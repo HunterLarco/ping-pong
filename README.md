@@ -1,3 +1,3 @@
 ```
-npm install --global rollup
+npm run initialize
 ```
