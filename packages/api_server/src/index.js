@@ -1,4 +1,5 @@
 import fastify from 'fastify'
+import cors from '@fastify/cors'
 
 import pkg from '../package.json'
 
@@ -19,6 +20,7 @@ app.get('/', async (request, reply) => {
 // LISTEN
 (async () => {
   try {
+    await app.register(cors, {});
     await app.listen({ port })
   } catch (err) {
     app.log.error(err)

@@ -9,10 +9,12 @@ export default {
       // since server packages can get them via npm install
       external: [
         'fastify',
+        '@fastify/cors',
       ],
       output: {
         globals: {
           'fastify': 'fastify',
+          '@fastify/cors': 'cors',
         }
       }
     },
