@@ -4,16 +4,20 @@
   "version": "1.0.0",
   "scripts": {
     "build": "NODE_ENV=production rollup -c",
-    "dev": "NODE_ENV=development rollup -c --watch"
+    "dev": "NODE_ENV=development rollup -c --watch",
+    "lint": "prettier . --check",
+    "lint:fix": "prettier . --write"
   },
   "dependencies": {
     "@apollo/server": "^4.1.1",
+    "dataloader": "2.1.0",
     "fuzzy-search": "3.2.1",
     "graphql": "^16.6.0"
   },
   "devDependencies": {
     "@rollup/plugin-graphql": "2.0.2",
     "@rollup/plugin-run": "3.0.1",
+    "prettier": "2.7.1",
     "rollup": "3.3.0"
   }
 }

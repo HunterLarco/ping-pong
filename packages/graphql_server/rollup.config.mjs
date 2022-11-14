@@ -1,4 +1,4 @@
-import run from "@rollup/plugin-run";
+import run from '@rollup/plugin-run';
 import graphql from '@rollup/plugin-graphql';
 
 export default {
@@ -11,11 +11,10 @@ export default {
   external: [
     '@apollo/server',
     '@apollo/server/standalone',
+    'fuzzy-search',
+    'dataloader',
   ],
-  plugins: [
-    graphql(),
-    process.env.NODE_ENV == "development" && run(),
-  ],
+  plugins: [graphql(), process.env.NODE_ENV == 'development' && run()],
   watch: {
     buildDelay: 500,
   },

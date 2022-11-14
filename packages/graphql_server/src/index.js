@@ -1,13 +1,11 @@
 import { ApolloServer } from '@apollo/server';
-import { startStandaloneServer } from '@apollo/server/standalone'
+import { startStandaloneServer } from '@apollo/server/standalone';
 import FuzzySearch from 'fuzzy-search';
+import DataLoader from 'dataloader';
 
 import schema from './schema.graphql';
 
-const libraries = [
-  { branch: 'ABRHS' },
-  { branch: 'NYPL' },
-];
+const libraries = [{ branch: 'ABRHS' }, { branch: 'NYPL' }];
 
 const books = [
   {
@@ -56,11 +54,16 @@ const server = new ApolloServer({
 });
 
 (async () => {
-// Passing an ApolloServer instance to the `startStandaloneServer` function:
-//  1. creates an Express app
-//  2. installs your ApolloServer instance as middleware
-//  3. prepares your app to handle incoming requests
-const { url } = await startStandaloneServer(server, { listen: { port: 4000 } });
+  // Passing an ApolloServer instance to the `startStandaloneServer` function:
+  //  1. creates an Express app
+  //  2. installs your ApolloServer instance as middleware
+  //  3. prepares your app to handle incoming requests
+  const { url } = await startStandaloneServer(server, {
+    listen: { port: 4000 },
+    context: () => ({
+      dataSources: {},
+    }),
+  });
 
-console.log(`🚀 Server listening at: ${url}`);
+  console.log(`🚀 Server listening at: ${url}`);
 })();
