@@ -4,14 +4,21 @@ import FuzzySearch from 'fuzzy-search';
 
 import schema from './schema.graphql';
 
+const libraries = [
+  { branch: 'ABRHS' },
+  { branch: 'NYPL' },
+];
+
 const books = [
   {
     title: 'The Awakening',
     author: 'Kate Chopin',
+    branch: 'ABRHS',
   },
   {
     title: 'City of Glass',
     author: 'Paul Auster',
+    branch: 'NYPL',
   },
 ];
 
@@ -29,6 +36,14 @@ const resolvers = {
       const byTitle = args.title ? kIndex.search(args.title) : [];
       const byAuthor = args.author ? kIndex.search(args.author) : [];
       return [...new Set([...byTitle, ...byAuthor])];
+    },
+
+    libraries: () => libraries,
+  },
+
+  Library: {
+    books: (parent) => {
+      return books.filter((book) => book.branch == parent.branch);
     },
   },
 };
