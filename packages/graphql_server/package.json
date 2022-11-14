@@ -1,0 +1,17 @@
+{
+  "name": "@ping-pong/graphql_server",
+  "description": "GraphQL Back-End",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "NODE_ENV=production rollup -c",
+    "dev": "NODE_ENV=development rollup -c --watch"
+  },
+  "dependencies": {
+    "@apollo/server": "^4.1.1",
+    "graphql": "^16.6.0"
+  },
+  "devDependencies": {
+    "@rollup/plugin-run": "3.0.1",
+    "rollup": "3.3.0"
+  }
+}
