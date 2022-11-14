@@ -1,6 +1,6 @@
 type Query {
   books(title: String, author: String): [Book!]
-  libraries: [Library!]
+  libraries(branch: String): [Library!]
 }
 
 type Library {

@@ -2,12 +2,10 @@ import { ApolloServer } from '@apollo/server';
 import { startStandaloneServer } from '@apollo/server/standalone';
 
 import schema from './schema.graphql';
+
 import BooksDataSource from './data_sources/BooksDataSource.js';
+import LibrariesDataSource from './data_sources/LibrariesDataSource.js';
 
-const libraries = [{ branch: 'ABRHS' }, { branch: 'NYPL' }];
-
-// Resolvers define the technique for fetching the types defined in the
-// schema. This resolver retrieves books from the "books" array above.
 const resolvers = {
   Query: {
     async books(_, args, { dataSources }) {
@@ -17,7 +15,9 @@ const resolvers = {
       });
     },
 
-    libraries: () => libraries,
+    async libraries(_, args, { dataSources }) {
+      return await dataSources.Libraries.fuzzySearch({ branch: args.branch });
+    },
   },
 
   Library: {
@@ -38,6 +38,7 @@ const server = new ApolloServer({
     context: () => ({
       dataSources: {
         Books: new BooksDataSource(),
+        Libraries: new LibrariesDataSource(),
       },
     }),
   });
