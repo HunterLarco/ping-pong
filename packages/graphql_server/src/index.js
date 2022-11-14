@@ -7,32 +7,56 @@ import schema from './schema.graphql';
 
 const libraries = [{ branch: 'ABRHS' }, { branch: 'NYPL' }];
 
-const books = [
-  {
-    title: 'The Awakening',
-    author: 'Kate Chopin',
-    branch: 'ABRHS',
-  },
-  {
-    title: 'City of Glass',
-    author: 'Paul Auster',
-    branch: 'NYPL',
-  },
-];
+class BooksDataSource {
+  constructor() {
+    this.books_ = [
+      {
+        title: 'The Awakening',
+        author: 'Kate Chopin',
+        branch: 'ABRHS',
+      },
+      {
+        title: 'City of Glass',
+        author: 'Paul Auster',
+        branch: 'NYPL',
+      },
+    ];
 
-const kIndex = new FuzzySearch(books, ['title', 'author']);
+    this.index_ = new FuzzySearch(this.books_, ['title', 'author', 'branch']);
+  }
+
+  batchQuery = new DataLoader(async (terms) => {
+    return terms.map((term) => this.index_.search(term));
+  });
+
+  async queryByBranch(name) {
+    return this.books_.filter((book) => book.branch == name);
+  }
+
+  async query(term) {
+    return this.batchQuery.load(term);
+  }
+
+  async all() {
+    return this.books_;
+  }
+}
 
 // Resolvers define the technique for fetching the types defined in the
 // schema. This resolver retrieves books from the "books" array above.
 const resolvers = {
   Query: {
-    books: (_, args) => {
+    async books(_, args, { dataSources }) {
       if (!args.title && !args.author) {
-        return books;
+        return await dataSources.Books.all();
       }
 
-      const byTitle = args.title ? kIndex.search(args.title) : [];
-      const byAuthor = args.author ? kIndex.search(args.author) : [];
+      const byTitle = args.title
+        ? await dataSources.Books.query(args.title)
+        : [];
+      const byAuthor = args.author
+        ? await dataSources.Books.query(args.author)
+        : [];
       return [...new Set([...byTitle, ...byAuthor])];
     },
 
@@ -40,8 +64,8 @@ const resolvers = {
   },
 
   Library: {
-    books: (parent) => {
-      return books.filter((book) => book.branch == parent.branch);
+    async books(parent, _, { dataSources }) {
+      return await dataSources.Books.queryByBranch(parent.branch);
     },
   },
 };
@@ -61,7 +85,9 @@ const server = new ApolloServer({
   const { url } = await startStandaloneServer(server, {
     listen: { port: 4000 },
     context: () => ({
-      dataSources: {},
+      dataSources: {
+        Books: new BooksDataSource(),
+      },
     }),
   });
 
