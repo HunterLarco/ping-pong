@@ -1,5 +1,6 @@
 import { ApolloServer } from '@apollo/server';
 import { startStandaloneServer } from '@apollo/server/standalone'
+import FuzzySearch from 'fuzzy-search';
 
 import schema from './schema.graphql';
 
@@ -14,11 +15,21 @@ const books = [
   },
 ];
 
+const kIndex = new FuzzySearch(books, ['title', 'author']);
+
 // Resolvers define the technique for fetching the types defined in the
 // schema. This resolver retrieves books from the "books" array above.
 const resolvers = {
   Query: {
-    books: () => books,
+    books: (_, args) => {
+      if (!args.title && !args.author) {
+        return books;
+      }
+
+      const byTitle = args.title ? kIndex.search(args.title) : [];
+      const byAuthor = args.author ? kIndex.search(args.author) : [];
+      return [...new Set([...byTitle, ...byAuthor])];
+    },
   },
 };
 

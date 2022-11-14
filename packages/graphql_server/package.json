@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "@apollo/server": "^4.1.1",
+    "fuzzy-search": "3.2.1",
     "graphql": "^16.6.0"
   },
   "devDependencies": {
