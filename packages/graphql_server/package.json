@@ -11,6 +11,7 @@
     "graphql": "^16.6.0"
   },
   "devDependencies": {
+    "@rollup/plugin-graphql": "2.0.2",
     "@rollup/plugin-run": "3.0.1",
     "rollup": "3.3.0"
   }

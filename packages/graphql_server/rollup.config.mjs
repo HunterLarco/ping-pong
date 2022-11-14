@@ -1,4 +1,5 @@
 import run from "@rollup/plugin-run";
+import graphql from '@rollup/plugin-graphql';
 
 export default {
   input: 'src/index.js',
@@ -12,6 +13,7 @@ export default {
     '@apollo/server/standalone',
   ],
   plugins: [
+    graphql(),
     process.env.NODE_ENV == "development" && run(),
   ],
   watch: {
