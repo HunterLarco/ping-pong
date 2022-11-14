@@ -63,4 +63,10 @@ export default class BooksDataSource {
   async loadAll() {
     return books;
   }
+
+  async insert({ title, author, branch }) {
+    const book = { title, author, branch };
+    books.push(book);
+    return book;
+  }
 }

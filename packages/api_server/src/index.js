@@ -20,9 +20,36 @@ const resolvers = {
     },
   },
 
+  Book: {
+    normalizedTitle(parent) {
+      return parent.title
+        .toLowerCase()
+        .split(/(?<=\s|-)/)
+        .map((word) => word.charAt(0).toUpperCase() + word.substring(1))
+        .join('');
+    },
+  },
+
   Library: {
     async books(parent, _, { dataSources }) {
       return await dataSources.Books.queryByBranch(parent.branch);
+    },
+  },
+
+  Mutation: {
+    async addBook(_, { title, author, branch }, { dataSources }) {
+      const book = await dataSources.Books.insert({
+        title,
+        author,
+        branch,
+      });
+
+      return {
+        code: 'OK',
+        success: true,
+        message: 'Added book.',
+        book,
+      };
     },
   },
 };

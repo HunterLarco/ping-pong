@@ -14,5 +14,9 @@ type AddBookMutationResponse {
 }
 
 type Mutation {
-  addBook(title: String, author: String): AddBookMutationResponse
+  addBook(
+    title: String!
+    author: String!
+    branch: String!
+  ): AddBookMutationResponse!
 }

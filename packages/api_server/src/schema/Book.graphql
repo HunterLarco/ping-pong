@@ -1,4 +1,5 @@
 type Book {
   title: String!
+  normalizedTitle: String!
   author: String!
 }
