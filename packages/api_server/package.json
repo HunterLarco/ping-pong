@@ -1,6 +1,6 @@
 {
-  "name": "@ping-pong/graphql_server",
-  "description": "GraphQL Back-End",
+  "name": "@ping-pong/api_server",
+  "description": "API Server",
   "version": "1.0.0",
   "scripts": {
     "build": "NODE_ENV=production rollup -c",
