@@ -1,16 +1,9 @@
+#import './Book.graphql'
+#import './Library.graphql'
+
 type Query {
   books(title: String, author: String): [Book!]
   libraries(branch: String): [Library!]
-}
-
-type Library {
-  branch: String!
-  books: [Book!]
-}
-
-type Book {
-  title: String!
-  author: String!
 }
 
 type AddBookMutationResponse {

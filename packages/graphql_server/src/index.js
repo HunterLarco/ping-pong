@@ -1,7 +1,7 @@
 import { ApolloServer } from '@apollo/server';
 import { startStandaloneServer } from '@apollo/server/standalone';
 
-import schema from './schema.graphql';
+import schema from './schema/api.graphql';
 
 import BooksDataSource from './data_sources/BooksDataSource.js';
 import LibrariesDataSource from './data_sources/LibrariesDataSource.js';
