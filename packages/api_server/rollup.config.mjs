@@ -11,8 +11,9 @@ export default {
   external: [
     '@apollo/server',
     '@apollo/server/standalone',
-    'fuzzy-search',
+    '@graphql-tools/merge',
     'dataloader',
+    'fuzzy-search',
   ],
   plugins: [graphql(), process.env.NODE_ENV == 'development' && run()],
   watch: {
