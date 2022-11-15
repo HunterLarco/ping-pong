@@ -1,10 +1,8 @@
 <script setup>
-import { useQuery } from "@vue/apollo-composable";
+import { useQuery, useMutation } from "@vue/apollo-composable";
 import gql from "graphql-tag";
 
-import TheWelcome from "../components/TheWelcome.vue";
-
-const { result, refetch } = useQuery(gql`
+const kGetBooksQuery = gql`
   query Query {
     books {
       author
@@ -12,12 +10,49 @@ const { result, refetch } = useQuery(gql`
       normalizedTitle
     }
   }
-`);
+`;
+
+const { result, refetch } = useQuery(kGetBooksQuery);
+
+const { mutate: addBook } = useMutation(
+  gql`
+    mutation AddBook($title: String!, $author: String!) {
+      addBook(title: $title, author: $author, branch: "NYPL") {
+        code
+        success
+        message
+        book {
+          title
+          author
+          normalizedTitle
+        }
+      }
+    }
+  `,
+  {
+    update(cache, { data }) {
+      if (!data.addBook.success) {
+        return;
+      }
+
+      const cachedData = cache.readQuery({ query: kGetBooksQuery });
+      cache.writeQuery({
+        query: kGetBooksQuery,
+        data: {
+          books: [...cachedData.books, data.addBook.book],
+        },
+      });
+    },
+  }
+);
 </script>
 
 <template>
-  <main @click="refetch()">
-    <TheWelcome />
-    {{ result }}
-  </main>
+  <div>
+    <div style="white-space: pre">{{ JSON.stringify(result, null, 2) }}</div>
+    <button @click="addBook({ title: Date.now().toString(), author: 'me' })">
+      Add Book
+    </button>
+    <button @click="refetch()">Refresh</button>
+  </div>
 </template>
