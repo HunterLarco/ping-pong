@@ -14,9 +14,7 @@
     "api_server:build": "lerna run build --stream --scope=@ping-pong/api_server",
     "api_server:dev": "lerna run dev --stream --scope=@ping-pong/api_server",
     "frontend:build": "lerna run build --stream --scope=@ping-pong/frontend",
-    "frontend:dev": "lerna run dev --stream --scope=@ping-pong/frontend",
-    "proto:build": "lerna run build --stream --scope=@ping-pong/proto",
-    "proto:dev": "lerna run dev --stream --scope=@ping-pong/proto"
+    "frontend:dev": "lerna run dev --stream --scope=@ping-pong/frontend"
   },
   "author": "Hunter John Larco",
   "license": "ISC",
