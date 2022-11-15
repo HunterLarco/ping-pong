@@ -1,5 +1,6 @@
 import run from '@rollup/plugin-run';
 import graphql from '@rollup/plugin-graphql';
+import alias from '@rollup/plugin-alias';
 
 export default {
   input: 'src/index.js',
@@ -15,7 +16,15 @@ export default {
     'dataloader',
     'fuzzy-search',
   ],
-  plugins: [graphql(), process.env.NODE_ENV == 'development' && run()],
+  plugins: [
+    graphql(),
+    alias({
+      entries: {
+        '@': './src',
+      },
+    }),
+    process.env.NODE_ENV == 'development' && run(),
+  ],
   watch: {
     buildDelay: 500,
   },

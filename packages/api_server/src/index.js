@@ -1,14 +1,14 @@
 import { ApolloServer } from '@apollo/server';
 import { startStandaloneServer } from '@apollo/server/standalone';
-import { mergeResolvers } from '@graphql-tools/merge'
+import { mergeResolvers } from '@graphql-tools/merge';
 
-import BookResolvers from './resolvers/Book/index.js';
-import LibraryResolvers from './resolvers/Library/index.js';
+import BookResolvers from '@/resolvers/Book/index.js';
+import LibraryResolvers from '@/resolvers/Library/index.js';
 
-import schema from './schema/api.graphql';
+import schema from '@/schema/api.graphql';
 
-import BooksDataSource from './data_sources/BooksDataSource.js';
-import LibrariesDataSource from './data_sources/LibrariesDataSource.js';
+import BooksDataSource from '@/data_sources/BooksDataSource.js';
+import LibrariesDataSource from '@/data_sources/LibrariesDataSource.js';
 
 const server = new ApolloServer({
   typeDefs: schema,
