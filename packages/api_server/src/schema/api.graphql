@@ -1,5 +1,0 @@
-#import '@/schema/LibraryService.graphql'
-#import '@/schema/BookService.graphql'
-
-type Query
-type Mutation

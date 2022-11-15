@@ -1,5 +1,5 @@
 #import '@/schema/Library.graphql'
 
-extend type Query {
+type Query {
   libraries(branch: String): [Library!]
 }

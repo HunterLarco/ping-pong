@@ -1,6 +1,6 @@
 #import '@/schema/Book.graphql'
 
-extend type Query {
+type Query {
   books(title: String, author: String): [Book!]
 }
 
@@ -11,7 +11,7 @@ type AddBookMutationResponse {
   book: Book
 }
 
-extend type Mutation {
+type Mutation {
   addBook(
     title: String!
     author: String!
