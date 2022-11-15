@@ -1,22 +1,5 @@
-#import '@/schema/Book.graphql'
-#import '@/schema/Library.graphql'
+#import '@/schema/LibraryService.graphql'
+#import '@/schema/BookService.graphql'
 
-type Query {
-  books(title: String, author: String): [Book!]
-  libraries(branch: String): [Library!]
-}
-
-type AddBookMutationResponse {
-  code: String!
-  success: Boolean!
-  message: String!
-  book: Book
-}
-
-type Mutation {
-  addBook(
-    title: String!
-    author: String!
-    branch: String!
-  ): AddBookMutationResponse!
-}
+type Query
+type Mutation

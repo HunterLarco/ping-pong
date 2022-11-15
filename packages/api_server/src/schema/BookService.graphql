@@ -1,0 +1,20 @@
+#import '@/schema/Book.graphql'
+
+extend type Query {
+  books(title: String, author: String): [Book!]
+}
+
+type AddBookMutationResponse {
+  code: String!
+  success: Boolean!
+  message: String!
+  book: Book
+}
+
+extend type Mutation {
+  addBook(
+    title: String!
+    author: String!
+    branch: String!
+  ): AddBookMutationResponse!
+}
