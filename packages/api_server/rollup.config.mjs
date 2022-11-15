@@ -1,6 +1,7 @@
 import run from '@rollup/plugin-run';
 import graphql from '@rollup/plugin-graphql';
 import alias from '@rollup/plugin-alias';
+import nodeResolve from '@rollup/plugin-node-resolve';
 
 export default {
   input: 'src/index.js',
@@ -23,6 +24,7 @@ export default {
         '@': './src',
       },
     }),
+    nodeResolve(),
     process.env.NODE_ENV == 'development' && run(),
   ],
   watch: {
