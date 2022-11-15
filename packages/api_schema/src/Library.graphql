@@ -1,0 +1,6 @@
+#import './Book.graphql'
+
+type Library {
+  branch: String!
+  books: [Book!]
+}
