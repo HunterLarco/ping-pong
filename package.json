@@ -10,11 +10,7 @@
     "initialize": "npm install && npm run clean && lerna bootstrap",
     "clean": "lerna clean --yes && lerna exec -- rm -rf dist",
     "refresh": "lerna bootstrap",
-    "dev": "lerna run dev --parallel --scope=@ping-pong/api_server --scope=@ping-pong/frontend",
-    "api_server:build": "lerna run build --stream --scope=@ping-pong/api_server",
-    "api_server:dev": "lerna run dev --stream --scope=@ping-pong/api_server",
-    "frontend:build": "lerna run build --stream --scope=@ping-pong/frontend",
-    "frontend:dev": "lerna run dev --stream --scope=@ping-pong/frontend"
+    "dev": "lerna run dev --parallel --scope=@ping-pong/api_server --scope=@ping-pong/frontend"
   },
   "author": "Hunter John Larco",
   "license": "ISC",
