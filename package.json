@@ -7,7 +7,7 @@
     "url": "git+https://github.com/HunterLarco/ping-pong.git"
   },
   "scripts": {
-    "initialize": "npm install && npm run clean && lerna bootstrap",
+    "initialize": "nvm install && npm install && npm run clean && lerna bootstrap",
     "clean": "lerna clean --yes && lerna exec -- rm -rf dist",
     "refresh": "lerna bootstrap",
     "dev": "lerna run dev --parallel --scope=@ping-pong/api_server --scope=@ping-pong/frontend"
