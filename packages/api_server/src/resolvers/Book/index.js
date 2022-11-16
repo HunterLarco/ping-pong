@@ -1,3 +1,7 @@
+import { PubSub } from 'graphql-subscriptions';
+
+const pubsub = new PubSub();
+
 export default {
   Query: {
     async books(_, args, { dataSources }) {
@@ -26,12 +30,20 @@ export default {
         branch,
       });
 
+      pubsub.publish('bookAdded', { bookAdded: book });
+
       return {
         code: 'OK',
         success: true,
         message: 'Added book.',
         book,
       };
+    },
+  },
+
+  Subscription: {
+    bookAdded: {
+      subscribe: () => pubsub.asyncIterator(['bookAdded']),
     },
   },
 };

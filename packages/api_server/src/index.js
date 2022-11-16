@@ -7,6 +7,10 @@ import { ApolloServer } from '@apollo/server';
 import { expressMiddleware } from '@apollo/server/express4';
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
 
+import { WebSocketServer } from 'ws';
+import { useServer } from 'graphql-ws/lib/use/ws';
+
+import { makeExecutableSchema } from '@graphql-tools/schema';
 import { mergeResolvers } from '@graphql-tools/merge';
 
 import BookResolvers from '@/resolvers/Book/index.js';
@@ -21,10 +25,32 @@ import LibrariesDataSource from '@/data_sources/LibrariesDataSource.js';
 const app = express();
 const httpServer = http.createServer(app);
 
-const server = new ApolloServer({
+const schema = makeExecutableSchema({
   typeDefs: [BookSchema, LibrarySchema],
   resolvers: mergeResolvers([LibraryResolvers, BookResolvers]),
-  plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
+});
+
+const wsServer = new WebSocketServer({
+  server: httpServer,
+  path: '/graphql',
+});
+
+const serverCleanup = useServer({ schema }, wsServer);
+
+const server = new ApolloServer({
+  schema,
+  plugins: [
+    ApolloServerPluginDrainHttpServer({ httpServer }),
+    {
+      async serverWillStart() {
+        return {
+          async drainServer() {
+            await serverCleanup.dispose();
+          },
+        };
+      },
+    },
+  ],
 });
 
 (async () => {

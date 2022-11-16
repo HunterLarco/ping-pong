@@ -16,7 +16,10 @@
     "dataloader": "2.1.0",
     "express": "4.18.2",
     "fuzzy-search": "3.2.1",
-    "graphql": "^16.6.0"
+    "graphql": "^16.6.0",
+    "graphql-subscriptions": "2.0.0",
+    "graphql-ws": "5.11.2",
+    "ws": "8.11.0"
   },
   "devDependencies": {
     "@rollup/plugin-alias": "4.0.2",
