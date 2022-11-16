@@ -23,6 +23,7 @@ export default {
     'graphql-subscriptions',
     'graphql-ws/lib/use/ws',
     'http',
+    'uuid',
     'ws',
   ],
   plugins: [
