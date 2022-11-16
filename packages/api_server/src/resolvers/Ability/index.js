@@ -8,7 +8,6 @@ export default {
         id: ability.id,
         name: ability.name,
         sourceUri: ability.uri,
-        imageUri: ability.image,
         type: ability.types.subtype,
         text: ability.text,
         rulings: ability.rulings,
@@ -28,6 +27,15 @@ export default {
       }
 
       return abilities;
+    },
+  },
+
+  Ability: {
+    imageUri(parent) {
+      return encodeURI(
+        `https://mtgtreachery.net/images/cards/en/trd/` +
+          `${parent.type} - ${parent.name}.jpg`
+      );
     },
   },
 };

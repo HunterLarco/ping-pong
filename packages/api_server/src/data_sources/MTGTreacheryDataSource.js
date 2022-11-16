@@ -6,13 +6,6 @@ async function fetchIdentities() {
   const { cards } = await fetch(
     'https://mtgtreachery.net/rules/oracle/treachery-cards.json'
   ).then((response) => response.json());
-
-  for (const card of cards) {
-    card.image = encodeURI(
-      `https://mtgtreachery.net/images/cards/en/trd/${card.types.subtype} - ${card.name}.jpg`
-    );
-  }
-
   return cards;
 }
 
