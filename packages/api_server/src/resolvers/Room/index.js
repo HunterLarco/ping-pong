@@ -12,13 +12,25 @@ export default {
 
   Mutation: {
     async sendMessage(_, { request }, { dataSources }) {
-      throw new GraphQLError('Not Implemented');
     },
   },
 
   Subscription: {
     joinRoom: {
-      subscribe: () => [],
+      subscribe: () => ({
+        async *[Symbol.asyncIterator]() {
+          yield {
+            joinRoom: {
+              type: 'Connected',
+              timestamp: new Date(),
+              details: {
+                __typename: 'ConnectedEvent',
+                cursor: 'foobar',
+              },
+            },
+          };
+        },
+      }),
     },
   },
 };
