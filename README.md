@@ -1,4 +1,5 @@
 ```
+nvm use
 npm run initialize
 ```
 
