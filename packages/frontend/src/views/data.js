@@ -1,5 +1,5 @@
-import { useQuery, useMutation } from "@vue/apollo-composable";
-import gql from "graphql-tag";
+import { useQuery, useMutation } from '@vue/apollo-composable';
+import gql from 'graphql-tag';
 
 const kGetBooksQuery = gql`
   query Query {
