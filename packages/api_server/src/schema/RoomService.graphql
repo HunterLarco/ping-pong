@@ -1,0 +1,27 @@
+#import '@/schema/RoomEvent.graphql'
+#import '@/schema/Types.graphql'
+
+type Query {
+  roomEvents(request: RoomEventsRequest!): [RoomEvent!]!
+}
+
+type Mutation {
+  sendMessage(request: SendMessageRequest!): Void
+}
+
+type Subscription {
+  joinRoom: RoomEvent!
+}
+
+input RoomEventsRequest {
+  # Searching room events always searches back in time from the cursor.
+  cursor: ID!
+}
+
+input SendMessageRequest {
+  payload: IChatMessagePayload!
+}
+
+input IChatMessagePayload {
+  text: String!
+}
