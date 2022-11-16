@@ -6,12 +6,28 @@ const pubsub = new PubSub();
 export default {
   Query: {
     async roomEvents(_, { request }, { dataSources }) {
-      return [];
+      return await dataSources.RoomEvents.queryBeforeDate(new Date());
     },
   },
 
   Mutation: {
     async sendMessage(_, { request }, { dataSources }) {
+      const { text } = request.payload;
+      const event = await dataSources.RoomEvents.insert({
+        type: 'ChatMessage',
+        timestamp: new Date(),
+        details: {
+          __typename: 'ChatMessageEvent',
+          author: {
+            id: 'foo',
+            handle: 'snowflakesmasher',
+          },
+          payload: {
+            text,
+          },
+        },
+      });
+      pubsub.publish('roomEvent', { event });
     },
   },
 
@@ -29,6 +45,10 @@ export default {
               },
             },
           };
+
+          for await (const { event } of pubsub.asyncIterator(['roomEvent'])) {
+            yield { joinRoom: event };
+          }
         },
       }),
     },
