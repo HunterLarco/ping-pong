@@ -18,3 +18,7 @@ type Mutation {
     branch: String!
   ): AddBookMutationResponse!
 }
+
+type Subscription {
+  bookAdded: Book!
+}
