@@ -1,15 +1,18 @@
 import DataLoader from 'dataloader';
 import FuzzySearch from 'fuzzy-search';
+import { v4 as uuidv4 } from 'uuid';
 
 // In-memory data
 
 const books = [
   {
+    id: uuidv4(),
     title: 'The Awakening',
     author: 'Kate Chopin',
     branch: 'ABRHS',
   },
   {
+    id: uuidv4(),
     title: 'City of Glass',
     author: 'Paul Auster',
     branch: 'NYPL',
@@ -65,7 +68,7 @@ export default class BooksDataSource {
   }
 
   async insert({ title, author, branch }) {
-    const book = { title, author, branch };
+    const book = { id: uuidv4(), title, author, branch };
     books.push(book);
     return book;
   }

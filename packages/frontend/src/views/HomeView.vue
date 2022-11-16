@@ -6,6 +6,7 @@ import gql from 'graphql-tag';
 const kGetBooksQuery = gql`
   query Query {
     books {
+      id
       author
       title
       normalizedTitle
@@ -13,7 +14,35 @@ const kGetBooksQuery = gql`
   }
 `;
 
-const { result, refetch } = useQuery(kGetBooksQuery);
+const { result, refetch, subscribeToMore } = useQuery(kGetBooksQuery);
+
+subscribeToMore({
+  document: gql`
+    subscription BookAdded {
+      bookAdded {
+        id
+        title
+        normalizedTitle
+        author
+      }
+    }
+  `,
+  updateQuery(prev, { subscriptionData }) {
+    if (!subscriptionData.data) {
+      return prev;
+    }
+
+    for (const book of prev.books) {
+      if (book.id == subscriptionData.data.bookAdded.id) {
+        return prev;
+      }
+    }
+
+    return {
+      books: [...prev.books, subscriptionData.data.bookAdded],
+    };
+  },
+});
 
 const { mutate: addBook } = useMutation(
   gql`
@@ -23,6 +52,7 @@ const { mutate: addBook } = useMutation(
         success
         message
         book {
+          id
           title
           author
           normalizedTitle
@@ -30,34 +60,7 @@ const { mutate: addBook } = useMutation(
       }
     }
   `,
-  {
-    update(cache, { data }) {
-      if (!data.addBook.success) {
-        return;
-      }
-
-      const cachedData = cache.readQuery({ query: kGetBooksQuery });
-      cache.writeQuery({
-        query: kGetBooksQuery,
-        data: {
-          books: [...cachedData.books, data.addBook.book],
-        },
-      });
-    },
-  }
 );
-
-const { onResult: onBookAdded } = useSubscription(gql`
-  subscription BookAdded {
-    bookAdded {
-      title
-    }
-  }
-`);
-
-onBookAdded((data) => {
-  console.log(data);
-});
 </script>
 
 <template>
