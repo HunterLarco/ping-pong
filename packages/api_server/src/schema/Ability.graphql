@@ -1,0 +1,16 @@
+enum AbilityType {
+  Leader
+  Guardian
+  Assassin
+  Traitor
+}
+
+type Ability {
+  id: String!
+  name: String!
+  imageUri: String!
+  type: AbilityType!
+  text: String!
+  sourceUri: String!
+  rulings: [String!]
+}

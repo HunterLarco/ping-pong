@@ -1,0 +1,11 @@
+#import '@/schema/Ability.graphql'
+
+input AbilityFilters {
+  id: String
+  name: String
+  type: AbilityType
+}
+
+type Query {
+  abilities(filters: AbilityFilters): [Ability!]
+}
