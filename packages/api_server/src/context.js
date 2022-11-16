@@ -6,6 +6,6 @@ export function createContext() {
     dataSources: {
       Books: new BooksDataSource(),
       Libraries: new LibrariesDataSource(),
-    }
+    },
   };
 }
