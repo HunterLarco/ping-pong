@@ -1,5 +1,6 @@
 <script setup>
-import { useQuery, useMutation } from '@vue/apollo-composable';
+import { watch } from 'vue';
+import { useQuery, useMutation, useSubscription } from '@vue/apollo-composable';
 import gql from 'graphql-tag';
 
 const kGetBooksQuery = gql`
@@ -45,6 +46,18 @@ const { mutate: addBook } = useMutation(
     },
   }
 );
+
+const { onResult: onBookAdded } = useSubscription(gql`
+  subscription BookAdded {
+    bookAdded {
+      title
+    }
+  }
+`);
+
+onBookAdded((data) => {
+  console.log(data);
+});
 </script>
 
 <template>
