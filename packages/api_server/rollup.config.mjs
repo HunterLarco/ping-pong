@@ -1,4 +1,6 @@
 import graphql from '@rollup/plugin-graphql';
+import alias from '@rollup/plugin-alias';
+import resolve from '@rollup/plugin-node-resolve';
 import run from '@rollup/plugin-run';
 import typescript from '@rollup/plugin-typescript';
 
@@ -28,19 +30,27 @@ export default {
   ],
   plugins: [
     graphql(),
+alias({
+      entries: [
+        {
+          find: /^@\/(.*)\.graphql$/,
+          replacement: './src/$1.graphql',
+        }
+      ],
+    }),
     typescript({
       tsconfig: false,
       compilerOptions: {
         allowJs: false,
         allowSyntheticDefaultImports: true,
-        baseUrl: './src',
+        baseUrl: './',
         forceConsistentCasingInFileNames: true,
         noEmitOnError: true,
         // TODO: noImplicitAny should be true
         strict: false,
         noImplicitAny: false,
         paths: {
-          '@/*': ['*'],
+          '@/*': ['src/*'],
         },
         preserveConstEnums: true,
         skipLibCheck: true,
