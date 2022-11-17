@@ -1,4 +1,4 @@
-import schema from '@/schema.js';
+import schema from '@/schema';
 
 /// HTTP Server
 
@@ -57,11 +57,13 @@ async function main() {
     cors(),
     bodyParser.json(),
     expressMiddleware(graphQlServer, {
-      context: () => createContext(),
+      async context() {
+        return createContext();
+      }
     })
   );
 
-  await new Promise((resolve) => httpServer.listen({ port: 4000 }, resolve));
+  await new Promise<void>((resolve) => httpServer.listen({ port: 4000 }, () => resolve()));
   console.log(`🚀 Server listening at: localhost:4000`);
 }
 

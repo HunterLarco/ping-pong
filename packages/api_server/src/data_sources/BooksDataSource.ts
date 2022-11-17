@@ -22,7 +22,7 @@ const books = [
 // Data source
 
 export default class BooksDataSource {
-  batchQueryByBranch = new DataLoader(async (branches) => {
+  batchQueryByBranch = new DataLoader(async (branches: Array<string>) => {
     const results = {};
     for (const branch of branches) {
       results[branch] = [];

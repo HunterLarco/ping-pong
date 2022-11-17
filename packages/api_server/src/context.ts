@@ -1,5 +1,5 @@
-import BooksDataSource from '@/data_sources/BooksDataSource.js';
-import LibrariesDataSource from '@/data_sources/LibrariesDataSource.js';
+import BooksDataSource from '@/data_sources/BooksDataSource';
+import LibrariesDataSource from '@/data_sources/LibrariesDataSource';
 
 export function createContext() {
   return {

@@ -1,8 +1,8 @@
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { mergeResolvers } from '@graphql-tools/merge';
 
-import BookResolvers from '@/resolvers/Book/index.js';
-import LibraryResolvers from '@/resolvers/Library/index.js';
+import BookResolvers from '@/resolvers/Book';
+import LibraryResolvers from '@/resolvers/Library';
 
 import BookSchema from '@/schema/BookService.graphql';
 import LibrarySchema from '@/schema/LibraryService.graphql';
