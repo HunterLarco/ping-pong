@@ -27,19 +27,27 @@ export default {
     'ws',
   ],
   plugins: [
+    graphql(),
     typescript({
+      tsconfig: false,
       compilerOptions: {
-        // TODO: noImplicitAny should be true
-        noImplicitAny: false,
-        preserveConstEnums: true,
+        allowJs: false,
         allowSyntheticDefaultImports: true,
         baseUrl: './src',
+        forceConsistentCasingInFileNames: true,
+        noEmitOnError: true,
+        // TODO: noImplicitAny should be true
+        strict: false,
+        noImplicitAny: false,
         paths: {
           '@/*': ['*'],
         },
+        preserveConstEnums: true,
+        skipLibCheck: true,
+        // TODO: strict should be true
+        strict: false,
       },
     }),
-    graphql(),
     process.env.NODE_ENV == 'development' && run(),
   ],
   watch: {
