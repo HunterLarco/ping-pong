@@ -46,7 +46,7 @@ import http from 'http';
 import cors from 'cors';
 import bodyParser from 'body-parser';
 
-import { createContext } from '@/context.js';
+import { createContext } from '@/context';
 import { expressMiddleware } from '@apollo/server/express4';
 
 async function main() {
@@ -59,11 +59,13 @@ async function main() {
     expressMiddleware(graphQlServer, {
       async context() {
         return createContext();
-      }
+      },
     })
   );
 
-  await new Promise<void>((resolve) => httpServer.listen({ port: 4000 }, () => resolve()));
+  await new Promise<void>((resolve) =>
+    httpServer.listen({ port: 4000 }, () => resolve())
+  );
   console.log(`🚀 Server listening at: localhost:4000`);
 }
 
