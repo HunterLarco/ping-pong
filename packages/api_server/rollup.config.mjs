@@ -46,16 +46,14 @@ export default {
         baseUrl: './',
         forceConsistentCasingInFileNames: true,
         noEmitOnError: true,
-        // TODO: noImplicitAny should be true
-        noImplicitAny: false,
+        noImplicitAny: true,
         paths: {
           '@/*': ['src/*'],
           '@generated/*': ['generated/*'],
         },
         preserveConstEnums: true,
         skipLibCheck: true,
-        // TODO: strict should be true
-        strict: false,
+        strict: true,
       },
     }),
     process.env.NODE_ENV == 'development' && run(),
