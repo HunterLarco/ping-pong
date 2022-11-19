@@ -1,9 +1,10 @@
-import run from '@rollup/plugin-run';
 import graphql from '@rollup/plugin-graphql';
 import alias from '@rollup/plugin-alias';
+import run from '@rollup/plugin-run';
+import typescript from '@rollup/plugin-typescript';
 
 export default {
-  input: 'src/index.js',
+  input: 'src/index.ts',
   output: {
     file: 'dist/server.js',
     format: 'cjs',
@@ -23,15 +24,35 @@ export default {
     'graphql-subscriptions',
     'graphql-ws/lib/use/ws',
     'http',
-    'node-fetch',
     'uuid',
     'ws',
   ],
   plugins: [
     graphql(),
     alias({
-      entries: {
-        '@': './src',
+      entries: [
+        {
+          find: /^@generated\/(.*\.graphql)$/,
+          replacement: './generated/$1',
+        },
+      ],
+    }),
+    typescript({
+      tsconfig: false,
+      compilerOptions: {
+        allowJs: false,
+        allowSyntheticDefaultImports: true,
+        baseUrl: './',
+        forceConsistentCasingInFileNames: true,
+        noEmitOnError: true,
+        noImplicitAny: true,
+        paths: {
+          '@/*': ['src/*'],
+          '@generated/*': ['generated/*'],
+        },
+        preserveConstEnums: true,
+        skipLibCheck: true,
+        strict: true,
       },
     }),
     process.env.NODE_ENV == 'development' && run(),

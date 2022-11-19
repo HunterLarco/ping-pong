@@ -1,4 +1,6 @@
-export default {
+import { Resolvers } from '@generated/schema/resolvers';
+
+const LibraryResolvers: Resolvers = {
   Query: {
     async libraries(_, args, { dataSources }) {
       return await dataSources.Libraries.fuzzySearch({ branch: args.branch });
@@ -11,3 +13,5 @@ export default {
     },
   },
 };
+
+export default LibraryResolvers;

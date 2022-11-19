@@ -1,4 +1,4 @@
-#import '@/schema/Book.graphql'
+#import './Book.graphql'
 
 type Query {
   books(title: String, author: String): [Book!]
