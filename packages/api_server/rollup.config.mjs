@@ -30,12 +30,12 @@ export default {
   ],
   plugins: [
     graphql(),
-alias({
+    alias({
       entries: [
         {
-          find: /^@\/(.*)\.graphql$/,
-          replacement: './src/$1.graphql',
-        }
+          find: /^@generated\/(.*\.graphql)$/,
+          replacement: './generated/$1',
+        },
       ],
     }),
     typescript({
@@ -47,10 +47,10 @@ alias({
         forceConsistentCasingInFileNames: true,
         noEmitOnError: true,
         // TODO: noImplicitAny should be true
-        strict: false,
         noImplicitAny: false,
         paths: {
           '@/*': ['src/*'],
+          '@generated/*': ['generated/*'],
         },
         preserveConstEnums: true,
         skipLibCheck: true,

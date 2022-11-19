@@ -4,10 +4,9 @@ import { mergeResolvers } from '@graphql-tools/merge';
 import BookResolvers from '@/resolvers/Book';
 import LibraryResolvers from '@/resolvers/Library';
 
-import BookSchema from '@/schema/BookService.graphql';
-import LibrarySchema from '@/schema/LibraryService.graphql';
+import ApiTypeDefs from '@generated/schema/api.graphql';
 
 export default makeExecutableSchema({
-  typeDefs: [BookSchema, LibrarySchema],
+  typeDefs: [ApiTypeDefs],
   resolvers: mergeResolvers([LibraryResolvers, BookResolvers]),
 });

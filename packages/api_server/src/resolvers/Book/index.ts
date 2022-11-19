@@ -1,8 +1,9 @@
 import { PubSub } from 'graphql-subscriptions';
+import { Resolvers } from '@generated/schema/resolvers';
 
 const pubsub = new PubSub();
 
-export default {
+const BookResolvers: Resolvers = {
   Query: {
     async books(_, args, { dataSources }) {
       return await dataSources.Books.fuzzySearch({
@@ -30,7 +31,7 @@ export default {
         branch,
       });
 
-      pubsub.publish('bookAdded', { bookAdded: book });
+      pubsub.publish('bookAdded', { book });
 
       return {
         code: 'OK',
@@ -43,7 +44,14 @@ export default {
 
   Subscription: {
     bookAdded: {
-      subscribe: () => pubsub.asyncIterator(['bookAdded']),
+      async* subscribe() {
+        // @ts-ignore
+        for await (const { book } of pubsub.asyncIterator(['bookAdded'])) {
+          yield { bookAdded: book }
+        }
+      },
     },
   },
 };
+
+export default BookResolvers;

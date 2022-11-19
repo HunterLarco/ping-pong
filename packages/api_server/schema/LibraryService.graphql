@@ -1,4 +1,4 @@
-#import '@/schema/Library.graphql'
+#import './Library.graphql'
 
 type Query {
   libraries(branch: String): [Library!]

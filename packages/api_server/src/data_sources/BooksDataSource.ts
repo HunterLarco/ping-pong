@@ -4,7 +4,14 @@ import { v4 as uuidv4 } from 'uuid';
 
 // In-memory data
 
-const books = [
+type BookDocument = {
+  id: string;
+  title: string;
+  author: string;
+  branch: string;
+};
+
+const books: Array<BookDocument> = [
   {
     id: uuidv4(),
     title: 'The Awakening',
@@ -23,27 +30,33 @@ const books = [
 
 export default class BooksDataSource {
   batchQueryByBranch = new DataLoader(async (branches: Array<string>) => {
-    const results = {};
+    const results = new Map<string, Array<BookDocument>>();
     for (const branch of branches) {
-      results[branch] = [];
+      results.set(branch, []);
     }
 
     for (const book of books) {
-      if (!!results[book.branch]) {
-        results[book.branch].push(book);
+      if (results.has(book.branch)) {
+        results.get(book.branch).push(book);
       }
     }
 
-    return branches.map((branch) => results[branch]);
+    return branches.map((branch) => results.get(branch));
   });
 
-  async queryByBranch(branch) {
+  async queryByBranch(branch: string) {
     return this.batchQueryByBranch.load(branch);
   }
 
-  async fuzzySearch({ title, author, branch }) {
+  async fuzzySearch(options: {
+    title: string;
+    author: string;
+    branch: string;
+  }): Promise<Array<BookDocument>> {
+    const { title, author, branch } = options;
+
     let index;
-    let results = books;
+    let results: Array<BookDocument> = books;
 
     if (title) {
       index = new FuzzySearch(results, ['title']);
@@ -67,8 +80,14 @@ export default class BooksDataSource {
     return books;
   }
 
-  async insert({ title, author, branch }) {
-    const book = { id: uuidv4(), title, author, branch };
+  async insert(options: {
+    title: string;
+    author: string;
+    branch: string;
+  }): Promise<BookDocument> {
+    const { title, author, branch } = options;
+
+    const book: BookDocument = { id: uuidv4(), title, author, branch };
     books.push(book);
     return book;
   }

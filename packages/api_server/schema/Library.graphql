@@ -1,4 +1,4 @@
-#import '@/schema/Book.graphql'
+#import './Book.graphql'
 
 type Library {
   branch: String!
