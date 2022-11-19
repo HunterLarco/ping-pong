@@ -1,6 +1,5 @@
 import graphql from '@rollup/plugin-graphql';
 import alias from '@rollup/plugin-alias';
-import resolve from '@rollup/plugin-node-resolve';
 import run from '@rollup/plugin-run';
 import typescript from '@rollup/plugin-typescript';
 
