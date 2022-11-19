@@ -59,7 +59,7 @@ const { mutate: addBook } = useMutation(
         }
       }
     }
-  `,
+  `
 );
 </script>
 

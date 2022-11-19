@@ -29,21 +29,23 @@ const books: Array<BookDocument> = [
 // Data source
 
 export default class BooksDataSource {
-  batchQueryByBranch = new DataLoader(async (branches: Readonly<Array<string>>) => {
-    const results = new Map<string, Array<BookDocument>>();
-    for (const branch of branches) {
-      results.set(branch, []);
-    }
-
-    for (const book of books) {
-      const result = results.get(book.branch);
-      if (result) {
-        result.push(book);
+  batchQueryByBranch = new DataLoader(
+    async (branches: Readonly<Array<string>>) => {
+      const results = new Map<string, Array<BookDocument>>();
+      for (const branch of branches) {
+        results.set(branch, []);
       }
-    }
 
-    return branches.map((branch) => results.get(branch));
-  });
+      for (const book of books) {
+        const result = results.get(book.branch);
+        if (result) {
+          result.push(book);
+        }
+      }
+
+      return branches.map((branch) => results.get(branch));
+    }
+  );
 
   async queryByBranch(branch: string) {
     return this.batchQueryByBranch.load(branch);

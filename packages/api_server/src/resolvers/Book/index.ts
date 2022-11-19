@@ -44,10 +44,10 @@ const BookResolvers: Resolvers = {
 
   Subscription: {
     bookAdded: {
-      async* subscribe() {
+      async *subscribe() {
         // @ts-ignore
         for await (const { book } of pubsub.asyncIterator(['bookAdded'])) {
-          yield { bookAdded: book }
+          yield { bookAdded: book };
         }
       },
     },
