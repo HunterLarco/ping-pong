@@ -1,6 +1,0 @@
-type Book {
-  id: String!
-  title: String!
-  normalizedTitle: String!
-  author: String!
-}

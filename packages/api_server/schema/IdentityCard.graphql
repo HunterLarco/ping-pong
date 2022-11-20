@@ -1,0 +1,18 @@
+#import './Scalars.graphql'
+
+enum IdentityType {
+  Leader
+  Guardian
+  Assassin
+  Traitor
+}
+
+type IdentityCard {
+  id: String!
+  title: String!
+  type: IdentityType!
+  image: URL!
+  text: String!
+  rulings: [String!]!
+  source: URL!
+}
