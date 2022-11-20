@@ -38,7 +38,7 @@ function toApiType(card: OracleCard): IdentityCard {
   };
 }
 
-function toFilters(
+function toDataSourceFilters(
   input: IdentityCardFilters | null | undefined
 ): FuzzySearchFilters {
   return {
@@ -50,7 +50,7 @@ const IdentityCardResolvers: Resolvers = {
   Query: {
     async identityCards(_, { filters }, { dataSources }) {
       const cards = await dataSources.MTGTreachery.fuzzySearch(
-        toFilters(filters)
+        toDataSourceFilters(filters)
       );
 
       return cards.map((card: OracleCard) => toApiType(card));
