@@ -6,6 +6,9 @@ const config: CodegenConfig = {
     './generated/schema/api.graphql': {
       plugins: ['schema-ast'],
     },
+    './generated/schema/ast.ts': {
+      plugins: ['@ping-pong/generate_graphql_ast'],
+    },
     './generated/schema/resolvers.ts': {
       plugins: ['typescript', 'typescript-resolvers'],
     },
