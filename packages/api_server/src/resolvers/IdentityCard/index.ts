@@ -28,7 +28,7 @@ function toApiType(card: OracleCard): IdentityCard {
       `https://mtgtreachery.net/images/cards/en/trd/` +
         `${card.types.subtype} - ${card.name}.jpg`
     ),
-    text: card.text,
+    text: card.text.replace(/\|/g, '\n'),
     rulings: card.rulings,
     source: card.uri,
   };
