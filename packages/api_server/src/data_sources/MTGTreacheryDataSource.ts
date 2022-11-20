@@ -9,7 +9,15 @@ import { z } from 'zod';
 const kDuration_Day = 24 * 60 * 60 * 1000;
 
 const OracleCard = z.object({
+  id: z.number(),
   name: z.string(),
+  uri: z.string(),
+  types: z.object({
+    supertype: z.string(),
+    subtype: z.string(),
+  }),
+  text: z.string(),
+  rulings: z.array(z.string()),
 });
 
 const OracleResponse = z.object({

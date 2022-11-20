@@ -9,7 +9,7 @@ enum IdentityType {
 
 type IdentityCard {
   id: ID!
-  title: String!
+  name: String!
   type: IdentityType!
   image: URL!
   text: String!
