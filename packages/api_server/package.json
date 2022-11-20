@@ -3,8 +3,10 @@
   "description": "API Server",
   "version": "1.0.0",
   "scripts": {
-    "build": "NODE_ENV=production rollup -c",
-    "dev": "NODE_ENV=development rollup -c --watch",
+    "build": "NODE_ENV=production graphql-codegen && rollup -c",
+    "dev": "concurrently npm:dev:* --kill-others",
+    "dev:graphql-codegen": "graphql-codegen --watch",
+    "dev:rollup": "NODE_ENV=development rollup -c --watch",
     "lint": "prettier . --check",
     "lint:fix": "prettier . --write"
   },
@@ -42,6 +44,7 @@
     "@types/graphql": "14.5.0",
     "@types/uuid": "8.3.4",
     "@types/ws": "8.5.3",
+    "concurrently": "7.5.0",
     "prettier": "2.7.1",
     "rollup": "3.3.0",
     "tslib": "2.4.1",
