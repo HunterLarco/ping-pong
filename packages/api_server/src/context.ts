@@ -1,11 +1,11 @@
-import BooksDataSource from '@/data_sources/BooksDataSource';
+import MTGTreacheryDataSource from '@/data_sources/MTGTreacheryDataSource';
 
 export type RequestContext = any;
 
 export function createContext() {
   return {
     dataSources: {
-      Books: new BooksDataSource(),
+      MTGTreachery: new MTGTreacheryDataSource(),
     },
   };
 }

@@ -24,8 +24,11 @@ export default {
     'graphql-subscriptions',
     'graphql-ws/lib/use/ws',
     'http',
+    'node-fetch',
+    'p-memoize',
     'uuid',
     'ws',
+    'zod',
   ],
   plugins: [
     graphql(),
