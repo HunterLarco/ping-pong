@@ -8,7 +8,7 @@ import { OracleCard } from '@/data_sources/MTGTreacheryDataSource';
 function toApiType(card: OracleCard): IdentityCard {
   return {
     id: '10',
-    title: card.title,
+    title: card.name,
     type: IdentityType.Leader,
     image: '',
     text: '',

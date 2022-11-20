@@ -9,7 +9,7 @@ import { z } from 'zod';
 const kDuration_Day = 24 * 60 * 60 * 1000;
 
 const OracleCard = z.object({
-  title: z.string(),
+  name: z.string(),
 });
 
 const OracleResponse = z.object({
@@ -20,7 +20,7 @@ const fetchOracleData = pMemoize(
   async () => {
     const response = await fetch(
       'https://mtgtreachery.net/rules/oracle/treachery-cards.json'
-    ).then((response) => OracleResponse.parse(response.json()));
+    ).then(async (response) => OracleResponse.parse(await response.json()));
     return response.cards;
   },
   { cache: new ExpiryMap(kDuration_Day) }
@@ -31,7 +31,7 @@ const fetchOracleData = pMemoize(
 export type OracleCard = z.infer<typeof OracleCard>;
 
 export default class MTGTreacheryDataSource {
-  async fuzzySearch(options: { title: string }): Promise<Array<OracleCard>> {
+  async fuzzySearch(options: { name: string }): Promise<Array<OracleCard>> {
     return [];
   }
 

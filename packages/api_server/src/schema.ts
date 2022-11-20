@@ -5,7 +5,9 @@ import IdentityCardResolvers from '@/resolvers/IdentityCard';
 
 import ApiTypeDefs from '@generated/schema/api.graphql';
 
+import { URLTypeDefinition, URLResolver } from 'graphql-scalars';
+
 export default makeExecutableSchema({
-  typeDefs: [ApiTypeDefs],
-  resolvers: mergeResolvers([IdentityCardResolvers]),
+  typeDefs: [ApiTypeDefs, URLTypeDefinition],
+  resolvers: mergeResolvers([IdentityCardResolvers, { URL: URLResolver }]),
 });
