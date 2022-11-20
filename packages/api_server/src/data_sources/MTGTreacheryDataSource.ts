@@ -38,9 +38,19 @@ const fetchOracleData = pMemoize(
 
 export type OracleCard = z.infer<typeof OracleCard>;
 
+export type FuzzySearchFilters = {
+  name: string | null;
+};
+
 export default class MTGTreacheryDataSource {
-  async fuzzySearch(options: { name: string }): Promise<Array<OracleCard>> {
-    return [];
+  async fuzzySearch(filters: FuzzySearchFilters): Promise<Array<OracleCard>> {
+    if (!filters.name) {
+      return this.fetchAll();
+    }
+
+    return new FuzzySearch(await fetchOracleData(), ['name']).search(
+      filters.name
+    );
   }
 
   async fetchAll(): Promise<Array<OracleCard>> {

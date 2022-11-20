@@ -1,5 +1,9 @@
 #import './IdentityCard.graphql'
 
 type Query {
-  identityCards: [IdentityCard!]!
+  identityCards(filters: IdentityCardFilters): [IdentityCard!]!
+}
+
+input IdentityCardFilters {
+  name: String
 }

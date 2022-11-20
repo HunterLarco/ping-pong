@@ -2,8 +2,12 @@ import {
   Resolvers,
   IdentityCard,
   IdentityType,
+  IdentityCardFilters,
 } from '@generated/schema/resolvers';
-import { OracleCard } from '@/data_sources/MTGTreacheryDataSource';
+import {
+  FuzzySearchFilters,
+  OracleCard,
+} from '@/data_sources/MTGTreacheryDataSource';
 
 function toIdentityType(raw: string): IdentityType {
   switch (raw.toLowerCase()) {
@@ -34,10 +38,21 @@ function toApiType(card: OracleCard): IdentityCard {
   };
 }
 
+function toFilters(
+  input: IdentityCardFilters | null | undefined
+): FuzzySearchFilters {
+  return {
+    name: input && input.name ? input.name : null,
+  };
+}
+
 const IdentityCardResolvers: Resolvers = {
   Query: {
-    async identityCards(_, args, { dataSources }) {
-      const cards = await dataSources.MTGTreachery.fetchAll();
+    async identityCards(_, { filters }, { dataSources }) {
+      const cards = await dataSources.MTGTreachery.fuzzySearch(
+        toFilters(filters)
+      );
+
       return cards.map((card: OracleCard) => toApiType(card));
     },
   },
