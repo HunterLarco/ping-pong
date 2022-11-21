@@ -3,7 +3,7 @@ import { mergeResolvers } from '@graphql-tools/merge';
 
 import IdentityCardResolvers from '@/resolvers/IdentityCard';
 
-import ApiTypeDefs from '@generated/schema/api.graphql';
+import ApiTypeDefs from '@generated/schema/ast';
 
 import { URLTypeDefinition, URLResolver } from 'graphql-scalars';
 

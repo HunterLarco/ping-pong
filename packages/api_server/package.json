@@ -11,7 +11,7 @@
     "lint:fix": "prettier . --write"
   },
   "dependencies": {
-    "@apollo/server": "^4.1.1",
+    "@apollo/server": "4.1.1",
     "@graphql-tools/merge": "8.3.12",
     "body-parser": "1.20.1",
     "cors": "2.8.5",
@@ -32,12 +32,11 @@
   "devDependencies": {
     "@ping-pong/generate_graphql_ast": "*",
     "@graphql-codegen/cli": "2.13.12",
-    "@graphql-codegen/schema-ast": "2.5.1",
     "@graphql-codegen/typescript": "2.8.2",
     "@graphql-codegen/typescript-resolvers": "2.7.7",
     "@rollup/plugin-alias": "4.0.2",
     "@rollup/plugin-graphql": "2.0.2",
-    "@rollup/plugin-node-resolve": "^15.0.1",
+    "@rollup/plugin-node-resolve": "15.0.1",
     "@rollup/plugin-run": "3.0.1",
     "@rollup/plugin-typescript": "9.0.2",
     "@types/cors": "2.8.12",
