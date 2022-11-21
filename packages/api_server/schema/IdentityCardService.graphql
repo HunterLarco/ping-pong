@@ -1,9 +1,15 @@
 #import './IdentityCard.graphql'
 
 type Query {
+  """
+  Allows clients to query Treachery identity cards.
+  """
   identityCards(filters: IdentityCardFilters): [IdentityCard!]!
 }
 
 input IdentityCardFilters {
+  """
+  Fuzzy text search constraint for identity card names.
+  """
   name: String
 }

@@ -8,11 +8,41 @@ enum IdentityType {
 }
 
 type IdentityCard {
+  """
+  Unique ID for the card.
+
+  Note that mtgtreachery.net does not guarantee that this ID wont change in the
+  future as new cards are printed, however, we expect that it wont.
+  """
   id: ID!
+
+  """
+  Unique name of this card.
+  """
   name: String!
+
+  """
+  Identity type: e.g. Leader or Assassin, etc...
+  """
   type: IdentityType!
+
+  """
+  High-res image of the card.
+  """
   image: URL!
+
+  """
+  The text extracted from the card image.
+  """
   text: String!
+
+  """
+  Ruling specific to this identity card. Each array value is a unique ruling.
+  """
   rulings: [String!]!
+
+  """
+  URL to the mtgtreachery.net official card listing.
+  """
   source: URL!
 }
