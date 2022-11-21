@@ -3,8 +3,9 @@
   "description": "API Server",
   "version": "1.0.0",
   "scripts": {
-    "build": "NODE_ENV=production graphql-codegen && rollup -c",
+    "build": "NODE_ENV=production prisma generate && graphql-codegen && rollup -c",
     "dev": "concurrently npm:dev:* --kill-others",
+    "dev:prisma": "prisma generate --watch",
     "dev:graphql-codegen": "graphql-codegen --watch",
     "dev:rollup": "NODE_ENV=development rollup -c --watch",
     "lint": "prettier . --check",
