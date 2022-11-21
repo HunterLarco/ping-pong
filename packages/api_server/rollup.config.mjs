@@ -58,7 +58,7 @@ export default {
         preserveConstEnums: true,
         skipLibCheck: true,
         strict: true,
-        target: "es2016",
+        target: 'es2016',
       },
     }),
     process.env.NODE_ENV == 'development' && run(),

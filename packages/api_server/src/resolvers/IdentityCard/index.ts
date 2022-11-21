@@ -48,7 +48,7 @@ function toDataSourceFilters(
 
 const IdentityCardResolvers: Resolvers = {
   Query: {
-    async identityCards({}, { filters }, { dataSources }) {
+    async identityCards(_0, { filters }, { dataSources }) {
       const cards = await dataSources.MTGTreachery.fuzzySearch(
         toDataSourceFilters(filters)
       );
