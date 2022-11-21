@@ -1,9 +1,14 @@
 #import './Game.graphql'
+#import './GameStateEvent.graphql'
 #import './TemporaryUser.graphql'
 
 type Mutation {
   createGame: Game!
   joinGame(request: JoinGameRequest!): TemporaryUser!
+}
+
+type Subscription {
+  gameState(request: GameStateRequest!): GameStateEvent
 }
 
 input JoinGameRequest {
@@ -16,4 +21,18 @@ input JoinGameRequest {
   The name displayed to other players in this game.
   """
   name: String!
+}
+
+input GameStateRequest {
+  """
+  The ID of the game to subscribe to.
+  """
+  gameId: ID!
+
+  """
+  The ID of the user subscribing to game state.
+
+  Note that this request will fail if the user hasn't already joined the game.
+  """
+  userId: ID!
 }

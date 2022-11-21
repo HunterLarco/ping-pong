@@ -1,0 +1,22 @@
+#import './Scalars.graphql'
+
+type GameStateEvent {
+  type: GameStateEventType!
+  timestamp: DateTime!
+  details: GameStateEventDetails!
+}
+
+enum GameStateEventType {
+  PlayerJoin
+  GameStart
+}
+
+union GameStateEventDetails = PlayerJoinEvent | GameStartEvent
+
+type PlayerJoinEvent {
+  name: String!
+}
+
+type GameStartEvent {
+  leaderName: String!
+}

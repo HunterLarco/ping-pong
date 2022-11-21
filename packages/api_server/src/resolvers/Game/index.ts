@@ -1,4 +1,12 @@
-import { Resolvers } from '@generated/graphql/resolvers';
+import { PubSub } from 'graphql-subscriptions';
+
+import {
+  Resolvers,
+  GameStateEvent,
+  GameStateEventType,
+} from '@generated/graphql/resolvers';
+
+const pubsub = new PubSub();
 
 const GameResolvers: Resolvers = {
   Mutation: {
@@ -17,7 +25,31 @@ const GameResolvers: Resolvers = {
         temporaryUserId: user.id,
       });
 
+      const gameStateEvent: GameStateEvent = {
+        type: GameStateEventType.PlayerJoin,
+        timestamp: new Date(),
+        details: {
+          __typename: 'PlayerJoinEvent',
+          name: request.name,
+        },
+      };
+
+      pubsub.publish('gameState', {
+        event: gameStateEvent,
+      });
+
       return user;
+    },
+  },
+
+  Subscription: {
+    gameState: {
+      async *subscribe(_0, { request }, { dataSources }) {
+        // @ts-expect-error TS2504
+        for await (const { event } of pubsub.asyncIterator(['gameState'])) {
+          yield { gameState: event };
+        }
+      },
     },
   },
 };
