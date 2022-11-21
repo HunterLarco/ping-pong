@@ -49,7 +49,11 @@ import bodyParser from 'body-parser';
 import { createContext } from '@/context';
 import { expressMiddleware } from '@apollo/server/express4';
 
+import { initiatePrismaClient } from '@/data_sources/PrismaDataSource';
+
 async function main() {
+  const prismaClient = await initiatePrismaClient();
+
   await graphQlServer.start();
 
   app.use(
@@ -58,7 +62,7 @@ async function main() {
     bodyParser.json(),
     expressMiddleware(graphQlServer, {
       async context() {
-        return createContext();
+        return createContext({ prismaClient });
       },
     })
   );
