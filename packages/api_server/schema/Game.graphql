@@ -1,0 +1,13 @@
+#import './Scalars.graphql'
+
+type Game {
+  """
+  Unique ID for the game.
+  """
+  id: ID!
+
+  """
+  The date and time when this game was created.
+  """
+  dateCreated: DateTime!
+}

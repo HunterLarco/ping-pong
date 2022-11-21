@@ -1,0 +1,5 @@
+#import './Game.graphql'
+
+type Mutation {
+  createGame: Game!
+}
