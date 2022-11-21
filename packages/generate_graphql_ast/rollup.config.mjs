@@ -8,7 +8,7 @@ export default {
     format: "cjs",
     sourcemap: true,
   },
-  external: ['graphql'],
+  external: ["graphql"],
   plugins: [
     resolve(),
     typescript({

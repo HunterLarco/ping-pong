@@ -5,7 +5,7 @@
   "main": "dist/plugin.js",
   "scripts": {
     "build": "NODE_ENV=production rollup -c",
-    "dev": "NODE_ENV=development rollup -c --watch",
+    "dev": "NODE_ENV=development rollup -c",
     "lint": "prettier . --check",
     "lint:fix": "prettier . --write"
   },
