@@ -3,7 +3,19 @@
 
 model Game {
   id String @id @default(auto()) @map("_id") @db.ObjectId
-  dateCreated DateTime
+
+  playerIds String[] @db.ObjectId
+
+  dateCreated DateTime @default(now())
+}
+
+model TemporaryUser {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  name String
+
+  dateCreated DateTime @default(now())
+  dateExpires DateTime
 }
 
 generator client {

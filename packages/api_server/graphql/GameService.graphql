@@ -1,5 +1,19 @@
 #import './Game.graphql'
+#import './TemporaryUser.graphql'
 
 type Mutation {
   createGame: Game!
+  joinGame(request: JoinGameRequest!): TemporaryUser!
+}
+
+input JoinGameRequest {
+  """
+  The ID of the game you'd like to join.
+  """
+  gameId: ID!
+
+  """
+  The name displayed to other players in this game.
+  """
+  name: String!
 }
