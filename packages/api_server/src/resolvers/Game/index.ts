@@ -1,4 +1,4 @@
-import { Resolvers } from '@generated/schema/resolvers';
+import { Resolvers } from '@generated/graphql/resolvers';
 
 const GameResolvers: Resolvers = {
   Mutation: {

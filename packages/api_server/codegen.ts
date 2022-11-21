@@ -1,12 +1,12 @@
 import type { CodegenConfig } from '@graphql-codegen/cli';
 
 const config: CodegenConfig = {
-  schema: './schema/*.graphql',
+  schema: './graphql/*.graphql',
   generates: {
-    './generated/schema/ast.ts': {
+    './generated/graphql/ast.ts': {
       plugins: ['@ping-pong/generate_graphql_ast'],
     },
-    './generated/schema/resolvers.ts': {
+    './generated/graphql/resolvers.ts': {
       plugins: ['typescript', 'typescript-resolvers'],
     },
   },

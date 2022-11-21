@@ -5,7 +5,7 @@ import * as graphqlScalars from 'graphql-scalars';
 import IdentityCardResolvers from '@/resolvers/IdentityCard';
 import GameResolvers from '@/resolvers/Game';
 
-import ApiTypeDefs from '@generated/schema/ast';
+import ApiTypeDefs from '@generated/graphql/ast';
 
 export default makeExecutableSchema({
   typeDefs: [ApiTypeDefs, ...graphqlScalars.typeDefs],
