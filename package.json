@@ -8,7 +8,7 @@
   },
   "scripts": {
     "initialize": "npm install && npm run clean && lerna bootstrap --hoist",
-    "clean": "lerna clean --yes && lerna exec -- rm -rf dist",
+    "clean": "lerna clean --yes && lerna exec -- rm -rf dist generated",
     "refresh": "lerna bootstrap --hoist",
     "dev": "lerna run dev --stream",
     "build": "lerna run build",
