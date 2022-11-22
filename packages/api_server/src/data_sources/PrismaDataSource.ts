@@ -21,15 +21,6 @@ export class PrismaDataSource {
     });
   }
 
-  async createTemporaryUser(options: { name: string }) {
-    return await this.#prismaClient.temporaryUser.create({
-      data: {
-        name: options.name,
-        dateExpires: new Date(Date.now() + kDuration_Days * 7),
-      },
-    });
-  }
-
   async joinGame(options: { gameId: string; temporaryUserId: string }) {
     await this.#prismaClient.game.update({
       where: {

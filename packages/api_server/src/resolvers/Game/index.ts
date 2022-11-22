@@ -16,7 +16,7 @@ const GameResolvers: Resolvers = {
     },
 
     async joinGame(_0, { request }, { dataSources }) {
-      const user = await dataSources.Prisma.createTemporaryUser({
+      const user = await dataSources.TemporaryUser.createTemporaryUser({
         name: request.name,
       });
 
@@ -47,7 +47,11 @@ const GameResolvers: Resolvers = {
 
   Subscription: {
     gameState: {
-      async *subscribe(_0, { request }, { dataSources }) {
+      async *subscribe(_0, { request }, { actor, dataSources }) {
+        if (!actor) {
+          throw new Error('Unauthorized');
+        }
+
         // @ts-expect-error TS2504
         for await (const { event } of pubsub.asyncIterator(['gameState'])) {
           yield { gameState: event };

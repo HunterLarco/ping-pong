@@ -31,18 +31,13 @@ async function main() {
     {
       schema,
       async context({ connectionParams }) {
-        const context = createContext({ prismaClient });
-
-        if (connectionParams && connectionParams.Authorization) {
-          const authToken = await context.dataSources.AuthToken.getById(
-            connectionParams.Authorization
-          );
-          if (!authToken) {
-            throw new Error('Unauthorized');
-          }
-        }
-
-        return context;
+        return createContext({
+          prismaClient,
+          authorization:
+            connectionParams && connectionParams.Authorization
+              ? connectionParams.Authorization
+              : null,
+        });
       },
     },
     wsServer
@@ -76,7 +71,7 @@ async function main() {
     bodyParser.json(),
     expressMiddleware(graphQlServer, {
       async context() {
-        return createContext({ prismaClient });
+        return createContext({ prismaClient, authorization: null });
       },
     })
   );

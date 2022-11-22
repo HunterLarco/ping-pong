@@ -28,14 +28,15 @@ export default class AuthTokenDataSource {
     });
   }
 
-  async createAuthToken(args: createAuthTokenArgs) {
+  async createAuthToken(args: createAuthTokenArgs): Promise<AuthToken> {
     return await this.#prismaClient.authToken.create({
       data: { scopes: args.scopes },
     });
   }
 
-  async getById(id: string) {
-    return this.#batchGetById.load(id);
+  async getById(id: string): Promise<AuthToken | null> {
+    const token = await this.#batchGetById.load(id);
+    return token || null;
   }
 
   #batchGetById = new DataLoader(async (ids: Readonly<Array<string>>) => {
