@@ -21,14 +21,8 @@ const GameResolvers: Resolvers = {
         name: request.name,
       });
 
-      const authToken = await dataSources.Prisma.createAuthToken({
-        scopes: [
-          {
-            code: AuthScopeCode.TemporaryUserAuth,
-            target: user.id,
-          },
-        ],
-      });
+      const authToken =
+        await dataSources.AuthToken.createTemporaryUserAuthToken(user.id);
 
       await dataSources.Prisma.joinGame({
         gameId: request.gameId,

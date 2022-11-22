@@ -42,14 +42,4 @@ export class PrismaDataSource {
       },
     });
   }
-
-  async createAuthToken(options: {
-    scopes: Array<{ code: AuthScopeCode; target: string }>;
-  }) {
-    return await this.#prismaClient.authToken.create({
-      data: {
-        scopes: options.scopes,
-      },
-    });
-  }
 }
