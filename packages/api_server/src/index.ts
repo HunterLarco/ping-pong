@@ -6,20 +6,14 @@ import { WebSocketServer } from 'ws';
 import { useServer } from 'graphql-ws/lib/use/ws';
 import bodyParser from 'body-parser';
 import { expressMiddleware } from '@apollo/server/express4';
-import { PrismaClient } from '@prisma/client';
 import express from 'express';
 
-import { createContext } from '@/context';
+import { createGlobalContext } from '@/GlobalContext';
+import { createRequestContext } from '@/RequestContext';
 import schema from '@/schema';
 
-async function initiatePrismaClient() {
-  const prisma = new PrismaClient();
-  await prisma.$connect();
-  return prisma;
-}
-
 async function main() {
-  const prismaClient = await initiatePrismaClient();
+  const globalContext = await createGlobalContext();
 
   /// HTTP Server
 
@@ -37,8 +31,8 @@ async function main() {
     {
       schema,
       async context({ connectionParams }) {
-        return createContext({
-          prismaClient,
+        return createRequestContext({
+          globalContext,
           authorization:
             connectionParams && connectionParams.Authorization
               ? connectionParams.Authorization
@@ -77,7 +71,7 @@ async function main() {
     bodyParser.json(),
     expressMiddleware(graphQlServer, {
       async context() {
-        return createContext({ prismaClient, authorization: null });
+        return createRequestContext({ globalContext, authorization: null });
       },
     })
   );

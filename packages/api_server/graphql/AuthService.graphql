@@ -1,0 +1,15 @@
+#import './Scalars.graphql'
+
+type Mutation {
+  verifyPhoneNumber(
+    request: VerifyPhoneNumberRequest!
+  ): VerifyPhoneNumberResponse!
+}
+
+input VerifyPhoneNumberRequest {
+  phoneNumber: PhoneNumber
+}
+
+type VerifyPhoneNumberResponse {
+  token: ID!
+}

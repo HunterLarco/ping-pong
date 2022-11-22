@@ -1,5 +1,6 @@
-import { PrismaClient, TemporaryUser, AuthScopeCode } from '@prisma/client';
+import { TemporaryUser, AuthScopeCode } from '@prisma/client';
 
+import type { GlobalContext } from '@/GlobalContext';
 import MTGTreacheryDataSource from '@/data_sources/MTGTreacheryDataSource';
 import GameDataSource from '@/data_sources/GameDataSource';
 import AuthTokenDataSource from '@/data_sources/AuthTokenDataSource';
@@ -15,22 +16,26 @@ type DataSources = {
 export type RequestContext = {
   actor: TemporaryUser | null;
   dataSources: DataSources;
+  globalContext: GlobalContext;
 };
 
-export async function createContext(args: {
-  prismaClient: PrismaClient;
+export async function createRequestContext(args: {
+  globalContext: GlobalContext;
   authorization: string | null;
 }): Promise<RequestContext> {
+  const { globalContext, authorization } = args;
+
   const dataSources: DataSources = {
-    Game: new GameDataSource(args.prismaClient),
-    AuthToken: new AuthTokenDataSource(args.prismaClient),
-    TemporaryUser: new TemporaryUserDataSource(args.prismaClient),
+    Game: new GameDataSource(globalContext.prisma),
+    AuthToken: new AuthTokenDataSource(globalContext.prisma),
+    TemporaryUser: new TemporaryUserDataSource(globalContext.prisma),
     MTGTreachery: new MTGTreacheryDataSource(),
   };
 
   return {
-    actor: await getActor(dataSources, args.authorization),
+    actor: await getActor(dataSources, authorization),
     dataSources,
+    globalContext,
   };
 }
 

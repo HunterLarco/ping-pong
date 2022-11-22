@@ -9,7 +9,7 @@ const config: CodegenConfig = {
     './generated/graphql/resolvers.ts': {
       plugins: ['typescript', 'typescript-resolvers'],
       config: {
-        contextType: '@/context#RequestContext',
+        contextType: '@/RequestContext#RequestContext',
       },
     },
   },
