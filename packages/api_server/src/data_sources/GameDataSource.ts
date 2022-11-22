@@ -14,14 +14,26 @@ export default class GameDataSource {
     });
   }
 
-  async addPlayer(options: { gameId: string; userId: string }) {
+  async addPlayer(args: { gameId: string; userId: string }) {
+    const { gameId, userId } = args;
+
+    const game = await this.getById(gameId);
+    if (!game) {
+      throw new Error(`Game ${gameId} not found.`);
+    } else if (game.playerIds.indexOf(userId) >= 0) {
+      // The player is already part of the game. This early exit doesn't avoid
+      // all race conditions, it's still possible to get duplicates in the
+      // `playerIds` field, but at least this helps reduce the chance.
+      return;
+    }
+
     await this.#prismaClient.game.update({
       where: {
-        id: options.gameId,
+        id: gameId,
       },
       data: {
         playerIds: {
-          push: [options.userId],
+          push: [userId],
         },
       },
     });
