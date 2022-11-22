@@ -14,18 +14,14 @@ const GameResolvers: Resolvers = {
       return dataSources.Game.createGame();
     },
 
-    /*
     async joinGame(_0, { request }, { actor, dataSources }) {
-      const user = await dataSources.TemporaryUser.createTemporaryUser({
-        name: request.name,
-      });
-
-      const authToken =
-        await dataSources.AuthToken.createTemporaryUserAuthToken(user.id);
+      if (!actor) {
+        throw new Error('Unauthorized');
+      }
 
       await dataSources.Game.addPlayer({
         gameId: request.gameId,
-        temporaryUserId: user.id,
+        userId: actor.id,
       });
 
       const gameStateEvent: GameStateEvent = {
@@ -33,17 +29,14 @@ const GameResolvers: Resolvers = {
         timestamp: new Date(),
         details: {
           __typename: 'PlayerJoinEvent',
-          name: request.name,
+          name: actor.name,
         },
       };
 
       pubsub.publish(`gameState:${request.gameId}`, {
         event: gameStateEvent,
       });
-
-      return { user, authToken: authToken.id };
     },
-    */
   },
 
   Subscription: {

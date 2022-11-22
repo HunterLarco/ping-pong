@@ -70,8 +70,11 @@ async function main() {
     cors(),
     bodyParser.json(),
     expressMiddleware(graphQlServer, {
-      async context() {
-        return createRequestContext({ globalContext, authorization: null });
+      async context({ req }) {
+        return createRequestContext({
+          globalContext,
+          authorization: req.get('Authorization') || null,
+        });
       },
     })
   );

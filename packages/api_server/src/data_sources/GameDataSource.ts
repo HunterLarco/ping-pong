@@ -14,14 +14,14 @@ export default class GameDataSource {
     });
   }
 
-  async addPlayer(options: { gameId: string; temporaryUserId: string }) {
+  async addPlayer(options: { gameId: string; userId: string }) {
     await this.#prismaClient.game.update({
       where: {
         id: options.gameId,
       },
       data: {
         playerIds: {
-          push: [options.temporaryUserId],
+          push: [options.userId],
         },
       },
     });
