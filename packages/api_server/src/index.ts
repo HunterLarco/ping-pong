@@ -6,11 +6,17 @@ import { WebSocketServer } from 'ws';
 import { useServer } from 'graphql-ws/lib/use/ws';
 import bodyParser from 'body-parser';
 import { expressMiddleware } from '@apollo/server/express4';
+import { PrismaClient } from '@prisma/client';
 import express from 'express';
 
 import { createContext } from '@/context';
 import schema from '@/schema';
-import { initiatePrismaClient } from '@/data_sources/PrismaDataSource';
+
+async function initiatePrismaClient() {
+  const prisma = new PrismaClient();
+  await prisma.$connect();
+  return prisma;
+}
 
 async function main() {
   const prismaClient = await initiatePrismaClient();

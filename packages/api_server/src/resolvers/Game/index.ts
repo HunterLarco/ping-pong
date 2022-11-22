@@ -11,11 +11,10 @@ const pubsub = new PubSub();
 const GameResolvers: Resolvers = {
   Mutation: {
     async createGame(_0, _1, { dataSources }) {
-      const game = await dataSources.Prisma.createGame();
-      return game;
+      return dataSources.Game.createGame();
     },
 
-    async joinGame(_0, { request }, { dataSources }) {
+    async joinGame(_0, { request }, { actor, dataSources }) {
       const user = await dataSources.TemporaryUser.createTemporaryUser({
         name: request.name,
       });
@@ -23,7 +22,7 @@ const GameResolvers: Resolvers = {
       const authToken =
         await dataSources.AuthToken.createTemporaryUserAuthToken(user.id);
 
-      await dataSources.Prisma.joinGame({
+      await dataSources.Game.addPlayer({
         gameId: request.gameId,
         temporaryUserId: user.id,
       });
@@ -37,7 +36,7 @@ const GameResolvers: Resolvers = {
         },
       };
 
-      pubsub.publish('gameState', {
+      pubsub.publish(`gameState:${request.gameId}`, {
         event: gameStateEvent,
       });
 
@@ -52,8 +51,19 @@ const GameResolvers: Resolvers = {
           throw new Error('Unauthorized');
         }
 
+        const game = await dataSources.Game.getById(request.gameId);
+        if (!game) {
+          throw new Error(`Game ${request.gameId} not found.`);
+        }
+
+        if (!new Set(game.playerIds).has(actor.id)) {
+          throw new Error('Unauthorized');
+        }
+
         // @ts-expect-error TS2504
-        for await (const { event } of pubsub.asyncIterator(['gameState'])) {
+        for await (const { event } of pubsub.asyncIterator([
+          `gameState:${request.gameId}`,
+        ])) {
           yield { gameState: event };
         }
       },

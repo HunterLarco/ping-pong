@@ -1,5 +1,5 @@
 import DataLoader from 'dataloader';
-import { PrismaClient, TemporaryUser } from '@prisma/client';
+import type { PrismaClient, TemporaryUser } from '@prisma/client';
 
 const kDuration_Days = 24 * 60 * 60 * 1000;
 
@@ -25,20 +25,20 @@ export default class TemporaryUserDataSource {
   }
 
   #batchGetById = new DataLoader(async (ids: Readonly<Array<string>>) => {
-    const tokens = await this.#prismaClient.temporaryUser.findMany({
+    const users = await this.#prismaClient.temporaryUser.findMany({
       where: {
         AND: ids.map((id) => ({ id })),
       },
     });
 
-    // We need to ensure that the returned tokens are in the same exact order as
+    // We need to ensure that the returned users are in the same exact order as
     // the searched id's to fulfill the DataLoader contract:
 
-    const tokenMap = new Map<string, TemporaryUser>();
-    for (const token of tokens) {
-      tokenMap.set(token.id, token);
+    const userMap = new Map<string, TemporaryUser>();
+    for (const user of users) {
+      userMap.set(user.id, user);
     }
 
-    return ids.map((id) => (tokenMap.has(id) ? tokenMap.get(id) : null));
+    return ids.map((id) => (userMap.has(id) ? userMap.get(id) : null));
   });
 }

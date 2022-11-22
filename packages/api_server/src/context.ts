@@ -1,16 +1,12 @@
-import {
-  PrismaClient,
-  TemporaryUser,
-  AuthScopeCode,
-} from '@prisma/client';
+import { PrismaClient, TemporaryUser, AuthScopeCode } from '@prisma/client';
 
 import MTGTreacheryDataSource from '@/data_sources/MTGTreacheryDataSource';
-import { PrismaDataSource } from '@/data_sources/PrismaDataSource';
+import GameDataSource from '@/data_sources/GameDataSource';
 import AuthTokenDataSource from '@/data_sources/AuthTokenDataSource';
 import TemporaryUserDataSource from '@/data_sources/TemporaryUserDataSource';
 
 type DataSources = {
-  Prisma: PrismaDataSource;
+  Game: GameDataSource;
   AuthToken: AuthTokenDataSource;
   TemporaryUser: TemporaryUserDataSource;
   MTGTreachery: MTGTreacheryDataSource;
@@ -26,7 +22,7 @@ export async function createContext(args: {
   authorization: string | null;
 }): Promise<RequestContext> {
   const dataSources: DataSources = {
-    Prisma: new PrismaDataSource(args.prismaClient),
+    Game: new GameDataSource(args.prismaClient),
     AuthToken: new AuthTokenDataSource(args.prismaClient),
     TemporaryUser: new TemporaryUserDataSource(args.prismaClient),
     MTGTreachery: new MTGTreacheryDataSource(),

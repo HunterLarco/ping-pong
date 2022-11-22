@@ -33,11 +33,4 @@ input GameStateRequest {
   The ID of the game to subscribe to.
   """
   gameId: ID!
-
-  """
-  The ID of the user subscribing to game state.
-
-  Note that this request will fail if the user hasn't already joined the game.
-  """
-  authToken: ID!
 }
