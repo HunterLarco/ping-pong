@@ -80,6 +80,7 @@ async function main() {
     httpServer.listen({ port: 4000 }, () => resolve())
   );
   console.log(`🚀 Server listening at: localhost:4000`);
+  console.log(`🚀 Running in ${process.env.NODE_ENV} mode`);
 }
 
 main();

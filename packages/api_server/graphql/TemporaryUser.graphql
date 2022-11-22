@@ -1,8 +1,0 @@
-#import './Scalars.graphql'
-
-type TemporaryUser {
-  id: ID!
-  name: String!
-  dateCreated: DateTime!
-  dateExpires: DateTime!
-}

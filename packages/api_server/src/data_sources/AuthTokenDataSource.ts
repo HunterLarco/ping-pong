@@ -1,14 +1,9 @@
-import DataLoader from 'dataloader';
 import {
   PrismaClient,
   AuthToken,
   AuthScope,
   AuthScopeCode,
 } from '@prisma/client';
-
-type createAuthTokenArgs = {
-  scopes: Array<AuthScope>;
-};
 
 export default class AuthTokenDataSource {
   #prismaClient: PrismaClient;
@@ -17,43 +12,91 @@ export default class AuthTokenDataSource {
     this.#prismaClient = prismaClient;
   }
 
-  async createTemporaryUserAuthToken(temporaryUserId: string) {
+  async createUserAuthToken(temporaryUserId: string) {
     return await this.createAuthToken({
       scopes: [
         {
-          code: AuthScopeCode.TemporaryUserAuth,
+          code: AuthScopeCode.UserAuth,
           target: temporaryUserId,
         },
       ],
     });
   }
 
-  async createAuthToken(args: createAuthTokenArgs): Promise<AuthToken> {
-    return await this.#prismaClient.authToken.create({
-      data: { scopes: args.scopes },
+  async createPhoneVerificationToken(phoneNumber: string) {
+    return await this.createAuthToken({
+      scopes: [
+        {
+          code: AuthScopeCode.PhoneVerification,
+          target: phoneNumber,
+        },
+      ],
+      remainingUses: 1,
     });
   }
 
-  async getById(id: string): Promise<AuthToken | null> {
-    const token = await this.#batchGetById.load(id);
-    return token || null;
+  async createAuthToken(args: {
+    scopes: Array<AuthScope>;
+    expiry?: Date;
+    remainingUses?: number;
+  }): Promise<AuthToken> {
+    return await this.#prismaClient.authToken.create({
+      data: {
+        scopes: args.scopes,
+        expiry: args.expiry,
+        remainingUses: args.remainingUses,
+      },
+    });
   }
 
-  #batchGetById = new DataLoader(async (ids: Readonly<Array<string>>) => {
-    const tokens = await this.#prismaClient.authToken.findMany({
+  async use(args: {
+    id: string;
+    requiredScopeCodes: Array<AuthScopeCode>;
+  }): Promise<Array<string>> {
+    const { id, requiredScopeCodes } = args;
+
+    const token = await this.#prismaClient.authToken.update({
       where: {
-        AND: ids.map((id) => ({ id })),
+        id,
+      },
+      data: {
+        remainingUses: {
+          decrement: 1,
+        },
       },
     });
 
-    // We need to ensure that the returned tokens are in the same exact order as
-    // the searched id's to fulfill the DataLoader contract:
+    const deleteToken = () => {
+      this.#prismaClient.authToken
+        .delete({
+          where: { id },
+        })
+        .catch((error) => {
+          console.error('Unexpected error:', error);
+        });
+    };
 
-    const tokenMap = new Map<string, AuthToken>();
-    for (const token of tokens) {
-      tokenMap.set(token.id, token);
+    if (token.expiry !== null && token.expiry < new Date()) {
+      deleteToken();
+      throw `Token ${id} has expired.`;
+    } else if (token.remainingUses !== null && token.remainingUses < 0) {
+      deleteToken();
+      throw `Token ${id} has no remaining uses.`;
+    } else if (token.remainingUses !== null && token.remainingUses == 0) {
+      deleteToken();
     }
 
-    return ids.map((id) => (tokenMap.has(id) ? tokenMap.get(id) : null));
-  });
+    const targetsByCode = new Map<AuthScopeCode, string>();
+    for (const scope of token.scopes) {
+      targetsByCode.set(scope.code, scope.target);
+    }
+
+    return requiredScopeCodes.map((scopeCode) => {
+      const target = targetsByCode.get(scopeCode);
+      if (target === undefined) {
+        throw new Error(`Token ${id} is missing code ${scopeCode}.`);
+      }
+      return target;
+    });
+  }
 }

@@ -8,15 +8,15 @@ model Game {
   dateCreated DateTime @default(now())
 }
 
-/// TemporaryUser
+/// User
 
-model TemporaryUser {
+model User {
   id String @id @default(auto()) @map("_id") @db.ObjectId
 
+  phoneNumber String @unique
   name String
 
   dateCreated DateTime @default(now())
-  dateExpires DateTime
 }
 
 /// AuthToken
@@ -28,6 +28,10 @@ model AuthToken {
 
   // If not set, the token never expires.
   expiry DateTime?
+
+  // If not set, the token can be used any number of times.
+  remainingUses Int?
+
   dateIssued DateTime @default(now())
 }
 
@@ -42,7 +46,8 @@ type AuthScope {
 }
 
 enum AuthScopeCode {
-  TemporaryUserAuth
+  PhoneVerification
+  UserAuth
 }
 
 /// Prisma configuration

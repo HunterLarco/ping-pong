@@ -1,15 +1,78 @@
 #import './Scalars.graphql'
+#import './User.graphql'
 
 type Mutation {
+  """
+  Part 1 of 2 in phone verification. Calling this mutation will trigger a text
+  message to be sent to the desired phone number with a one time password. Use
+  `verifyPhoneNumber` to verify the one time password.
+  """
+  issuePhoneVerification(request: IssuePhoneVerificationRequest!): Void
+
+  """
+  Part 2 of 2 in phone verification. By providing the phone number from
+  `issuePhoneVerification` and a correct one time password, clients can obtain
+  a verification token which can be used in any API requiring identity
+  verification.
+  """
   verifyPhoneNumber(
     request: VerifyPhoneNumberRequest!
   ): VerifyPhoneNumberResponse!
+
+  login(request: LoginRequest!): LoginResponse!
+
+  signup(request: SignupRequest!): SignupResponse!
 }
 
+### issuePhoneVerification
+
+input IssuePhoneVerificationRequest {
+  """
+  The phone number to verify.
+  """
+  phoneNumber: PhoneNumber!
+}
+
+### verifyPhoneNumber
+
 input VerifyPhoneNumberRequest {
-  phoneNumber: PhoneNumber
+  phoneNumber: PhoneNumber!
+  oneTimePassword: ID!
 }
 
 type VerifyPhoneNumberResponse {
-  token: ID!
+  """
+  A single-use token which can be used in any APIs which require phone
+  verification.
+  """
+  verificationToken: ID!
+}
+
+### login
+
+input LoginRequest {
+  verificationToken: ID!
+}
+
+type LoginResponse {
+  """
+  Token which authenticates requests. Include via the "Authorization" header to
+  all requests which require user authentication.
+  """
+  authToken: ID!
+}
+
+### signup
+
+input SignupRequest {
+  verificationToken: ID!
+  name: String!
+}
+
+type SignupResponse {
+  """
+  Token which authenticates requests. Include via the "Authorization" header to
+  all requests which require user authentication.
+  """
+  authToken: ID!
 }

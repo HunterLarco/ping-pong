@@ -1,0 +1,6 @@
+#import './Scalars.graphql'
+
+type PublicUser {
+  id: ID!
+  name: String!
+}

@@ -14,6 +14,7 @@ const GameResolvers: Resolvers = {
       return dataSources.Game.createGame();
     },
 
+    /*
     async joinGame(_0, { request }, { actor, dataSources }) {
       const user = await dataSources.TemporaryUser.createTemporaryUser({
         name: request.name,
@@ -42,6 +43,7 @@ const GameResolvers: Resolvers = {
 
       return { user, authToken: authToken.id };
     },
+    */
   },
 
   Subscription: {

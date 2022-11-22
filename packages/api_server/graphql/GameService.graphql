@@ -1,6 +1,5 @@
 #import './Game.graphql'
 #import './GameStateEvent.graphql'
-#import './TemporaryUser.graphql'
 
 type Mutation {
   createGame: Game!
@@ -24,7 +23,6 @@ input JoinGameRequest {
 }
 
 type JoinGameResponse {
-  user: TemporaryUser!
   authToken: ID!
 }
 
