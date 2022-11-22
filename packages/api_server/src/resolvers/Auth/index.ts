@@ -7,11 +7,21 @@ import {
 
 const AuthResolvers: Resolvers = {
   Mutation: {
-    async issuePhoneVerification(_0, { request }, { globalContext }) {
+    async issuePhoneVerification(
+      _0,
+      { request },
+      { globalContext, dataSources }
+    ) {
       await issuePhoneVerification({
         globalContext,
         phoneNumber: request.phoneNumber,
       });
+
+      const user = await dataSources.User.getByPhoneNumber(request.phoneNumber);
+
+      return {
+        knownPhoneNumber: !!user,
+      };
     },
 
     async verifyPhoneNumber(_0, { request }, { globalContext, dataSources }) {

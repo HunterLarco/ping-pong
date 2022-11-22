@@ -1,5 +1,4 @@
 #import './Scalars.graphql'
-#import './User.graphql'
 
 type Mutation {
   """
@@ -7,7 +6,9 @@ type Mutation {
   message to be sent to the desired phone number with a one time password. Use
   `verifyPhoneNumber` to verify the one time password.
   """
-  issuePhoneVerification(request: IssuePhoneVerificationRequest!): Void
+  issuePhoneVerification(
+    request: IssuePhoneVerificationRequest!
+  ): IssuePhoneVerificationResponse!
 
   """
   Part 2 of 2 in phone verification. By providing the phone number from
@@ -31,6 +32,13 @@ input IssuePhoneVerificationRequest {
   The phone number to verify.
   """
   phoneNumber: PhoneNumber!
+}
+
+type IssuePhoneVerificationResponse {
+  """
+  Indicates if a user is linked to the verified phone number.
+  """
+  knownPhoneNumber: Boolean!
 }
 
 ### verifyPhoneNumber
