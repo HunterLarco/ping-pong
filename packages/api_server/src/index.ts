@@ -27,11 +27,22 @@ async function main() {
     path: '/graphql',
   });
 
-  const wsServerCleanup = useServer(
+  const wsServerCleanup = useServer<Record<string, string | undefined>, {}>(
     {
       schema,
-      async context() {
-        return createContext({ prismaClient });
+      async context({ connectionParams }) {
+        const context = createContext({ prismaClient });
+
+        if (connectionParams && connectionParams.Authorization) {
+          const authToken = await context.dataSources.AuthToken.getById(
+            connectionParams.Authorization
+          );
+          if (!authToken) {
+            throw new Error('Unauthorized');
+          }
+        }
+
+        return context;
       },
     },
     wsServer

@@ -1,5 +1,4 @@
 import { PubSub } from 'graphql-subscriptions';
-import { AuthScopeCode } from '@prisma/client';
 
 import {
   Resolvers,
