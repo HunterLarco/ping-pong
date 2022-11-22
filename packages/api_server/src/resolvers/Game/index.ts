@@ -1,4 +1,5 @@
 import { PubSub } from 'graphql-subscriptions';
+import { AuthScopeCode } from '@prisma/client';
 
 import {
   Resolvers,
@@ -20,6 +21,15 @@ const GameResolvers: Resolvers = {
         name: request.name,
       });
 
+      const authToken = await dataSources.Prisma.createAuthToken({
+        scopes: [
+          {
+            code: AuthScopeCode.TemporaryUserAuth,
+            target: user.id,
+          },
+        ],
+      });
+
       await dataSources.Prisma.joinGame({
         gameId: request.gameId,
         temporaryUserId: user.id,
@@ -38,7 +48,7 @@ const GameResolvers: Resolvers = {
         event: gameStateEvent,
       });
 
-      return user;
+      return { user, authToken: authToken.id };
     },
   },
 

@@ -1,5 +1,4 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+/// Game
 
 model Game {
   id String @id @default(auto()) @map("_id") @db.ObjectId
@@ -9,6 +8,8 @@ model Game {
   dateCreated DateTime @default(now())
 }
 
+/// TemporaryUser
+
 model TemporaryUser {
   id String @id @default(auto()) @map("_id") @db.ObjectId
 
@@ -17,6 +18,34 @@ model TemporaryUser {
   dateCreated DateTime @default(now())
   dateExpires DateTime
 }
+
+/// AuthToken
+
+model AuthToken {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  scopes AuthScope[]
+
+  // If not set, the token never expires.
+  expiry DateTime?
+  dateIssued DateTime @default(now())
+}
+
+type AuthScope {
+  code AuthScopeCode
+
+  // Optional foreign key designating a target for the scope. For example, if
+  // this scope provides DOCUMENT_EDITING permissions, the target might be a
+  // document key--whereas for a PASSWORD_RESET permission, the target might be
+  // a user key.
+  target String
+}
+
+enum AuthScopeCode {
+  TemporaryUserAuth
+}
+
+/// Prisma configuration
 
 generator client {
   provider = "prisma-client-js"

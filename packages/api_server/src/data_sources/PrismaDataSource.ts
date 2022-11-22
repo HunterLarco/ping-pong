@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, AuthScopeCode } from '@prisma/client';
 
 const kDuration_Days = 24 * 60 * 60 * 1000;
 
@@ -39,6 +39,16 @@ export class PrismaDataSource {
         playerIds: {
           push: [options.temporaryUserId],
         },
+      },
+    });
+  }
+
+  async createAuthToken(options: {
+    scopes: Array<{ code: AuthScopeCode; target: string }>;
+  }) {
+    return await this.#prismaClient.authToken.create({
+      data: {
+        scopes: options.scopes,
       },
     });
   }

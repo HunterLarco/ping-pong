@@ -4,7 +4,7 @@
 
 type Mutation {
   createGame: Game!
-  joinGame(request: JoinGameRequest!): TemporaryUser!
+  joinGame(request: JoinGameRequest!): JoinGameResponse!
 }
 
 type Subscription {
@@ -23,6 +23,11 @@ input JoinGameRequest {
   name: String!
 }
 
+type JoinGameResponse {
+  user: TemporaryUser!
+  authToken: ID!
+}
+
 input GameStateRequest {
   """
   The ID of the game to subscribe to.
@@ -34,5 +39,5 @@ input GameStateRequest {
 
   Note that this request will fail if the user hasn't already joined the game.
   """
-  userId: ID!
+  authToken: ID!
 }
