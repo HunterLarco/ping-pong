@@ -42,14 +42,16 @@ const GameResolvers: Resolvers = {
     },
 
     async startGame(_0, { request }, { dataSources }) {
-      const identityAssignments = await dataSources.Game.startGame(request.gameId);
+      const identityAssignments = await dataSources.Game.startGame(
+        request.gameId
+      );
       return {
         leader: {
           id: 'foo',
           name: 'Foo',
         },
         players: [],
-      }
+      };
     },
   },
 

@@ -45,7 +45,7 @@ export default class GameDataSource {
         id: gameId,
       },
       data: {
-        dateStarted: new Date,
+        dateStarted: new Date(),
       },
     });
   }
