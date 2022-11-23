@@ -2,10 +2,36 @@
 
 model Game {
   id String @id @default(auto()) @map("_id") @db.ObjectId
+  dateCreated DateTime @default(now())
 
   playerIds String[] @db.ObjectId
 
-  dateCreated DateTime @default(now())
+  dateStarted DateTime?
+  identityAssignments IdentityAssignment[]
+
+  dateEnded DateTime?
+}
+
+type IdentityAssignment {
+  playerId String @db.ObjectId
+  identityCard IdentityCard
+}
+
+type IdentityCard {
+  id String
+  name String
+  type IdentityType
+  image String
+  text String
+  rulings String[]
+  source String
+}
+
+enum IdentityType {
+  Leader
+  Guardian
+  Assassin
+  Traitor
 }
 
 /// User

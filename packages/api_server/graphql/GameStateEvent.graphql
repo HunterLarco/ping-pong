@@ -1,4 +1,5 @@
 #import './Scalars.graphql'
+#import './User.graphql'
 
 type GameStateEvent {
   type: GameStateEventType!
@@ -14,9 +15,9 @@ enum GameStateEventType {
 union GameStateEventDetails = PlayerJoinEvent | GameStartEvent
 
 type PlayerJoinEvent {
-  name: String!
+  user: PublicUser!
 }
 
 type GameStartEvent {
-  leaderName: String!
+  leader: PublicUser!
 }

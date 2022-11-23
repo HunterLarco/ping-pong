@@ -39,6 +39,17 @@ export default class GameDataSource {
     });
   }
 
+  async startGame(gameId: string): Promise<void> {
+    await this.#prismaClient.game.update({
+      where: {
+        id: gameId,
+      },
+      data: {
+        dateStarted: new Date,
+      },
+    });
+  }
+
   async getById(id: string): Promise<Game | null> {
     const game = await this.#batchGetById.load(id);
     return game || null;

@@ -29,13 +29,27 @@ const GameResolvers: Resolvers = {
         timestamp: new Date(),
         details: {
           __typename: 'PlayerJoinEvent',
-          name: actor.name,
+          user: {
+            id: actor.id,
+            name: actor.name,
+          },
         },
       };
 
       pubsub.publish(`gameState:${request.gameId}`, {
         event: gameStateEvent,
       });
+    },
+
+    async startGame(_0, { request }, { dataSources }) {
+      const identityAssignments = await dataSources.Game.startGame(request.gameId);
+      return {
+        leader: {
+          id: 'foo',
+          name: 'Foo',
+        },
+        players: [],
+      }
     },
   },
 
