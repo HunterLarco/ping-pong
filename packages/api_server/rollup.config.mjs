@@ -29,6 +29,8 @@ export default {
     'http',
     'node-fetch',
     'p-memoize',
+    'pick-random',
+    'shuffle-array',
     'twilio',
     'uuid',
     'ws',

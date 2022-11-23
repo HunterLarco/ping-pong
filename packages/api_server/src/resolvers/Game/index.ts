@@ -6,6 +6,8 @@ import {
   GameStateEventType,
 } from '@generated/graphql/resolvers';
 
+import { assignIdentityCards } from '@/util/identityAssignments';
+
 const pubsub = new PubSub();
 
 const GameResolvers: Resolvers = {
@@ -42,6 +44,20 @@ const GameResolvers: Resolvers = {
     },
 
     async startGame(_0, { request }, { dataSources }) {
+      const game = await dataSources.Game.getById(request.gameId);
+
+      if (!game) {
+        throw new Error(`Game ${request.gameId} not found.`);
+      }
+
+      const identityIt = assignIdentityCards({
+        playerIds: game.playerIds,
+        identityDataSource: dataSources.MTGTreachery,
+      });
+      for await (const assignment of identityIt) {
+        console.log(assignment);
+      }
+
       const identityAssignments = await dataSources.Game.startGame(
         request.gameId
       );
