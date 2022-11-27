@@ -10,6 +10,7 @@ const config: CodegenConfig = {
       plugins: ['typescript', 'typescript-resolvers'],
       config: {
         contextType: '@/RequestContext#RequestContext',
+        defaultMapper: 'Partial<{T}>',
       },
     },
   },

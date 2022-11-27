@@ -29,8 +29,10 @@ input StartGameRequest {
 }
 
 type StartGameResponse {
-  leader: PublicUser!
-  everyoneElse: [PublicUser!]!
+  leaderId: ID!
+
+  playerIds: [ID!]!
+  players: [PublicUser!]!
 }
 
 ### gameState

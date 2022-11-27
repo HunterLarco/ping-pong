@@ -56,28 +56,29 @@ const GameResolvers: Resolvers = {
         throw new Error(`Game ${game.id} does not have a leader.`);
       }
 
+      return {
+        leaderId: leaderAssignment.playerId,
+        playerIds: game.identityAssignments.map(({ playerId }) => playerId),
+      };
+    },
+  },
+
+  StartGameResponse: {
+    async players(parent, _1, { dataSources }) {
+      if (!parent.playerIds) {
+        return [];
+      }
+
       const users = await Promise.all(
-        game.identityAssignments.map(({ playerId }) =>
+        parent.playerIds.map((playerId) =>
           dataSources.User.getByIdOrThrow(playerId)
         )
       );
 
-      const leader = users.find(({ id }) => id == leaderAssignment.playerId);
-      if (!leader) {
-        throw new Error('asd');
-      }
-      const everyoneElse = users.filter(({ id }) => id != leader.id);
-
-      return {
-        leader: {
-          id: leader.id,
-          name: leader.name,
-        },
-        everyoneElse: everyoneElse.map((user) => ({
-          id: user.id,
-          name: user.name,
-        })),
-      };
+      return users.map((user) => ({
+        id: user.id,
+        name: user.name,
+      }));
     },
   },
 
