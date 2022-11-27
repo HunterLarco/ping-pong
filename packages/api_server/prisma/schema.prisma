@@ -10,6 +10,9 @@ model Game {
   identityAssignments IdentityAssignment[]
 
   dateEnded DateTime?
+
+  // Value used for optimistic locking (See https://tinyurl.com/3wkprjn6)
+  cas Int @default(0)
 }
 
 type IdentityAssignment {
@@ -21,7 +24,6 @@ type IdentityCard {
   id String
   name String
   type IdentityType
-  image String
   text String
   rulings String[]
   source String

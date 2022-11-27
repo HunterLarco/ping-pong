@@ -1,12 +1,12 @@
 import { PubSub } from 'graphql-subscriptions';
+import type { IdentityAssignment } from '@prisma/client';
+import { IdentityType } from '@prisma/client';
 
 import {
   Resolvers,
   GameStateEvent,
   GameStateEventType,
 } from '@generated/graphql/resolvers';
-
-import { assignIdentityCards } from '@/util/identityAssignments';
 
 const pubsub = new PubSub();
 
@@ -44,29 +44,39 @@ const GameResolvers: Resolvers = {
     },
 
     async startGame(_0, { request }, { dataSources }) {
-      const game = await dataSources.Game.getById(request.gameId);
-
-      if (!game) {
-        throw new Error(`Game ${request.gameId} not found.`);
-      }
-
-      const identityIt = assignIdentityCards({
-        playerIds: game.playerIds,
+      const game = await dataSources.Game.startGame({
+        gameId: request.gameId,
         identityDataSource: dataSources.MTGTreachery,
       });
-      for await (const assignment of identityIt) {
-        console.log(assignment);
+
+      const leaderAssignment = game.identityAssignments.find(
+        (assignment) => assignment.identityCard.type == IdentityType.Leader
+      );
+      if (!leaderAssignment) {
+        throw new Error(`Game ${game.id} does not have a leader.`);
       }
 
-      const identityAssignments = await dataSources.Game.startGame(
-        request.gameId
+      const users = await Promise.all(
+        game.identityAssignments.map(({ playerId }) =>
+          dataSources.User.getByIdOrThrow(playerId)
+        )
       );
+
+      const leader = users.find(({ id }) => id == leaderAssignment.playerId);
+      if (!leader) {
+        throw new Error('asd');
+      }
+      const everyoneElse = users.filter(({ id }) => id != leader.id);
+
       return {
         leader: {
-          id: 'foo',
-          name: 'Foo',
+          id: leader.id,
+          name: leader.name,
         },
-        players: [],
+        everyoneElse: everyoneElse.map((user) => ({
+          id: user.id,
+          name: user.name,
+        })),
       };
     },
   },

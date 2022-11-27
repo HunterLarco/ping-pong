@@ -26,7 +26,7 @@ export default class UserDataSource {
     async (phoneNumbers: Readonly<Array<string>>) => {
       const tokens = await this.#prismaClient.user.findMany({
         where: {
-          AND: phoneNumbers.map((phoneNumber) => ({ phoneNumber })),
+          OR: phoneNumbers.map((phoneNumber) => ({ phoneNumber })),
         },
       });
 
@@ -44,26 +44,34 @@ export default class UserDataSource {
     }
   );
 
+  async getByIdOrThrow(id: string): Promise<User> {
+    const user = await this.getById(id);
+    if (!user) {
+      throw new Error(`User ${id} not found.`);
+    }
+    return user;
+  }
+
   async getById(id: string): Promise<User | null> {
     const user = await this.#batchGetById.load(id);
     return user || null;
   }
 
   #batchGetById = new DataLoader(async (ids: Readonly<Array<string>>) => {
-    const tokens = await this.#prismaClient.user.findMany({
+    const users = await this.#prismaClient.user.findMany({
       where: {
-        AND: ids.map((id) => ({ id })),
+        OR: ids.map((id) => ({ id })),
       },
     });
 
-    // We need to ensure that the returned tokens are in the same exact order as
+    // We need to ensure that the returned users are in the same exact order as
     // the searched id's to fulfill the DataLoader contract:
 
-    const tokenMap = new Map<string, User>();
-    for (const token of tokens) {
-      tokenMap.set(token.id, token);
+    const userMap = new Map<string, User>();
+    for (const user of users) {
+      userMap.set(user.id, user);
     }
 
-    return ids.map((id) => (tokenMap.has(id) ? tokenMap.get(id) : null));
+    return ids.map((id) => (userMap.has(id) ? userMap.get(id) : null));
   });
 }

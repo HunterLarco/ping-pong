@@ -1,5 +1,9 @@
 import DataLoader from 'dataloader';
 import type { PrismaClient, Game } from '@prisma/client';
+import { IdentityType } from '@prisma/client';
+
+import type MTGTreacheryDataSource from '@/data_sources/MTGTreacheryDataSource';
+import { assignIdentityCards } from '@/util/identityAssignments';
 
 export default class GameDataSource {
   #prismaClient: PrismaClient;
@@ -21,33 +25,74 @@ export default class GameDataSource {
     if (!game) {
       throw new Error(`Game ${gameId} not found.`);
     } else if (game.playerIds.indexOf(userId) >= 0) {
-      // The player is already part of the game. This early exit doesn't avoid
-      // all race conditions, it's still possible to get duplicates in the
-      // `playerIds` field, but at least this helps reduce the chance.
+      // The player is already part of the game.
       return;
+    } else if (game.playerIds.length >= 8) {
+      throw new Error(`Game ${gameId} cannot accept more players.`);
     }
 
-    await this.#prismaClient.game.update({
+    await this.#prismaClient.game.updateMany({
       where: {
         id: gameId,
+        cas: game.cas,
       },
       data: {
-        playerIds: {
-          push: [userId],
-        },
+        playerIds: { push: [userId] },
+        cas: { increment: 1 },
       },
     });
   }
 
-  async startGame(gameId: string): Promise<void> {
-    await this.#prismaClient.game.update({
+  async startGame(args: {
+    gameId: string;
+    identityDataSource: MTGTreacheryDataSource;
+  }): Promise<Game> {
+    const { gameId, identityDataSource } = args;
+
+    const game = await this.getById(gameId);
+    if (!game) {
+      throw new Error(`Game ${gameId} not found.`);
+    } else if (game.dateStarted) {
+      throw new Error(`Game ${gameId} has already been started.`);
+    }
+
+    const identityAssignments = [];
+    for await (const { playerId, identity } of assignIdentityCards({
+      playerIds: game.playerIds,
+      identityDataSource,
+    })) {
+      identityAssignments.push({
+        playerId,
+        identityCard: {
+          id: identity.id.toString(),
+          name: identity.name,
+          type: orcleToPrismaIdentityType(identity.types.subtype),
+          text: identity.text,
+          rulings: identity.rulings,
+          source: identity.uri,
+        },
+      });
+    }
+
+    const now = new Date();
+    await this.#prismaClient.game.updateMany({
       where: {
         id: gameId,
+        cas: game.cas,
       },
       data: {
-        dateStarted: new Date(),
+        dateStarted: now,
+        identityAssignments,
+        cas: { increment: 1 },
       },
     });
+
+    return {
+      ...game,
+      dateStarted: now,
+      identityAssignments,
+      cas: game.cas + 1,
+    };
   }
 
   async getById(id: string): Promise<Game | null> {
@@ -58,7 +103,7 @@ export default class GameDataSource {
   #batchGetById = new DataLoader(async (ids: Readonly<Array<string>>) => {
     const games = await this.#prismaClient.game.findMany({
       where: {
-        AND: ids.map((id) => ({ id })),
+        OR: ids.map((id) => ({ id })),
       },
     });
 
@@ -72,4 +117,18 @@ export default class GameDataSource {
 
     return ids.map((id) => (gameMap.has(id) ? gameMap.get(id) : null));
   });
+}
+
+function orcleToPrismaIdentityType(identityType: string): IdentityType {
+  switch (identityType.toLowerCase()) {
+    case 'leader':
+      return IdentityType.Leader;
+    case 'guardian':
+      return IdentityType.Guardian;
+    case 'assassin':
+      return IdentityType.Assassin;
+    case 'traitor':
+      return IdentityType.Traitor;
+  }
+  throw new Error(`Unknown identity subtype ${identityType}.`);
 }

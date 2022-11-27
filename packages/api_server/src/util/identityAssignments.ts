@@ -16,7 +16,7 @@ export function getTreacheryDistribution(
   players: number
 ): TreacheryDistribution {
   if (players < 4 || players > 8) {
-    throw 'Treachery requires 4-8 players';
+    throw new Error(`Treachery requires 4-8 players.`);
   }
 
   const distribution = {
@@ -48,10 +48,9 @@ type SortedIdentities = {
   guardians: Array<OracleCard>;
   assassins: Array<OracleCard>;
   traitors: Array<OracleCard>;
-}
+};
 
-function sortIdentities(identities: Array<OracleCard>): SortedIdentities
-{
+function sortIdentities(identities: Array<OracleCard>): SortedIdentities {
   const sortedIdentities: SortedIdentities = {
     leaders: [],
     guardians: [],
@@ -84,11 +83,17 @@ export async function* assignIdentityCards(args: {
   notLeader?: Array<string>;
   identityDataSource: MTGTreacheryDataSource;
 }): AsyncGenerator<{
-  playerId: String;
+  playerId: string;
   identity: OracleCard;
 }> {
   const { playerIds, identityDataSource } = args;
   const notLeader = new Set<string>(args.notLeader || []);
+
+  if (playerIds.length < 4 || playerIds.length > 8) {
+    throw new Error(`Treachery requires 4-8 players.`);
+  } else if (notLeader.size == playerIds.length) {
+    throw new Error(`At least one player must be the leader.`);
+  }
 
   const [leader] = pickRandom(playerIds.filter((id) => !notLeader.has(id)));
   const everyoneElse = playerIds.filter((id) => id !== leader);
