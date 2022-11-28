@@ -1,0 +1,6 @@
+#import '../Game.graphql'
+
+type Viewer {
+  id: ID! @external
+  currentGame: Game
+}

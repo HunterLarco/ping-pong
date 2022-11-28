@@ -1,0 +1,20 @@
+#import 'external/User.graphql'
+#import 'external/IdentityCard.graphql'
+
+scalar DateTime
+
+type IdentityAssignments {
+  playerId: ID!
+  identityCard: IdentityCard!
+}
+
+type Game @key(fields: "id") {
+  id: ID!
+
+  players: [User!]!
+  identities: [IdentityAssignments]
+
+  dateCreated: DateTime!
+  dateStarted: DateTime
+  dateEnded: DateTime
+}

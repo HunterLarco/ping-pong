@@ -1,16 +1,21 @@
-#import './Game.graphql'
-#import './GameStateEvent.graphql'
-#import './Scalars.graphql'
-#import './User.graphql'
+#import 'Game.graphql';
+
+scalar Void
 
 type Mutation {
-  createGame: Game!
+  createGame: CreateGameResponse!
   joinGame(request: JoinGameRequest!): Void
   startGame(request: StartGameRequest!): StartGameResponse!
 }
 
 type Subscription {
   gameState(request: GameStateRequest!): GameStateEvent!
+}
+
+### createGame
+
+type CreateGameResponse {
+  game: Game!
 }
 
 ### joinGame
@@ -29,10 +34,7 @@ input StartGameRequest {
 }
 
 type StartGameResponse {
-  leaderId: ID!
-
-  playerIds: [ID!]!
-  players: [PublicUser!]!
+  game: Game!
 }
 
 ### gameState
@@ -42,4 +44,8 @@ input GameStateRequest {
   The ID of the game to subscribe to.
   """
   gameId: ID!
+}
+
+type GameStateEvent {
+  dateEmitted: DateTime!
 }

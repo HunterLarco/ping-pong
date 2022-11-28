@@ -1,4 +1,4 @@
-#import './Scalars.graphql'
+scalar PhoneNumber
 
 type Mutation {
   """
@@ -7,7 +7,7 @@ type Mutation {
   `verifyPhoneNumber` to verify the one time password.
   """
   issuePhoneVerification(
-    request: IssuePhoneVerificationRequest!
+    request: IssuePhoneVerificationRequest
   ): IssuePhoneVerificationResponse!
 
   """
@@ -19,18 +19,12 @@ type Mutation {
   verifyPhoneNumber(
     request: VerifyPhoneNumberRequest!
   ): VerifyPhoneNumberResponse!
-
-  login(request: LoginRequest!): LoginResponse!
-
-  signup(request: SignupRequest!): SignupResponse!
 }
 
 ### issuePhoneVerification
 
 input IssuePhoneVerificationRequest {
-  """
-  The phone number to verify.
-  """
+  "The phone number to verify."
   phoneNumber: PhoneNumber!
 }
 
@@ -44,7 +38,10 @@ type IssuePhoneVerificationResponse {
 ### verifyPhoneNumber
 
 input VerifyPhoneNumberRequest {
+  "The phone number to verify."
   phoneNumber: PhoneNumber!
+
+  "The one-time-password texted to the phone number."
   oneTimePassword: ID!
 }
 
@@ -54,33 +51,4 @@ type VerifyPhoneNumberResponse {
   verification.
   """
   verificationToken: ID!
-}
-
-### login
-
-input LoginRequest {
-  verificationToken: ID!
-}
-
-type LoginResponse {
-  """
-  Token which authenticates requests. Include via the "Authorization" header to
-  all requests which require user authentication.
-  """
-  authToken: ID!
-}
-
-### signup
-
-input SignupRequest {
-  verificationToken: ID!
-  name: String!
-}
-
-type SignupResponse {
-  """
-  Token which authenticates requests. Include via the "Authorization" header to
-  all requests which require user authentication.
-  """
-  authToken: ID!
 }
