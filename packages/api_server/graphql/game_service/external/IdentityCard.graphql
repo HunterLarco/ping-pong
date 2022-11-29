@@ -1,3 +1,3 @@
-type IdentityCard {
+type IdentityCard @key(fields: "id", resolvable: false) {
   id: ID! @external
 }

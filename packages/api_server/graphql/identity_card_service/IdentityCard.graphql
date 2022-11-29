@@ -7,7 +7,7 @@ enum IdentityType {
   Traitor
 }
 
-type IdentityCard {
+type IdentityCard @key(fields: "id") {
   """
   Unique ID for the card.
 
