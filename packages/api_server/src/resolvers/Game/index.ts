@@ -60,8 +60,12 @@ const GameResolvers: Resolvers = {
     id(parent) {
       return parent.id;
     },
-    players(parent, _1, { dataSources }) {
-      return [];
+    async players(parent, _1, { dataSources }) {
+      return await Promise.all(
+        parent.playerIds.map((playerId) =>
+          dataSources.User.getByIdOrThrow(playerId)
+        )
+      );
     },
     identities(parent, _1, { dataSources }) {
       return [];
