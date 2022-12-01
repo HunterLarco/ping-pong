@@ -1,13 +1,4 @@
-scalar URL
-
-enum IdentityType {
-  Leader
-  Guardian
-  Assassin
-  Traitor
-}
-
-type IdentityCard @key(fields: "id") {
+type IdentityCard {
   """
   Unique ID for the card.
 
@@ -46,3 +37,12 @@ type IdentityCard @key(fields: "id") {
   """
   source: URL!
 }
+
+enum IdentityType {
+  Leader
+  Guardian
+  Assassin
+  Traitor
+}
+
+scalar URL

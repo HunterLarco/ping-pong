@@ -1,4 +1,4 @@
-type Viewer @key(fields: "id") {
+type Viewer {
   id: ID!
   name: String!
 }

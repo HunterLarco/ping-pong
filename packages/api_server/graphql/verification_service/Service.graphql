@@ -7,7 +7,7 @@ type Mutation {
   `verifyPhoneNumber` to verify the one time password.
   """
   issuePhoneVerification(
-    request: IssuePhoneVerificationRequest
+    request: IssuePhoneVerificationRequest!
   ): IssuePhoneVerificationResponse!
 
   """

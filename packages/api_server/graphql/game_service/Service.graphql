@@ -1,4 +1,5 @@
 #import 'Game.graphql';
+#import 'GameEvent.graphql';
 
 scalar Void
 
@@ -9,7 +10,7 @@ type Mutation {
 }
 
 type Subscription {
-  gameState(request: GameStateRequest!): GameStateEvent!
+  gameEvent(request: GameEventRequest!): GameEvent!
 }
 
 ### createGame
@@ -37,15 +38,11 @@ type StartGameResponse {
   game: Game!
 }
 
-### gameState
+### gameEvent
 
-input GameStateRequest {
+input GameEventRequest {
   """
   The ID of the game to subscribe to.
   """
   gameId: ID!
-}
-
-type GameStateEvent {
-  dateEmitted: DateTime!
 }

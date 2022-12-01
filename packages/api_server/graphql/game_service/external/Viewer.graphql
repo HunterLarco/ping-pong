@@ -1,6 +1,6 @@
 #import '../Game.graphql'
 
-type Viewer @key(fields: "id") {
-  id: ID! @external
+type Viewer {
+  id: ID!
   currentGame: Game
 }

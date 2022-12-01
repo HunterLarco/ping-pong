@@ -1,0 +1,24 @@
+#import 'external/User.graphql'
+
+type GameEvent {
+  type: GameEventType!
+  timestamp: DateTime!
+  details: GameEventDetails!
+}
+
+enum GameEventType {
+  PlayerJoin
+  GameStart
+}
+
+union GameEventDetails = PlayerJoinEvent | GameStartEvent
+
+type PlayerJoinEvent {
+  user: User!
+}
+
+type GameStartEvent {
+  leader: User!
+}
+
+scalar DateTime

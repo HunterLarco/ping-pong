@@ -3,7 +3,7 @@ import {
   IdentityCard,
   IdentityType,
   IdentityCardFilters,
-} from '@generated/graphql/resolvers';
+} from '@generated/graphql/identity_card_service/resolvers';
 import {
   FuzzySearchFilters,
   OracleCard,
