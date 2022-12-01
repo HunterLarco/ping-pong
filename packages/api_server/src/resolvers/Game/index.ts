@@ -11,23 +11,12 @@ import {
 
 const pubsub = new PubSub();
 
-function toApiType(game: PrismaGame): Partial<Game> {
-  return {
-    id: game.id,
-    /* .players is populated by the resolver */
-    /* .identities is populated by the resolver */
-    dateCreated: game.dateCreated,
-    dateStarted: game.dateStarted,
-    dateEnded: game.dateEnded,
-  }
-}
-
 const GameResolvers: Resolvers = {
   Mutation: {
     // @ts-ignore
     async createGame(_0, _1, { dataSources }) {
       const game = await dataSources.Game.createGame();
-      return { game: toApiType(game) }
+      return { game };
     },
 
     async joinGame(_0, { request }, { actor, dataSources }) {
@@ -63,29 +52,36 @@ const GameResolvers: Resolvers = {
         identityDataSource: dataSources.MTGTreachery,
       });
 
-      return { game: toApiType(game) };
+      return { game };
     },
   },
 
   Game: {
+    id(parent) {
+      return parent.id;
+    },
     players(parent, _1, { dataSources }) {
       return [];
     },
-
     identities(parent, _1, { dataSources }) {
       return [];
+    },
+    dateCreated(parent) {
+      return parent.dateCreated;
+    },
+    dateStarted(parent) {
+      return parent.dateStarted;
+    },
+    dateEnded(parent) {
+      return parent.dateEnded;
     },
   },
 
   Viewer: {
     currentGame(parent, _0, { dataSources }) {
       // TODO
-      return {
-        id: '100',
-        players: [],
-        dateCreated: new Date(),
-      }
-    }
+      return null;
+    },
   },
 
   Subscription: {

@@ -4,15 +4,8 @@ import { AuthScopeCode } from '@prisma/client';
 const UserResolvers: Resolvers = {
   Query: {
     me(_0, _1, { actor }) {
-      if (!actor) {
-        return null;
-      }
-
-      return {
-        id: actor.id,
-        name: actor.name,
-      }
-    }
+      return actor;
+    },
   },
 
   Mutation: {
@@ -55,6 +48,15 @@ const UserResolvers: Resolvers = {
       return {
         authToken: authToken.id,
       };
+    },
+  },
+
+  Viewer: {
+    id(parent) {
+      return parent.id;
+    },
+    name(parent) {
+      return parent.name;
     },
   },
 };
