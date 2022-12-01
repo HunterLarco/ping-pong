@@ -43,6 +43,24 @@ export default class GameDataSource {
     });
   }
 
+  async getCurrentGame(args: { playerId: string }): Promise<Game | null> {
+    const { playerId } = args;
+
+    return await this.#prismaClient.game.findFirst({
+      where: {
+        playerIds: {
+          has: playerId,
+        },
+        dateEnded: {
+          isSet: false,
+        },
+      },
+      orderBy: {
+        dateCreated: 'desc',
+      },
+    });
+  }
+
   async startGame(args: {
     gameId: string;
     identityDataSource: MTGTreacheryDataSource;

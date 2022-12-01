@@ -27,9 +27,12 @@ export const resolvers: Resolvers = {
   },
 
   Viewer: {
-    currentGame(parent, _0, { dataSources }) {
-      // TODO
-      return null;
+    currentGame(parent, _0, { dataSources, actor }) {
+      if (!actor) {
+        return null;
+      }
+
+      return dataSources.Game.getCurrentGame({ playerId: actor.id });
     },
   },
 };
