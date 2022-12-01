@@ -57,9 +57,6 @@ model AuthToken {
   // If not set, the token never expires.
   expiry DateTime?
 
-  // If not set, the token can be used any number of times.
-  remainingUses Int?
-
   dateIssued DateTime @default(now())
 }
 
@@ -74,8 +71,9 @@ type AuthScope {
 }
 
 enum AuthScopeCode {
-  PhoneVerification
-  UserAuth
+  GameHost // target is the gameID
+  PhoneVerification // target is the phone number
+  UserAuth // target is the userId
 }
 
 /// Prisma configuration

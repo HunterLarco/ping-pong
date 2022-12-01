@@ -10,7 +10,10 @@ import { broadcastGameEvent } from '@/resolvers/game/Subscriptions';
 export const resolvers: MutationResolvers = {
   async createGame(_0, _1, { dataSources }) {
     const game = await dataSources.Game.createGame();
-    return { game };
+    const authToken = await dataSources.AuthToken.createGameHostAuthToken(
+      game.id
+    );
+    return { game, authToken: authToken.id };
   },
 
   async joinGame(_0, { request }, { actor, dataSources }) {
@@ -18,21 +21,21 @@ export const resolvers: MutationResolvers = {
       throw new Error('Unauthorized');
     }
 
-    await dataSources.Game.addPlayer({
+    const alreadyJoined = await dataSources.Game.addPlayer({
       gameId: request.gameId,
       userId: actor.id,
     });
 
-    broadcastGameEvent(request.gameId, {
-      type: GameEventType.PlayerJoin,
-      timestamp: new Date(),
-      details: {
-        __typename: 'PlayerJoinEvent',
-        user: {
-          id: actor.id,
+    if (!alreadyJoined) {
+      broadcastGameEvent(request.gameId, {
+        type: GameEventType.PlayerJoin,
+        timestamp: new Date(),
+        details: {
+          __typename: 'PlayerJoinEvent',
+          user: actor,
         },
-      },
-    });
+      });
+    }
   },
 
   async startGame(_0, { request }, { dataSources }) {

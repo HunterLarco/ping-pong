@@ -1,4 +1,4 @@
-import { User, AuthScopeCode } from '@prisma/client';
+import { User, Game, AuthScopeCode } from '@prisma/client';
 
 import type { GlobalContext } from '@/GlobalContext';
 import MTGTreacheryDataSource from '@/data_sources/MTGTreacheryDataSource';
@@ -15,6 +15,7 @@ type DataSources = {
 
 export type RequestContext = {
   actor: User | null;
+  hostedGame: Game | null;
   dataSources: DataSources;
   globalContext: GlobalContext;
 };
@@ -34,6 +35,7 @@ export async function createRequestContext(args: {
 
   return {
     actor: await getActor(dataSources, authorization),
+    hostedGame: await getHostedGame(dataSources, authorization),
     dataSources,
     globalContext,
   };
@@ -54,6 +56,26 @@ async function getActor(
     });
 
     return await dataSources.User.getById(userId);
+  } catch {
+    return null;
+  }
+}
+
+async function getHostedGame(
+  dataSources: DataSources,
+  authorization: string | null
+): Promise<Game | null> {
+  if (!authorization) {
+    return null;
+  }
+
+  try {
+    const [gameId] = await dataSources.AuthToken.use({
+      id: authorization,
+      requiredScopeCodes: [AuthScopeCode.GameHost],
+    });
+
+    return await dataSources.Game.getById(gameId);
   } catch {
     return null;
   }

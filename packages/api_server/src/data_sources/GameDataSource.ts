@@ -18,7 +18,7 @@ export default class GameDataSource {
     });
   }
 
-  async addPlayer(args: { gameId: string; userId: string }) {
+  async addPlayer(args: { gameId: string; userId: string }): Promise<Boolean> {
     const { gameId, userId } = args;
 
     const game = await this.getById(gameId);
@@ -26,7 +26,7 @@ export default class GameDataSource {
       throw new Error(`Game ${gameId} not found.`);
     } else if (game.playerIds.indexOf(userId) >= 0) {
       // The player is already part of the game.
-      return;
+      return true;
     } else if (game.playerIds.length >= 8) {
       throw new Error(`Game ${gameId} cannot accept more players.`);
     }
@@ -41,6 +41,8 @@ export default class GameDataSource {
         cas: { increment: 1 },
       },
     });
+
+    return false;
   }
 
   async getCurrentGame(args: { playerId: string }): Promise<Game | null> {

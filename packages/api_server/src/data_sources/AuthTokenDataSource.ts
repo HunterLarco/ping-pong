@@ -1,3 +1,4 @@
+import DataLoader from 'dataloader';
 import {
   PrismaClient,
   AuthToken,
@@ -31,20 +32,28 @@ export default class AuthTokenDataSource {
           target: phoneNumber,
         },
       ],
-      remainingUses: 1,
+    });
+  }
+
+  async createGameHostAuthToken(gameId: string) {
+    return await this.createAuthToken({
+      scopes: [
+        {
+          code: AuthScopeCode.GameHost,
+          target: gameId,
+        },
+      ],
     });
   }
 
   async createAuthToken(args: {
     scopes: Array<AuthScope>;
     expiry?: Date;
-    remainingUses?: number;
   }): Promise<AuthToken> {
     return await this.#prismaClient.authToken.create({
       data: {
         scopes: args.scopes,
         expiry: args.expiry,
-        remainingUses: args.remainingUses,
       },
     });
   }
@@ -55,16 +64,10 @@ export default class AuthTokenDataSource {
   }): Promise<Array<string>> {
     const { id, requiredScopeCodes } = args;
 
-    const token = await this.#prismaClient.authToken.update({
-      where: {
-        id,
-      },
-      data: {
-        remainingUses: {
-          decrement: 1,
-        },
-      },
-    });
+    const token = await this.#batchGetById.load(id);
+    if (!token) {
+      throw `Token ${id} not found.`;
+    }
 
     const deleteToken = () => {
       this.#prismaClient.authToken
@@ -79,11 +82,6 @@ export default class AuthTokenDataSource {
     if (token.expiry !== null && token.expiry < new Date()) {
       deleteToken();
       throw `Token ${id} has expired.`;
-    } else if (token.remainingUses !== null && token.remainingUses < 0) {
-      deleteToken();
-      throw `Token ${id} has no remaining uses.`;
-    } else if (token.remainingUses !== null && token.remainingUses == 0) {
-      deleteToken();
     }
 
     const targetsByCode = new Map<AuthScopeCode, string>();
@@ -99,4 +97,27 @@ export default class AuthTokenDataSource {
       return target;
     });
   }
+
+  #batchGetById = new DataLoader(
+    async (ids: Readonly<Array<string>>): Promise<Array<AuthToken | null>> => {
+      const tokens = await this.#prismaClient.authToken.findMany({
+        where: {
+          OR: ids.map((id) => ({ id })),
+        },
+      });
+
+      // We need to ensure that the returned tokens are in the same exact order
+      // as the searched id's to fulfill the DataLoader contract:
+
+      const tokenMap = new Map<string, AuthToken>();
+      for (const token of tokens) {
+        tokenMap.set(token.id, token);
+      }
+
+      return ids.map((id) => {
+        const token = tokenMap.get(id);
+        return token || null;
+      });
+    }
+  );
 }

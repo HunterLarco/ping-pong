@@ -9,23 +9,14 @@ const pubsub = new PubSub();
 
 export const resolvers: SubscriptionResolvers = {
   gameEvent: {
-    async *subscribe(_0, { request }, { actor, dataSources }) {
-      if (!actor) {
-        throw new Error('Unauthorized');
-      }
-
-      const game = await dataSources.Game.getById(request.gameId);
-      if (!game) {
-        throw new Error(`Game ${request.gameId} not found.`);
-      }
-
-      if (!new Set(game.playerIds).has(actor.id)) {
+    async *subscribe(_0, { request }, { hostedGame, dataSources }) {
+      if (!hostedGame || hostedGame.id != request.gameId) {
         throw new Error('Unauthorized');
       }
 
       // @ts-expect-error TS2504
       for await (const { event } of pubsub.asyncIterator([
-        `gameEvent:${request.gameId}`,
+        `gameEvent:${hostedGame.id}`,
       ])) {
         yield { gameEvent: event };
       }
