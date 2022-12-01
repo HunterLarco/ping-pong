@@ -4,6 +4,7 @@ const kMappers = {
   Game: '@prisma/client#Game as GameModel',
   User: '@prisma/client#User as UserModel',
   Viewer: '@prisma/client#User as UserModel',
+  IdentityCard: '@/data_sources/MTGTreacheryDataSource#OracleCard',
 };
 
 const kResolverConfig = {
