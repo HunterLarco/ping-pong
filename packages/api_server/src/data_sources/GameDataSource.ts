@@ -25,7 +25,7 @@ export default class GameDataSource {
     if (!game) {
       throw new Error(`Game ${gameId} not found.`);
     } else if (game.players.find((player) => player.userId == userId)) {
-      // The player is already part of the game.
+      console.info(`User ${userId} is already part of game ${gameId}.`);
       return true;
     } else if (game.players.length >= 8) {
       throw new Error(`Game ${gameId} cannot accept more players.`);
@@ -103,7 +103,8 @@ export default class GameDataSource {
         cas: game.cas,
       },
       data: {
-        ...game,
+        dateStarted: game.dateStarted,
+        players: game.players,
         cas: { increment: 1 },
       },
     });
