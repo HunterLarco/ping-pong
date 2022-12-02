@@ -10,7 +10,7 @@ type Mutation {
 }
 
 type Subscription {
-  gameEvent(request: GameEventRequest!): GameEvent!
+  spectate(request: SpectateRequest!): GameEvent!
 }
 
 ### createGame
@@ -46,7 +46,7 @@ type StartGameResponse {
 
 ### gameEvent
 
-input GameEventRequest {
+input SpectateRequest {
   """
   The ID of the game to subscribe to.
   """

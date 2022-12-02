@@ -8,17 +8,13 @@ import {
 const pubsub = new PubSub();
 
 export const resolvers: SubscriptionResolvers = {
-  gameEvent: {
-    async *subscribe(_0, { request }, { hostedGame, dataSources }) {
-      if (!hostedGame || hostedGame.id != request.gameId) {
-        throw new Error('Unauthorized');
-      }
-
+  spectate: {
+    async *subscribe(_0, { request }, _2) {
       // @ts-expect-error TS2504
       for await (const { event } of pubsub.asyncIterator([
-        `gameEvent:${hostedGame.id}`,
+        `gameEvent:${request.gameId}`,
       ])) {
-        yield { gameEvent: event };
+        yield { spectate: event };
       }
     },
   },
