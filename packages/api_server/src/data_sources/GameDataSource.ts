@@ -1,9 +1,9 @@
 import DataLoader from 'dataloader';
-import type { PrismaClient, Game } from '@prisma/client';
+import type { PrismaClient, Game, Player } from '@prisma/client';
 import { IdentityType } from '@prisma/client';
 
 import type MTGTreacheryDataSource from '@/data_sources/MTGTreacheryDataSource';
-import { assignIdentityCards } from '@/util/identityAssignments';
+import { selectIdentityCards } from '@/util/identityAssignments';
 
 export default class GameDataSource {
   #prismaClient: PrismaClient;
@@ -24,10 +24,10 @@ export default class GameDataSource {
     const game = await this.getById(gameId);
     if (!game) {
       throw new Error(`Game ${gameId} not found.`);
-    } else if (game.playerIds.indexOf(userId) >= 0) {
+    } else if (game.players.find((player) => player.userId == userId)) {
       // The player is already part of the game.
       return true;
-    } else if (game.playerIds.length >= 8) {
+    } else if (game.players.length >= 8) {
       throw new Error(`Game ${gameId} cannot accept more players.`);
     }
 
@@ -37,7 +37,7 @@ export default class GameDataSource {
         cas: game.cas,
       },
       data: {
-        playerIds: { push: [userId] },
+        players: { push: [{ userId }] },
         cas: { increment: 1 },
       },
     });
@@ -50,8 +50,10 @@ export default class GameDataSource {
 
     return await this.#prismaClient.game.findFirst({
       where: {
-        playerIds: {
-          has: playerId,
+        players: {
+          some: {
+            userId: playerId,
+          },
         },
         dateEnded: {
           isSet: false,
@@ -76,36 +78,37 @@ export default class GameDataSource {
       throw new Error(`Game ${gameId} has already been started.`);
     }
 
-    const identityAssignments = [];
-    for await (const { playerId, identity } of assignIdentityCards({
-      playerIds: game.playerIds,
-      identityDataSource,
-    })) {
-      identityAssignments.push({
-        playerId,
-        identityCard: identity,
-      });
+    const identityCards = await selectIdentityCards({
+      count: game.players.length,
+      cards: await identityDataSource.fetchAll(),
+    });
+
+    /// Update the game document in-process.
+
+    game.dateStarted = new Date();
+    for (const player of game.players) {
+      const identityCard = identityCards.pop();
+      if (!identityCard) {
+        throw new Error('Insufficient number of selected identity cards.');
+      }
+      player.identityCard = identityCard;
     }
+
+    /// Persist the modified game document.
 
     const now = new Date();
     await this.#prismaClient.game.updateMany({
       where: {
-        id: gameId,
+        id: game.id,
         cas: game.cas,
       },
       data: {
-        dateStarted: now,
-        identityAssignments,
+        ...game,
         cas: { increment: 1 },
       },
     });
 
-    return {
-      ...game,
-      dateStarted: now,
-      identityAssignments,
-      cas: game.cas + 1,
-    };
+    return game;
   }
 
   async getById(id: string): Promise<Game | null> {

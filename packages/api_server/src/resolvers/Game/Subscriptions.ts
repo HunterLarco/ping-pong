@@ -2,7 +2,7 @@ import { PubSub } from 'graphql-subscriptions';
 
 import {
   SubscriptionResolvers,
-  GameEvent,
+  ResolversTypes,
 } from '@generated/graphql/game_service/resolvers';
 
 const pubsub = new PubSub();
@@ -20,6 +20,9 @@ export const resolvers: SubscriptionResolvers = {
   },
 };
 
-export function broadcastGameEvent(gameId: string, event: GameEvent) {
+export function broadcastGameEvent(
+  gameId: string,
+  event: ResolversTypes['GameEvent']
+) {
   pubsub.publish(`gameEvent:${gameId}`, { event });
 }

@@ -8,24 +8,12 @@ export const resolvers: Resolvers = {
     },
 
     async players(parent, _1, { dataSources }) {
-      const users = await Promise.all(
-        parent.playerIds.map((playerId) =>
-          dataSources.User.getByIdOrThrow(playerId)
-        )
+      return await Promise.all(
+        parent.players.map((player) => ({
+          user: dataSources.User.getByIdOrThrow(player.userId),
+          identity: player.identityCard,
+        }))
       );
-
-      const identityAssignments = new Map<string, IdentityCard>();
-      for (const { playerId, identityCard } of parent.identityAssignments) {
-        identityAssignments.set(playerId, identityCard);
-      }
-
-      return users.map((user) => {
-        const identity = identityAssignments.get(user.id);
-        return {
-          user,
-          identity: identity || null,
-        };
-      });
     },
 
     dateCreated(parent) {

@@ -44,22 +44,12 @@ export const resolvers: MutationResolvers = {
       identityDataSource: dataSources.MTGTreachery,
     });
 
-    let leader;
-    for (const { playerId, identityCard } of game.identityAssignments) {
-      if (identityCard.type == IdentityType.Leader) {
-        leader = await dataSources.User.getByIdOrThrow(playerId);
-      }
-    }
-    if (!leader) {
-      throw new Error(`Game ${game.id} does not have a leader.`);
-    }
-
     broadcastGameEvent(request.gameId, {
       type: GameEventType.GameStart,
       timestamp: new Date(),
       details: {
         __typename: 'GameStartEvent',
-        leader,
+        game,
       },
     });
 

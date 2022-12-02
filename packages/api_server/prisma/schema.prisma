@@ -2,22 +2,23 @@
 
 model Game {
   id String @id @default(auto()) @map("_id") @db.ObjectId
+
   dateCreated DateTime @default(now())
-
-  playerIds String[] @db.ObjectId
-
   dateStarted DateTime?
-  identityAssignments IdentityAssignment[]
-
   dateEnded DateTime?
+
+  players Player[]
 
   // Value used for optimistic locking (See https://tinyurl.com/3wkprjn6)
   cas Int @default(0)
 }
 
-type IdentityAssignment {
-  playerId String @db.ObjectId
-  identityCard IdentityCard
+type Player {
+  userId String @db.ObjectId
+
+  // Will only be populated once the game starts.
+  identityCard IdentityCard?
+  unveiled Boolean @default(false)
 }
 
 type IdentityCard {

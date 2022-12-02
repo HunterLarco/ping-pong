@@ -78,46 +78,37 @@ function sortIdentities(identities: Array<IdentityCard>): SortedIdentities {
   return sortedIdentities;
 }
 
-export async function* assignIdentityCards(args: {
-  playerIds: Array<string>;
-  notLeader?: Array<string>;
-  identityDataSource: MTGTreacheryDataSource;
-}): AsyncGenerator<{
-  playerId: string;
-  identity: IdentityCard;
-}> {
-  const { playerIds, identityDataSource } = args;
-  const notLeader = new Set<string>(args.notLeader || []);
+/**
+ * Selects the provided number of identity cards while preserving the treachery
+ * distribution rules. For example, selecting 4 cards will return a leader,
+ * traitor, and 2 assassins.
+ */
+export async function selectIdentityCards(args: {
+  count: number;
+  cards: Array<IdentityCard>;
+}): Promise<Array<IdentityCard>> {
+  const { count, cards } = args;
 
-  if (playerIds.length < 4 || playerIds.length > 8) {
+  if (count < 4 || count > 8) {
     throw new Error(`Treachery requires 4-8 players.`);
-  } else if (notLeader.size == playerIds.length) {
-    throw new Error(`At least one player must be the leader.`);
   }
 
-  const [leader] = pickRandom(playerIds.filter((id) => !notLeader.has(id)));
-  const everyoneElse = playerIds.filter((id) => id !== leader);
+  const identities = sortIdentities(cards);
+  const distribution = getTreacheryDistribution(count);
 
-  const identities = sortIdentities(await identityDataSource.fetchAll());
+  if (
+    identities.leaders.length < distribution.leader ||
+    identities.guardians.length < distribution.guardian ||
+    identities.assassins.length < distribution.assassin ||
+    identities.traitors.length < distribution.traitor
+  ) {
+    throw new Error('Not enough identity cards to pick from.');
+  }
 
-  yield {
-    playerId: leader,
-    identity: pickRandom(identities.leaders)[0],
-  };
-
-  const distribution = getTreacheryDistribution(playerIds.length);
-  const pool = [
+  return shuffleArray([
+    ...pickRandom(identities.leaders, { count: distribution.leader }),
     ...pickRandom(identities.traitors, { count: distribution.traitor }),
     ...pickRandom(identities.assassins, { count: distribution.assassin }),
     ...pickRandom(identities.guardians, { count: distribution.guardian }),
-  ];
-
-  shuffleArray(pool);
-
-  for (let i = 0; i < everyoneElse.length; ++i) {
-    yield {
-      playerId: everyoneElse[i],
-      identity: pool[i],
-    };
-  }
+  ]);
 }

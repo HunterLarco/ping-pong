@@ -1,3 +1,4 @@
+#import 'Game.graphql'
 #import 'external/User.graphql'
 
 type GameEvent {
@@ -18,7 +19,7 @@ type PlayerJoinEvent {
 }
 
 type GameStartEvent {
-  leader: User!
+  game: Game!
 }
 
 scalar DateTime
