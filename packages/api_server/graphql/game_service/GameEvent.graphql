@@ -10,9 +10,10 @@ type GameEvent {
 enum GameEventType {
   PlayerJoin
   GameStart
+  PlayerUnveil
 }
 
-union GameEventDetails = PlayerJoinEvent | GameStartEvent
+union GameEventDetails = PlayerJoinEvent | GameStartEvent | PlayerUnveilEvent
 
 type PlayerJoinEvent {
   user: User!
@@ -20,6 +21,10 @@ type PlayerJoinEvent {
 
 type GameStartEvent {
   game: Game!
+}
+
+type PlayerUnveilEvent {
+  player: Player!
 }
 
 scalar DateTime

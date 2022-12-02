@@ -6,19 +6,9 @@ export const resolvers: Resolvers = {
     id(parent) {
       return parent.id;
     },
-
-    async players(parent, _1, { actor, dataSources }) {
-      return await Promise.all(
-        parent.players.map((player) => ({
-          user: dataSources.User.getByIdOrThrow(player.userId),
-          identity:
-            player.userId == actor?.id || player.unveiled
-              ? player.identityCard
-              : null,
-        }))
-      );
+    players(parent) {
+      return parent.players;
     },
-
     dateCreated(parent) {
       return parent.dateCreated;
     },
@@ -27,6 +17,18 @@ export const resolvers: Resolvers = {
     },
     dateEnded(parent) {
       return parent.dateEnded;
+    },
+  },
+
+  Player: {
+    async user(parent, _1, { dataSources }) {
+      return dataSources.User.getByIdOrThrow(parent.userId);
+    },
+
+    identity(parent, _1, { actor }) {
+      return parent.userId == actor?.id || parent.unveiled
+        ? parent.identityCard
+        : null;
     },
   },
 

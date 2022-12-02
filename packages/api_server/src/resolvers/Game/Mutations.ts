@@ -61,9 +61,22 @@ export const resolvers: MutationResolvers = {
       throw new Error('Unauthorized');
     }
 
-    await dataSources.Game.unveil({
+    const player = await dataSources.Game.unveil({
       gameId: game,
       userId: actor.id,
+    });
+
+    if (!player) {
+      throw new Error(`User ${actor.id} is not a player in game ${game}.`);
+    }
+
+    broadcastGameEvent(game, {
+      type: GameEventType.PlayerUnveil,
+      timestamp: new Date(),
+      details: {
+        __typename: 'PlayerUnveilEvent',
+        player,
+      },
     });
   },
 };

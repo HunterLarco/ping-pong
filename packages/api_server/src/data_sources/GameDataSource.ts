@@ -113,10 +113,13 @@ export default class GameDataSource {
     return game;
   }
 
-  async unveil(args: { gameId: string; userId: string }): Promise<Game> {
+  async unveil(args: {
+    gameId: string;
+    userId: string;
+  }): Promise<Player | null> {
     const { gameId, userId } = args;
 
-    return await this.#prismaClient.game.update({
+    const game = await this.#prismaClient.game.update({
       where: {
         id: gameId,
       },
@@ -133,6 +136,8 @@ export default class GameDataSource {
         },
       },
     });
+
+    return game.players.find((player) => player.userId == userId) || null;
   }
 
   async getById(id: string): Promise<Game | null> {

@@ -2,6 +2,7 @@ import type { CodegenConfig } from '@graphql-codegen/cli';
 
 const kMappers = {
   Game: '@prisma/client#Game as GameModel',
+  Player: '@prisma/client#Player as PlayerModel',
   User: '@prisma/client#User as UserModel',
   Viewer: '@prisma/client#User as UserModel',
   IdentityCard: '@prisma/client#IdentityCard as IdentityCardModel',
