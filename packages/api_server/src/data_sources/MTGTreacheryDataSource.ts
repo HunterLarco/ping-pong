@@ -52,10 +52,6 @@ const fetchOracleData = pMemoize(
       id: card.id.toString(16),
       name: card.name,
       type: convertIdentityType(card.types.subtype),
-      image: encodeURI(
-        `https://mtgtreachery.net/images/cards/en/trd/` +
-          `${card.types.subtype} - ${card.name}.jpg`
-      ),
       text: card.text.replace(/\|/g, '\n'),
       rulings: card.rulings,
       source: card.uri,
