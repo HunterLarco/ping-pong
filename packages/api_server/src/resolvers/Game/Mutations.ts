@@ -79,4 +79,28 @@ export const resolvers: MutationResolvers = {
       },
     });
   },
+
+  async concede(_0, { game }, { actor, dataSources }) {
+    if (!actor) {
+      throw new Error('Unauthorized');
+    }
+
+    const player = await dataSources.Game.concede({
+      gameId: game,
+      userId: actor.id,
+    });
+
+    if (!player) {
+      throw new Error(`User ${actor.id} is not a player in game ${game}.`);
+    }
+
+    broadcastGameEvent(game, {
+      type: GameEventType.PlayerConcede,
+      timestamp: new Date(),
+      details: {
+        __typename: 'PlayerConcedeEvent',
+        player,
+      },
+    });
+  },
 };

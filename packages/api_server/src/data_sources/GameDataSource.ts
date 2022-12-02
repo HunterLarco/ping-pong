@@ -145,6 +145,34 @@ export default class GameDataSource {
     return game || null;
   }
 
+  async concede(args: {
+    gameId: string;
+    userId: string;
+  }): Promise<Player | null> {
+    const { gameId, userId } = args;
+
+    const game = await this.#prismaClient.game.update({
+      where: {
+        id: gameId,
+      },
+      data: {
+        players: {
+          updateMany: {
+            where: {
+              userId,
+            },
+            data: {
+              unveiled: true,
+              conceded: true,
+            },
+          },
+        },
+      },
+    });
+
+    return game.players.find((player) => player.userId == userId) || null;
+  }
+
   #batchGetById = new DataLoader(async (ids: Readonly<Array<string>>) => {
     const games = await this.#prismaClient.game.findMany({
       where: {
@@ -162,18 +190,4 @@ export default class GameDataSource {
 
     return ids.map((id) => (gameMap.has(id) ? gameMap.get(id) : null));
   });
-}
-
-function orcleToPrismaIdentityType(identityType: string): IdentityType {
-  switch (identityType.toLowerCase()) {
-    case 'leader':
-      return IdentityType.Leader;
-    case 'guardian':
-      return IdentityType.Guardian;
-    case 'assassin':
-      return IdentityType.Assassin;
-    case 'traitor':
-      return IdentityType.Traitor;
-  }
-  throw new Error(`Unknown identity subtype ${identityType}.`);
 }

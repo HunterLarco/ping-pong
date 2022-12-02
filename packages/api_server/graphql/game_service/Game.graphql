@@ -20,6 +20,8 @@ type Player {
   identity and publically unveiled identities.
   """
   identity: IdentityCard
+
+  conceded: Boolean!
 }
 
 scalar DateTime

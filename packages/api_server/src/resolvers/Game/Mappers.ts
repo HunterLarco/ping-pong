@@ -30,6 +30,10 @@ export const resolvers: Resolvers = {
         ? parent.identityCard
         : null;
     },
+
+    conceded(parent) {
+      return parent.conceded;
+    },
   },
 
   Viewer: {

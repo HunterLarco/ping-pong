@@ -11,9 +11,14 @@ enum GameEventType {
   PlayerJoin
   GameStart
   PlayerUnveil
+  PlayerConcede
 }
 
-union GameEventDetails = PlayerJoinEvent | GameStartEvent | PlayerUnveilEvent
+union GameEventDetails =
+    PlayerJoinEvent
+  | GameStartEvent
+  | PlayerUnveilEvent
+  | PlayerConcedeEvent
 
 type PlayerJoinEvent {
   user: User!
@@ -24,6 +29,10 @@ type GameStartEvent {
 }
 
 type PlayerUnveilEvent {
+  player: Player!
+}
+
+type PlayerConcedeEvent {
   player: Player!
 }
 

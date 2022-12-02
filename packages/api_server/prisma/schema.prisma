@@ -19,6 +19,7 @@ type Player {
   // Will only be populated once the game starts.
   identityCard IdentityCard?
   unveiled Boolean @default(false)
+  conceded Boolean @default(false)
 }
 
 type IdentityCard {
