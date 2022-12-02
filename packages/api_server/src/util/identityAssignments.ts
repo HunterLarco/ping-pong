@@ -1,7 +1,7 @@
 import pickRandom from 'pick-random';
 import shuffleArray from 'shuffle-array';
 
-import type { OracleCard } from '@/data_sources/MTGTreacheryDataSource';
+import { IdentityCard, IdentityType } from '@prisma/client';
 import type MTGTreacheryDataSource from '@/data_sources/MTGTreacheryDataSource';
 import type { RequestContext } from '@/RequestContext';
 
@@ -44,13 +44,13 @@ export function getTreacheryDistribution(
 }
 
 type SortedIdentities = {
-  leaders: Array<OracleCard>;
-  guardians: Array<OracleCard>;
-  assassins: Array<OracleCard>;
-  traitors: Array<OracleCard>;
+  leaders: Array<IdentityCard>;
+  guardians: Array<IdentityCard>;
+  assassins: Array<IdentityCard>;
+  traitors: Array<IdentityCard>;
 };
 
-function sortIdentities(identities: Array<OracleCard>): SortedIdentities {
+function sortIdentities(identities: Array<IdentityCard>): SortedIdentities {
   const sortedIdentities: SortedIdentities = {
     leaders: [],
     guardians: [],
@@ -59,17 +59,17 @@ function sortIdentities(identities: Array<OracleCard>): SortedIdentities {
   };
 
   for (const identity of identities) {
-    switch (identity.types.subtype.toLowerCase()) {
-      case 'leader':
+    switch (identity.type) {
+      case IdentityType.Leader:
         sortedIdentities.leaders.push(identity);
         break;
-      case 'guardian':
+      case IdentityType.Guardian:
         sortedIdentities.guardians.push(identity);
         break;
-      case 'assassin':
+      case IdentityType.Assassin:
         sortedIdentities.assassins.push(identity);
         break;
-      case 'traitor':
+      case IdentityType.Traitor:
         sortedIdentities.traitors.push(identity);
         break;
     }
@@ -84,7 +84,7 @@ export async function* assignIdentityCards(args: {
   identityDataSource: MTGTreacheryDataSource;
 }): AsyncGenerator<{
   playerId: string;
-  identity: OracleCard;
+  identity: IdentityCard;
 }> {
   const { playerIds, identityDataSource } = args;
   const notLeader = new Set<string>(args.notLeader || []);

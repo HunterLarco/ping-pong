@@ -83,14 +83,7 @@ export default class GameDataSource {
     })) {
       identityAssignments.push({
         playerId,
-        identityCard: {
-          id: identity.id.toString(),
-          name: identity.name,
-          type: orcleToPrismaIdentityType(identity.types.subtype),
-          text: identity.text,
-          rulings: identity.rulings,
-          source: identity.uri,
-        },
+        identityCard: identity,
       });
     }
 

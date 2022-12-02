@@ -1,3 +1,4 @@
+import { IdentityType as PrismaIdentityType } from '@prisma/client';
 import {
   Resolvers,
   IdentityType,
@@ -6,38 +7,37 @@ import {
 export const resolvers: Resolvers = {
   IdentityCard: {
     id(parent) {
-      return parent.id.toString(16);
+      return parent.id;
     },
     name(parent) {
       return parent.name;
     },
     type(parent) {
-      switch (parent.types.subtype.toLowerCase()) {
-        case 'leader':
+      switch (parent.type) {
+        case PrismaIdentityType.Leader:
           return IdentityType.Leader;
-        case 'guardian':
+        case PrismaIdentityType.Guardian:
           return IdentityType.Guardian;
-        case 'assassin':
+        case PrismaIdentityType.Assassin:
           return IdentityType.Assassin;
-        case 'traitor':
+        case PrismaIdentityType.Traitor:
           return IdentityType.Traitor;
       }
-      throw new Error(`Unknown identity type '${parent.types.subtype}'`);
     },
     image(parent) {
       return encodeURI(
         `https://mtgtreachery.net/images/cards/en/trd/` +
-          `${parent.types.subtype} - ${parent.name}.jpg`
+          `${parent.type} - ${parent.name}.jpg`
       );
     },
     text(parent) {
-      return parent.text.replace(/\|/g, '\n');
+      return parent.text;
     },
     rulings(parent) {
       return parent.rulings;
     },
     source(parent) {
-      return parent.uri;
+      return parent.source;
     },
   },
 };
