@@ -1,3 +1,4 @@
+import { IdentityCard } from '@prisma/client';
 import { Resolvers } from '@generated/graphql/game_service/resolvers';
 
 export const resolvers: Resolvers = {
@@ -5,16 +6,28 @@ export const resolvers: Resolvers = {
     id(parent) {
       return parent.id;
     },
+
     async players(parent, _1, { dataSources }) {
-      return await Promise.all(
+      const users = await Promise.all(
         parent.playerIds.map((playerId) =>
           dataSources.User.getByIdOrThrow(playerId)
         )
       );
+
+      const identityAssignments = new Map<string, IdentityCard>();
+      for (const { playerId, identityCard } of parent.identityAssignments) {
+        identityAssignments.set(playerId, identityCard);
+      }
+
+      return users.map((user) => {
+        const identity = identityAssignments.get(user.id);
+        return {
+          user,
+          identity: identity || null,
+        };
+      });
     },
-    identities(parent, _1, { dataSources }) {
-      return [];
-    },
+
     dateCreated(parent) {
       return parent.dateCreated;
     },

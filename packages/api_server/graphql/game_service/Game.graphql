@@ -3,18 +3,23 @@
 
 type Game {
   id: ID!
-
-  players: [User!]!
-  identities: [IdentityAssignments!]!
-
+  players: [Player!]!
   dateCreated: DateTime!
   dateStarted: DateTime
   dateEnded: DateTime
 }
 
-type IdentityAssignments {
-  playerId: ID!
-  identityCard: IdentityCard!
+type Player {
+  user: User!
+
+  """
+  Will only be populated if the actor requesting the Game object can view the
+  assigned identity for this player.
+
+  For example, when requesting a game object, you'll be able to see your
+  identity and publically unveiled identities.
+  """
+  identity: IdentityCard
 }
 
 scalar DateTime
