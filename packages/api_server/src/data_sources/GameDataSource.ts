@@ -113,6 +113,28 @@ export default class GameDataSource {
     return game;
   }
 
+  async unveil(args: { gameId: string; userId: string }): Promise<Game> {
+    const { gameId, userId } = args;
+
+    return await this.#prismaClient.game.update({
+      where: {
+        id: gameId,
+      },
+      data: {
+        players: {
+          updateMany: {
+            where: {
+              userId,
+            },
+            data: {
+              unveiled: true,
+            },
+          },
+        },
+      },
+    });
+  }
+
   async getById(id: string): Promise<Game | null> {
     const game = await this.#batchGetById.load(id);
     return game || null;

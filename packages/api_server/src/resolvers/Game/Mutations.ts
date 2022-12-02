@@ -55,4 +55,15 @@ export const resolvers: MutationResolvers = {
 
     return { game };
   },
+
+  async unveil(_0, { game }, { actor, dataSources }) {
+    if (!actor) {
+      throw new Error('Unauthorized');
+    }
+
+    await dataSources.Game.unveil({
+      gameId: game,
+      userId: actor.id,
+    });
+  },
 };

@@ -3,10 +3,19 @@
 
 scalar Void
 
+type Query {
+  getGameById(id: ID!): Game
+}
+
 type Mutation {
   createGame: CreateGameResponse!
   joinGame(request: JoinGameRequest!): Void
   startGame(request: StartGameRequest!): StartGameResponse!
+
+  """
+  Unveils the authenticated user in the given game.
+  """
+  unveil(game: ID!): Void
 }
 
 type Subscription {
