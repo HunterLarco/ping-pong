@@ -7,11 +7,14 @@ export const resolvers: Resolvers = {
       return parent.id;
     },
 
-    async players(parent, _1, { dataSources }) {
+    async players(parent, _1, { actor, dataSources }) {
       return await Promise.all(
         parent.players.map((player) => ({
           user: dataSources.User.getByIdOrThrow(player.userId),
-          identity: player.identityCard,
+          identity:
+            player.userId == actor?.id || player.unveiled
+              ? player.identityCard
+              : null,
         }))
       );
     },

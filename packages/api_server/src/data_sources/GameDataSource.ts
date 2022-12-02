@@ -92,6 +92,7 @@ export default class GameDataSource {
         throw new Error('Insufficient number of selected identity cards.');
       }
       player.identityCard = identityCard;
+      player.unveiled = identityCard.type == IdentityType.Leader;
     }
 
     /// Persist the modified game document.
