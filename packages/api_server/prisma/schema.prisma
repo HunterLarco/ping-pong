@@ -82,6 +82,7 @@ enum AuthScopeCode {
 
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["extendedWhereUnique"]
 }
 
 datasource db {

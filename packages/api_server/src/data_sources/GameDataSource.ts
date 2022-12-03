@@ -31,7 +31,7 @@ export default class GameDataSource {
       throw new Error(`Game ${gameId} cannot accept more players.`);
     }
 
-    await this.#prismaClient.game.updateMany({
+    await this.#prismaClient.game.update({
       where: {
         id: gameId,
         cas: game.cas,
@@ -85,7 +85,6 @@ export default class GameDataSource {
 
     /// Update the game document in-process.
 
-    game.dateStarted = new Date();
     for (const player of game.players) {
       const identityCard = identityCards.pop();
       if (!identityCard) {
@@ -97,20 +96,17 @@ export default class GameDataSource {
 
     /// Persist the modified game document.
 
-    const now = new Date();
-    await this.#prismaClient.game.updateMany({
+    return this.#prismaClient.game.update({
       where: {
         id: game.id,
         cas: game.cas,
       },
       data: {
-        dateStarted: game.dateStarted,
+        dateStarted: new Date(),
         players: game.players,
         cas: { increment: 1 },
       },
     });
-
-    return game;
   }
 
   async unveil(args: {
@@ -122,6 +118,13 @@ export default class GameDataSource {
     const game = await this.#prismaClient.game.update({
       where: {
         id: gameId,
+        players: {
+          none: {
+            userId,
+            unveiled: true,
+            conceded: true,
+          },
+        },
       },
       data: {
         players: {
@@ -140,11 +143,6 @@ export default class GameDataSource {
     return game.players.find((player) => player.userId == userId) || null;
   }
 
-  async getById(id: string): Promise<Game | null> {
-    const game = await this.#batchGetById.load(id);
-    return game || null;
-  }
-
   async concede(args: {
     gameId: string;
     userId: string;
@@ -154,6 +152,12 @@ export default class GameDataSource {
     const game = await this.#prismaClient.game.update({
       where: {
         id: gameId,
+        players: {
+          none: {
+            userId,
+            conceded: true,
+          },
+        },
       },
       data: {
         players: {
@@ -171,6 +175,11 @@ export default class GameDataSource {
     });
 
     return game.players.find((player) => player.userId == userId) || null;
+  }
+
+  async getById(id: string): Promise<Game | null> {
+    const game = await this.#batchGetById.load(id);
+    return game || null;
   }
 
   #batchGetById = new DataLoader(async (ids: Readonly<Array<string>>) => {
