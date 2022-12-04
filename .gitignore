@@ -15,6 +15,7 @@ generated
 coverage
 *.local
 .env
+*.lerna_backup
 
 /cypress/videos/
 /cypress/screenshots/
