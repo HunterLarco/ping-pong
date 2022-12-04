@@ -1,5 +1,8 @@
-import { IdentityCard } from '@prisma/client';
-import { Resolvers } from '@generated/graphql/game_service/resolvers';
+import { IdentityCard, PlayerState as ModelPlayerState } from '@prisma/client';
+import {
+  Resolvers,
+  PlayerState,
+} from '@generated/graphql/game_service/resolvers';
 
 export const resolvers: Resolvers = {
   Game: {
@@ -31,8 +34,17 @@ export const resolvers: Resolvers = {
         : null;
     },
 
-    conceded(parent) {
-      return parent.conceded;
+    state(parent) {
+      switch (parent.state) {
+        case ModelPlayerState.Active:
+          return PlayerState.Active;
+        case ModelPlayerState.Inactive:
+          return PlayerState.Inactive;
+        case ModelPlayerState.Lost:
+          return PlayerState.Lost;
+        case ModelPlayerState.Won:
+          return PlayerState.Won;
+      }
     },
   },
 

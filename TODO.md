@@ -2,7 +2,7 @@
 
 - Features
   - Game state protections (e.g. can't unveil twice, can't concede twice)
-  - Detect wins and force table unveil
+  - Send game win events to subscriptions
   - Life counters
     - Life total
     - Commander damage

@@ -46,39 +46,42 @@ export function getTreacheryDistribution(
   return distribution;
 }
 
-type SortedIdentities = {
-  leaders: Array<IdentityCard>;
-  guardians: Array<IdentityCard>;
-  assassins: Array<IdentityCard>;
-  traitors: Array<IdentityCard>;
+type SortedByIdentity<T> = {
+  leaders: Array<T>;
+  guardians: Array<T>;
+  assassins: Array<T>;
+  traitors: Array<T>;
 };
 
-function sortIdentities(identities: Array<IdentityCard>): SortedIdentities {
-  const sortedIdentities: SortedIdentities = {
+export function sortByIdentity<T>(
+  values: Array<T>,
+  getIdentityType: (value: T) => IdentityType
+): SortedByIdentity<T> {
+  const sortedValues: SortedByIdentity<T> = {
     leaders: [],
     guardians: [],
     assassins: [],
     traitors: [],
   };
 
-  for (const identity of identities) {
-    switch (identity.type) {
+  for (const value of values) {
+    switch (getIdentityType(value)) {
       case IdentityType.Leader:
-        sortedIdentities.leaders.push(identity);
+        sortedValues.leaders.push(value);
         break;
       case IdentityType.Guardian:
-        sortedIdentities.guardians.push(identity);
+        sortedValues.guardians.push(value);
         break;
       case IdentityType.Assassin:
-        sortedIdentities.assassins.push(identity);
+        sortedValues.assassins.push(value);
         break;
       case IdentityType.Traitor:
-        sortedIdentities.traitors.push(identity);
+        sortedValues.traitors.push(value);
         break;
     }
   }
 
-  return sortedIdentities;
+  return sortedValues;
 }
 
 /**
@@ -93,7 +96,7 @@ export async function selectIdentityCards(args: {
   const { count, cards } = args;
 
   const distribution = getTreacheryDistribution(count);
-  const identities = sortIdentities(cards);
+  const identities = sortByIdentity(cards, (card) => card.type);
 
   if (
     identities.leaders.length < distribution.leader ||

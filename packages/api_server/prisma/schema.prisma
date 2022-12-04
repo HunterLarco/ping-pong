@@ -19,7 +19,20 @@ type Player {
   // Will only be populated once the game starts.
   identityCard IdentityCard?
   unveiled Boolean @default(false)
-  conceded Boolean @default(false)
+
+  state PlayerState @default(Active)
+}
+
+enum PlayerState {
+  // Indicates that the player is an active member in the game.
+  Active 
+
+  // Indicates that the player is currently inactive. Right now this has one way
+  // of getting set: they conceded because they died.
+  Inactive
+
+  Lost
+  Won
 }
 
 type IdentityCard {

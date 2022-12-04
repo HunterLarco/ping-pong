@@ -1,10 +1,13 @@
 import { GraphQLError } from 'graphql';
 import DataLoader from 'dataloader';
 import type { PrismaClient, Game, Player } from '@prisma/client';
-import { IdentityType } from '@prisma/client';
+import { IdentityType, PlayerState } from '@prisma/client';
 
 import type MTGTreacheryDataSource from '@/data_sources/MTGTreacheryDataSource';
-import { selectIdentityCards } from '@/util/identityAssignments';
+import {
+  sortByIdentity,
+  selectIdentityCards,
+} from '@/util/identityAssignments';
 
 export default class GameDataSource {
   #prismaClient: PrismaClient;
@@ -29,6 +32,10 @@ export default class GameDataSource {
     if (!game) {
       throw new GraphQLError(`Game ${gameId} not found.`, {
         extensions: { code: 'NOT_FOUND' },
+      });
+    } else if (game.dateStarted) {
+      throw new GraphQLError(`Game ${gameId} is already started.`, {
+        extensions: { code: 'FAILED_PRECONDITION' },
       });
     } else if (game.players.length + userIds.length > 8) {
       throw new GraphQLError(
@@ -157,7 +164,6 @@ export default class GameDataSource {
           none: {
             userId,
             unveiled: true,
-            conceded: true,
           },
         },
       },
@@ -184,32 +190,97 @@ export default class GameDataSource {
   }): Promise<Player | null> {
     const { gameId, userId } = args;
 
-    const game = await this.#prismaClient.game.update({
+    const game = await this.getById(gameId);
+    if (!game) {
+      throw new GraphQLError(`Game ${gameId} not found`, {
+        extensions: { code: 'NOT_FOUND' },
+      });
+    } else if (!game.dateStarted) {
+      throw new GraphQLError(`Game ${gameId} has not been started.`, {
+        extensions: { code: 'FAILED_PRECONDITION' },
+      });
+    }
+
+    const player = game.players.find((player) => player.userId == userId);
+    if (!player) {
+      throw new GraphQLError(
+        `User ${userId} is not a player in game ${gameId}`,
+        { extensions: { code: 'FAILED_PRECONDITION' } }
+      );
+    } else if (player.state != PlayerState.Active) {
+      throw new GraphQLError(
+        `User ${userId} is not an active player in game ${gameId}.`,
+        { extensions: { code: 'FAILED_PRECONDITION' } }
+      );
+    }
+
+    /// Concede the target user.
+
+    player.unveiled = true;
+    player.state = PlayerState.Inactive;
+
+    /// Check for any winners.
+
+    const sortedPlayers = sortByIdentity(
+      game.players,
+      (player) => player.identityCard!.type
+    );
+    const isActive = (player: Player) => player.state == PlayerState.Active;
+    const isInactive = (player: Player) => player.state == PlayerState.Inactive;
+    const markWinner = (player: Player) => {
+      player.unveiled = true;
+      player.state = PlayerState.Won;
+    };
+    const markLoser = (player: Player) => {
+      player.unveiled = true;
+      player.state = PlayerState.Lost;
+    };
+
+    let gameEnded: boolean = false;
+    if (sortedPlayers.leaders.every(isInactive)) {
+      if (sortedPlayers.assassins.some(isActive)) {
+        sortedPlayers.leaders.forEach(markLoser);
+        sortedPlayers.guardians.forEach(markLoser);
+        sortedPlayers.assassins.forEach(markWinner);
+        sortedPlayers.traitors.forEach(markLoser);
+        gameEnded = true;
+      } else {
+        const aliveTraitors = sortedPlayers.traitors.filter(isActive);
+        if (aliveTraitors.length == 1) {
+          sortedPlayers.leaders.forEach(markLoser);
+          sortedPlayers.guardians.forEach(markLoser);
+          sortedPlayers.assassins.forEach(markLoser);
+          sortedPlayers.traitors.forEach(markLoser);
+          markWinner(aliveTraitors[0]);
+          gameEnded = true;
+        }
+      }
+    } else if (
+      sortedPlayers.assassins.every(isInactive) &&
+      sortedPlayers.traitors.every(isInactive)
+    ) {
+      sortedPlayers.leaders.forEach(markWinner);
+      sortedPlayers.guardians.forEach(markWinner);
+      sortedPlayers.assassins.forEach(markLoser);
+      sortedPlayers.traitors.forEach(markLoser);
+      gameEnded = true;
+    }
+
+    const updatedGame = await this.#prismaClient.game.update({
       where: {
-        id: gameId,
-        players: {
-          none: {
-            userId,
-            conceded: true,
-          },
-        },
+        id: game.id,
+        cas: game.cas,
       },
       data: {
-        players: {
-          updateMany: {
-            where: {
-              userId,
-            },
-            data: {
-              unveiled: true,
-              conceded: true,
-            },
-          },
-        },
+        players: game.players,
+        dateEnded: gameEnded ? new Date() : null,
+        cas: { increment: 1 },
       },
     });
 
-    return game.players.find((player) => player.userId == userId) || null;
+    return (
+      updatedGame.players.find((player) => player.userId == userId) || null
+    );
   }
 
   async getById(id: string): Promise<Game | null> {
