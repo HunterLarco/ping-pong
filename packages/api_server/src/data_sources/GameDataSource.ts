@@ -238,18 +238,16 @@ export default class GameDataSource {
 
     let gameEnded: boolean = false;
     if (sortedPlayers.leaders.every(isInactive)) {
+      sortedPlayers.leaders.forEach(markLoser);
+      sortedPlayers.guardians.forEach(markLoser);
       if (sortedPlayers.assassins.some(isActive)) {
-        sortedPlayers.leaders.forEach(markLoser);
-        sortedPlayers.guardians.forEach(markLoser);
         sortedPlayers.assassins.forEach(markWinner);
         sortedPlayers.traitors.forEach(markLoser);
         gameEnded = true;
       } else {
+        sortedPlayers.assassins.forEach(markLoser);
         const aliveTraitors = sortedPlayers.traitors.filter(isActive);
         if (aliveTraitors.length == 1) {
-          sortedPlayers.leaders.forEach(markLoser);
-          sortedPlayers.guardians.forEach(markLoser);
-          sortedPlayers.assassins.forEach(markLoser);
           sortedPlayers.traitors.forEach(markLoser);
           markWinner(aliveTraitors[0]);
           gameEnded = true;
