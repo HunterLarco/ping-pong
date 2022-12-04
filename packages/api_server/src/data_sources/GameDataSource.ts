@@ -161,10 +161,9 @@ export default class GameDataSource {
       where: {
         id: gameId,
         players: {
-          none: {
-            userId,
-            unveiled: true,
-          },
+          userId,
+          unveiled: false,
+          state: PlayerState.Active,
         },
       },
       data: {
