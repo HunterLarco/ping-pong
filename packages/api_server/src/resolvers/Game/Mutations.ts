@@ -24,12 +24,12 @@ export const resolvers: MutationResolvers = {
       });
     }
 
-    const alreadyJoined = await dataSources.Game.addPlayer({
+    const { newPlayers } = await dataSources.Game.addPlayers({
       gameId: request.gameId,
-      userId: actor.id,
+      userIds: [actor.id],
     });
 
-    if (!alreadyJoined) {
+    if (!newPlayers) {
       broadcastGameEvent(request.gameId, {
         type: GameEventType.PlayerJoin,
         timestamp: new Date(),

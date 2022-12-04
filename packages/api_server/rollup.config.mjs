@@ -15,6 +15,7 @@ export default {
     '@graphql-tools/merge',
     '@graphql-tools/schema',
     'body-parser',
+    'chance',
     'cors',
     'dataloader',
     'dotenv',

@@ -19,35 +19,59 @@ export default class GameDataSource {
     });
   }
 
-  async addPlayer(args: { gameId: string; userId: string }): Promise<Boolean> {
-    const { gameId, userId } = args;
+  async addPlayers(args: {
+    gameId: string;
+    userIds: Array<string>;
+  }): Promise<{ newPlayers: Array<Player>; game: Game }> {
+    const { gameId, userIds } = args;
 
     const game = await this.getById(gameId);
     if (!game) {
       throw new GraphQLError(`Game ${gameId} not found.`, {
         extensions: { code: 'NOT_FOUND' },
       });
-    } else if (game.players.find((player) => player.userId == userId)) {
-      console.info(`User ${userId} is already part of game ${gameId}.`);
-      return true;
-    } else if (game.players.length >= 8) {
-      throw new GraphQLError(`Game ${gameId} cannot accept more players.`, {
-        extensions: { code: 'FAILED_PRECONDITION' },
-      });
+    } else if (game.players.length + userIds.length > 8) {
+      throw new GraphQLError(
+        `Game ${gameId} cannot accept ${userIds.length} more players.`,
+        { extensions: { code: 'FAILED_PRECONDITION' } }
+      );
     }
 
-    await this.#prismaClient.game.update({
+    const newPlayerUserIds = userIds.filter(
+      (userId) => !game.players.find((player) => player.userId == userId)
+    );
+    if (!newPlayerUserIds.length) {
+      return {
+        newPlayers: [],
+        game,
+      };
+    }
+
+    const updatedGame = await this.#prismaClient.game.update({
       where: {
         id: gameId,
         cas: game.cas,
       },
       data: {
-        players: { push: [{ userId }] },
+        players: { push: newPlayerUserIds.map((userId) => ({ userId })) },
         cas: { increment: 1 },
       },
     });
 
-    return false;
+    const newPlayers = newPlayerUserIds.map((userId) => {
+      const player = updatedGame.players.find(
+        (player) => player.userId == userId
+      );
+      if (!player) {
+        throw new GraphQLError(`Unexpectedly missing player ${userId}.`);
+      }
+      return player;
+    });
+
+    return {
+      newPlayers,
+      game: updatedGame,
+    };
   }
 
   async getCurrentGame(args: { playerId: string }): Promise<Game | null> {

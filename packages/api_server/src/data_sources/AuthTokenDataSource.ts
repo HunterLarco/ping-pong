@@ -14,12 +14,12 @@ export default class AuthTokenDataSource {
     this.#prismaClient = prismaClient;
   }
 
-  async createUserAuthToken(temporaryUserId: string) {
+  async createUserAuthToken(userId: string) {
     return await this.createAuthToken({
       scopes: [
         {
           code: AuthScopeCode.UserAuth,
-          target: temporaryUserId,
+          target: userId,
         },
       ],
     });

@@ -1,0 +1,23 @@
+#import 'external/Game.graphql';
+#import 'external/User.graphql';
+
+type Mutation {
+  populateGame(request: PopulateGameRequest!): PopulateGameResponse!
+}
+
+### populateGame
+
+input PopulateGameRequest {
+  gameId: ID!
+  numberOfPlayers: Int!
+}
+
+type PopulateGameResponse {
+  game: Game!
+  users: [PopulatedUser!]!
+}
+
+type PopulatedUser {
+  user: User!
+  authToken: ID!
+}
