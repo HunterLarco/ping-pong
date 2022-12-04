@@ -1,5 +1,3 @@
-import graphql from '@rollup/plugin-graphql';
-import alias from '@rollup/plugin-alias';
 import run from '@rollup/plugin-run';
 import typescript from '@rollup/plugin-typescript';
 
@@ -38,15 +36,6 @@ export default {
     'zod',
   ],
   plugins: [
-    graphql(),
-    alias({
-      entries: [
-        {
-          find: /^@generated\/(.*\.graphql)$/,
-          replacement: './generated/$1',
-        },
-      ],
-    }),
     typescript({
       tsconfig: false,
       compilerOptions: {

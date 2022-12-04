@@ -40,8 +40,6 @@
     "@graphql-codegen/typescript-resolvers": "2.7.7",
     "@ping-pong/generate_graphql_ast": "*",
     "@prisma/client": "4.6.1",
-    "@rollup/plugin-alias": "4.0.2",
-    "@rollup/plugin-graphql": "2.0.2",
     "@rollup/plugin-node-resolve": "15.0.1",
     "@rollup/plugin-run": "3.0.1",
     "@rollup/plugin-typescript": "9.0.2",
