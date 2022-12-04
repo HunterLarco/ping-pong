@@ -219,7 +219,12 @@ export default class GameDataSource {
     player.unveiled = true;
     player.state = PlayerState.Inactive;
 
-    /// Check for any winners.
+    /// Evaluate win conditions
+    ///
+    /// This includes both checking if they game ended as well as promoting
+    /// inactive players to players who lost if their team can no longer win.
+    /// For example, assasins are marked as inactive until all assassins are
+    /// inactive, at which point they're all marked as losers.
 
     const sortedPlayers = sortByIdentity(
       game.players,
@@ -227,6 +232,8 @@ export default class GameDataSource {
     );
     const isActive = (player: Player) => player.state == PlayerState.Active;
     const isInactive = (player: Player) => player.state == PlayerState.Inactive;
+    const hasLost = (player: Player) => player.state == PlayerState.Lost;
+
     const markWinner = (player: Player) => {
       player.unveiled = true;
       player.state = PlayerState.Won;
@@ -236,16 +243,34 @@ export default class GameDataSource {
       player.state = PlayerState.Lost;
     };
 
-    let gameEnded: boolean = false;
-    if (sortedPlayers.leaders.every(isInactive)) {
-      sortedPlayers.leaders.forEach(markLoser);
+    // Promote from Inactive -> Lost
+
+    for (const leader of sortedPlayers.leaders) {
+      if (leader.state == PlayerState.Inactive) {
+        leader.state = PlayerState.Lost;
+      }
+    }
+    if (sortedPlayers.leaders.every(hasLost)) {
       sortedPlayers.guardians.forEach(markLoser);
+    }
+    if (sortedPlayers.assassins.every(isInactive)) {
+      sortedPlayers.assassins.forEach(markLoser);
+    }
+    for (const traitor of sortedPlayers.traitors) {
+      if (traitor.state == PlayerState.Inactive) {
+        traitor.state = PlayerState.Lost;
+      }
+    }
+
+    // Check for winners
+
+    let gameEnded: boolean = false;
+    if (sortedPlayers.leaders.every(hasLost)) {
       if (sortedPlayers.assassins.some(isActive)) {
         sortedPlayers.assassins.forEach(markWinner);
         sortedPlayers.traitors.forEach(markLoser);
         gameEnded = true;
       } else {
-        sortedPlayers.assassins.forEach(markLoser);
         const aliveTraitors = sortedPlayers.traitors.filter(isActive);
         if (aliveTraitors.length == 1) {
           sortedPlayers.traitors.forEach(markLoser);
@@ -254,15 +279,15 @@ export default class GameDataSource {
         }
       }
     } else if (
-      sortedPlayers.assassins.every(isInactive) &&
-      sortedPlayers.traitors.every(isInactive)
+      sortedPlayers.assassins.every(hasLost) &&
+      sortedPlayers.traitors.every(hasLost)
     ) {
       sortedPlayers.leaders.forEach(markWinner);
       sortedPlayers.guardians.forEach(markWinner);
-      sortedPlayers.assassins.forEach(markLoser);
-      sortedPlayers.traitors.forEach(markLoser);
       gameEnded = true;
     }
+
+    /// Persist the new game state.
 
     const updatedGame = await this.#prismaClient.game.update({
       where: {

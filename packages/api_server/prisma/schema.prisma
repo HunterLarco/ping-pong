@@ -27,8 +27,8 @@ enum PlayerState {
   // Indicates that the player is an active member in the game.
   Active 
 
-  // Indicates that the player is currently inactive. Right now this has one way
-  // of getting set: they conceded because they died.
+  // Indicates that a player is no longer playing the game, but could still win.
+  // For example, a Guardian who lost when the Leader is still alive.
   Inactive
 
   Lost

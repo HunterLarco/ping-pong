@@ -31,11 +31,8 @@ enum PlayerState {
   Active
 
   """
-  Indicates that a player is no playing in the game. Right now this has one way
-  of getting set: they died.
-
-  Note that dead != lost. For example, a guardian may die in a match but then
-  later win because the Leader wins.
+  Indicates that a player is no longer playing the game, but could still win.
+  For example, a Guardian who lost when the Leader is still alive.
   """
   Inactive
 
