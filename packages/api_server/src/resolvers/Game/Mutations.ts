@@ -1,5 +1,6 @@
-import { IdentityType } from '@prisma/client';
+import { GraphQLError } from 'graphql';
 
+import { IdentityType } from '@prisma/client';
 import {
   MutationResolvers,
   GameEventType,
@@ -18,7 +19,9 @@ export const resolvers: MutationResolvers = {
 
   async joinGame(_0, { request }, { actor, dataSources }) {
     if (!actor) {
-      throw new Error('Unauthorized');
+      throw new GraphQLError('joinGame endpoint requires a logged in user.', {
+        extensions: { code: 'UNAUTHORIZED' },
+      });
     }
 
     const alreadyJoined = await dataSources.Game.addPlayer({
@@ -58,7 +61,9 @@ export const resolvers: MutationResolvers = {
 
   async unveil(_0, { game }, { actor, dataSources }) {
     if (!actor) {
-      throw new Error('Unauthorized');
+      throw new GraphQLError('unveil endpoint requires a logged in user.', {
+        extensions: { code: 'UNAUTHORIZED' },
+      });
     }
 
     const player = await dataSources.Game.unveil({
@@ -67,7 +72,10 @@ export const resolvers: MutationResolvers = {
     });
 
     if (!player) {
-      throw new Error(`User ${actor.id} is not a player in game ${game}.`);
+      throw new GraphQLError(
+        `User ${actor.id} is not a player in game ${game}.`,
+        { extensions: { code: 'FORBIDDEN' } }
+      );
     }
 
     broadcastGameEvent(game, {
@@ -82,7 +90,9 @@ export const resolvers: MutationResolvers = {
 
   async concede(_0, { game }, { actor, dataSources }) {
     if (!actor) {
-      throw new Error('Unauthorized');
+      throw new GraphQLError('concede endpoint requires a logged in user.', {
+        extensions: { code: 'UNAUTHORIZED' },
+      });
     }
 
     const player = await dataSources.Game.concede({
@@ -91,7 +101,10 @@ export const resolvers: MutationResolvers = {
     });
 
     if (!player) {
-      throw new Error(`User ${actor.id} is not a player in game ${game}.`);
+      throw new GraphQLError(
+        `User ${actor.id} is not a player in game ${game}.`,
+        { extensions: { code: 'FORBIDDEN' } }
+      );
     }
 
     broadcastGameEvent(game, {

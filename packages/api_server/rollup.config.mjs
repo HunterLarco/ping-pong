@@ -23,6 +23,7 @@ export default {
     'expiry-map',
     'express',
     'fuzzy-search',
+    'graphql',
     'graphql-scalars',
     'graphql-subscriptions',
     'graphql-ws/lib/use/ws',

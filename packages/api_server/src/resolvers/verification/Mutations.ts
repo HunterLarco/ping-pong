@@ -1,3 +1,5 @@
+import { GraphQLError } from 'graphql';
+
 import { MutationResolvers } from '@generated/graphql/verification_service/resolvers';
 import {
   issuePhoneVerification,
@@ -30,7 +32,9 @@ export const resolvers: MutationResolvers = {
     });
 
     if (!isValid) {
-      throw new Error('Unauthorized');
+      throw new GraphQLError(`Incorrect one time password.`, {
+        extensions: { code: 'UNAUTHORIZED' },
+      });
     }
 
     const verificationToken =

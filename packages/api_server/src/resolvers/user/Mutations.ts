@@ -1,3 +1,5 @@
+import { GraphQLError } from 'graphql';
+
 import { MutationResolvers } from '@generated/graphql/user_service/resolvers';
 import { AuthScopeCode } from '@prisma/client';
 
@@ -29,7 +31,10 @@ export const resolvers: MutationResolvers = {
     const user = await dataSources.User.getByPhoneNumber(phoneNumber);
 
     if (!user) {
-      throw new Error('User not found');
+      throw new GraphQLError(
+        `User for phone number ${phoneNumber} not found.`,
+        { extensions: { code: 'NOT_FOUND' } }
+      );
     }
 
     const authToken = await dataSources.AuthToken.createUserAuthToken(user.id);
