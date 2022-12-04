@@ -55,7 +55,10 @@ export default {
         target: 'es2016',
       },
     }),
-    process.env.NODE_ENV == 'development' && run(),
+    process.env.NODE_ENV == 'development' &&
+      run({
+        execArgv: ['-r', 'source-map-support/register'],
+      }),
   ],
   watch: {
     buildDelay: 500,

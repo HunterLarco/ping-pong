@@ -29,6 +29,7 @@
     "p-memoize": "7.1.1",
     "pick-random": "4.0.0",
     "shuffle-array": "1.0.1",
+    "source-map-support": "0.5.21",
     "twilio": "3.83.3",
     "uuid": "9.0.0",
     "ws": "8.11.0",
