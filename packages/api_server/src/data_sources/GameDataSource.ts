@@ -1,3 +1,4 @@
+import { GraphQLError } from 'graphql';
 import DataLoader from 'dataloader';
 import type { PrismaClient, Game, Player } from '@prisma/client';
 import { IdentityType } from '@prisma/client';
@@ -23,12 +24,16 @@ export default class GameDataSource {
 
     const game = await this.getById(gameId);
     if (!game) {
-      throw new Error(`Game ${gameId} not found.`);
+      throw new GraphQLError(`Game ${gameId} not found.`, {
+        extensions: { code: 'NOT_FOUND' },
+      });
     } else if (game.players.find((player) => player.userId == userId)) {
       console.info(`User ${userId} is already part of game ${gameId}.`);
       return true;
     } else if (game.players.length >= 8) {
-      throw new Error(`Game ${gameId} cannot accept more players.`);
+      throw new GraphQLError(`Game ${gameId} cannot accept more players.`, {
+        extensions: { code: 'FAILED_PRECONDITION' },
+      });
     }
 
     await this.#prismaClient.game.update({
@@ -73,9 +78,13 @@ export default class GameDataSource {
 
     const game = await this.getById(gameId);
     if (!game) {
-      throw new Error(`Game ${gameId} not found.`);
+      throw new GraphQLError(`Game ${gameId} not found.`, {
+        extensions: { code: 'NOT_FOUND' },
+      });
     } else if (game.dateStarted) {
-      throw new Error(`Game ${gameId} has already been started.`);
+      throw new GraphQLError(`Game ${gameId} has already been started.`, {
+        extensions: { code: 'FAILED_PRECONDITION' },
+      });
     }
 
     const identityCards = await selectIdentityCards({
@@ -88,7 +97,9 @@ export default class GameDataSource {
     for (const player of game.players) {
       const identityCard = identityCards.pop();
       if (!identityCard) {
-        throw new Error('Insufficient number of selected identity cards.');
+        throw new GraphQLError(
+          'Insufficient number of selected identity cards.'
+        );
       }
       player.identityCard = identityCard;
       player.unveiled = identityCard.type == IdentityType.Leader;

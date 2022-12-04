@@ -1,3 +1,4 @@
+import { GraphQLError } from 'graphql';
 import pMemoize from 'p-memoize';
 import ExpiryMap from 'expiry-map';
 import fetch from 'node-fetch';
@@ -36,7 +37,7 @@ function convertIdentityType(typeString: string): IdentityType {
     case 'traitor':
       return IdentityType.Traitor;
   }
-  throw new Error(`Unknown identity type '${typeString}'`);
+  throw new GraphQLError(`Unknown identity type '${typeString}'`);
 }
 
 const fetchOracleData = pMemoize(

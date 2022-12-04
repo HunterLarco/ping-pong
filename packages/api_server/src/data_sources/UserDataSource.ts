@@ -1,3 +1,4 @@
+import { GraphQLError } from 'graphql';
 import DataLoader from 'dataloader';
 import type { PrismaClient, User } from '@prisma/client';
 
@@ -47,7 +48,9 @@ export default class UserDataSource {
   async getByIdOrThrow(id: string): Promise<User> {
     const user = await this.getById(id);
     if (!user) {
-      throw new Error(`User ${id} not found.`);
+      throw new GraphQLError(`User ${id} not found.`, {
+        extensions: { code: 'NOT_FOUND' },
+      });
     }
     return user;
   }

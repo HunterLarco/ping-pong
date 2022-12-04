@@ -1,3 +1,4 @@
+import { GraphQLError } from 'graphql';
 import pickRandom from 'pick-random';
 import shuffleArray from 'shuffle-array';
 
@@ -16,7 +17,9 @@ export function getTreacheryDistribution(
   players: number
 ): TreacheryDistribution {
   if (players < 4 || players > 8) {
-    throw new Error(`Treachery requires 4-8 players.`);
+    throw new GraphQLError(`Treachery requires 4-8 players.`, {
+      extensions: { code: 'FAILED_PRECONDITION' },
+    });
   }
 
   const distribution = {
@@ -89,12 +92,8 @@ export async function selectIdentityCards(args: {
 }): Promise<Array<IdentityCard>> {
   const { count, cards } = args;
 
-  if (count < 4 || count > 8) {
-    throw new Error(`Treachery requires 4-8 players.`);
-  }
-
-  const identities = sortIdentities(cards);
   const distribution = getTreacheryDistribution(count);
+  const identities = sortIdentities(cards);
 
   if (
     identities.leaders.length < distribution.leader ||
@@ -102,7 +101,9 @@ export async function selectIdentityCards(args: {
     identities.assassins.length < distribution.assassin ||
     identities.traitors.length < distribution.traitor
   ) {
-    throw new Error('Not enough identity cards to pick from.');
+    throw new GraphQLError(`Not enough identity cards to pick from.`, {
+      extensions: { code: 'FAILED_PRECONDITION' },
+    });
   }
 
   return shuffleArray([

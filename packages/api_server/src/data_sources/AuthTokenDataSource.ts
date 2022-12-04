@@ -1,3 +1,4 @@
+import { GraphQLError } from 'graphql';
 import DataLoader from 'dataloader';
 import {
   PrismaClient,
@@ -92,7 +93,9 @@ export default class AuthTokenDataSource {
     return requiredScopeCodes.map((scopeCode) => {
       const target = targetsByCode.get(scopeCode);
       if (target === undefined) {
-        throw new Error(`Token ${id} is missing code ${scopeCode}.`);
+        throw new GraphQLError(`Token ${id} is missing code ${scopeCode}.`, {
+          extensions: { code: 'FORBIDDEN' },
+        });
       }
       return target;
     });
