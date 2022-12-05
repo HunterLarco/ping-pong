@@ -1,4 +1,4 @@
-import { createToaster } from "@meforma/vue-toaster"
+import { createToaster } from '@meforma/vue-toaster';
 
 const toaster = createToaster({
   position: 'bottom',

@@ -21,7 +21,9 @@ function tryEmitClick() {
 </script>
 
 <template>
-  <div class="Button" :disabled="disabled || undefined" @click="tryEmitClick">{{ text }}</div>
+  <div class="Button" :disabled="disabled || undefined" @click="tryEmitClick">
+    {{ text }}
+  </div>
 </template>
 
 <style scoped lang="scss">

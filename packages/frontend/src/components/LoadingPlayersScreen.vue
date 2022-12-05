@@ -48,19 +48,20 @@ function cancelGame() {
 <template>
   <div class="Host">
     <div class="Frame">
-      <div class="Qrcode">
+      <div class="ActionBar">
         <QrcodeVue :value="joinUrl" :size="200" />
+        <MenuButton
+          text="Start Game"
+          @click="startGame()"
+          :disabled="game.players.length < 4"
+        />
+        <MenuButton text="Cancel Game" @click="cancelGame()" />
       </div>
       <div class="Players">
-        <div
-          class="Player"
-          v-for="player of game.players"
-          :key="player.user.id"
-        >
+        <div class="SectionTitle">Ready Players:</div>
+        <div v-for="player of game.players" :key="player.user.id">
           {{ player.user.name }}
         </div>
-          <MenuButton text="Start Game" @click="startGame()" :disabled="game.players.length < 4" />
-        <MenuButton text="Cancel Game" @click="cancelGame()" />
       </div>
     </div>
   </div>
@@ -80,8 +81,12 @@ function cancelGame() {
   max-width: 600px;
 }
 
-.Qrcode {
+.ActionBar {
   flex-shrink: 0;
+
+  & > * {
+    margin: 10px 0;
+  }
 }
 
 .Players {
@@ -89,8 +94,7 @@ function cancelGame() {
   padding-left: 20px;
 }
 
-.Player {
-  font-size: 18px;
-  padding: 4px;
+.SectionTitle {
+  font-weight: 700;
 }
 </style>
