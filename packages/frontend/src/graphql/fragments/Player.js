@@ -13,5 +13,6 @@ export default gql`
       image
       source
     }
+    unveiled
   }
 `;

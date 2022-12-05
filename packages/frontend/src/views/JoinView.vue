@@ -65,7 +65,7 @@ const canUnveil = computed(() => {
   if (!myPlayer.value) {
     return false;
   }
-  return myPlayer.value.state == 'Active' && !myPlayer.value.identity;
+  return myPlayer.value.state == 'Active' && !myPlayer.value.unveiled;
 });
 
 const canConcede = computed(() => {

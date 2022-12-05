@@ -34,6 +34,10 @@ export const resolvers: Resolvers = {
         : null;
     },
 
+    unveiled(parent) {
+      return parent.unveiled;
+    },
+
     state(parent) {
       switch (parent.state) {
         case ModelPlayerState.Active:

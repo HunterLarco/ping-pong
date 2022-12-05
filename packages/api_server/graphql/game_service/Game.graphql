@@ -21,6 +21,8 @@ type Player {
   """
   identity: IdentityCard
 
+  unveiled: Boolean!
+
   state: PlayerState!
 }
 
