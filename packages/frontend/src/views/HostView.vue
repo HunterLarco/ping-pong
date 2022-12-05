@@ -5,120 +5,20 @@ import { useRouter, useRoute } from 'vue-router';
 import gql from 'graphql-tag';
 import cloneDeep from 'clone-deep';
 
+import getGameByIdDocument from '@/graphql/getGameById';
+import spectateDocument from '@/graphql/spectate';
+
 import Player from '@/components/Player.vue';
 
 const route = useRoute();
 const router = useRouter();
 
-const { result, subscribeToMore } = useQuery(
-  gql`
-    query getGame($gameId: ID!) {
-      game: getGameById(id: $gameId) {
-        dateCreated
-        dateEnded
-        dateStarted
-        players {
-          user {
-            name
-            id
-          }
-          state
-          identity {
-            name
-            type
-            image
-            source
-          }
-        }
-      }
-    }
-  `,
-  () => ({
-    gameId: route.params.gameId,
-  })
-);
+const { result, subscribeToMore } = useQuery(getGameByIdDocument, () => ({
+  gameId: route.params.gameId,
+}));
 
 subscribeToMore(() => ({
-  document: gql`
-    subscription onGameEvent($request: SpectateRequest!) {
-      spectate(request: $request) {
-        timestamp
-        type
-        details {
-          ... on PlayerJoinEvent {
-            player {
-              user {
-                name
-                id
-              }
-              state
-              identity {
-                name
-                type
-                image
-                source
-              }
-            }
-          }
-          ... on GameStartEvent {
-            game {
-              dateCreated
-              dateEnded
-              dateStarted
-              players {
-                user {
-                  name
-                  id
-                }
-                state
-                identity {
-                  name
-                  type
-                  image
-                  source
-                }
-              }
-            }
-          }
-          ... on PlayerUpdateEvent {
-            player {
-              user {
-                name
-                id
-              }
-              state
-              identity {
-                name
-                type
-                image
-                source
-              }
-            }
-          }
-          ... on GameEndEvent {
-            game {
-              dateCreated
-              dateEnded
-              dateStarted
-              players {
-                user {
-                  name
-                  id
-                }
-                state
-                identity {
-                  name
-                  type
-                  image
-                  source
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  `,
+  document: spectateDocument,
   variables: {
     request: {
       gameId: route.params.gameId,
