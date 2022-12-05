@@ -175,7 +175,7 @@ export default class GameDataSource {
 
     return {
       game,
-      player: game.players.find((player) => (player.userId = userId))!,
+      player: game.players.find((player) => player.userId == userId)!,
     };
   }
 
