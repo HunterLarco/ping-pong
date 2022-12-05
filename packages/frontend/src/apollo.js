@@ -1,6 +1,8 @@
 import {
   HttpLink,
   split,
+  concat,
+  ApolloLink,
   ApolloClient,
   InMemoryCache,
 } from '@apollo/client/core';
@@ -31,9 +33,21 @@ const link = split(
   httpLink
 );
 
+const authorization = new ApolloLink((operation, forward) => {
+  const token = localStorage.getItem('authorization');
+  if (token) {
+    operation.setContext({
+      headers: {
+        Authorization: token,
+      },
+    });
+  }
+  return forward(operation);
+});
+
 const apolloClient = new ApolloClient({
   cache: new InMemoryCache(),
-  link,
+  link: concat(authorization, link),
 });
 
 provideApolloClient(apolloClient);

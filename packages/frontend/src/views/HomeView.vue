@@ -3,46 +3,19 @@ import { watch } from 'vue';
 import { useQuery, useMutation, useSubscription } from '@vue/apollo-composable';
 import gql from 'graphql-tag';
 
-const kGetBooksQuery = gql`
+const kGetMe = gql`
   query Query {
-    books {
+    me {
       id
-      author
-      title
-      normalizedTitle
+      name
+      currentGame {
+        id
+      }
     }
   }
 `;
 
-const { result, refetch, subscribeToMore } = useQuery(kGetBooksQuery);
-
-subscribeToMore({
-  document: gql`
-    subscription BookAdded {
-      bookAdded {
-        id
-        title
-        normalizedTitle
-        author
-      }
-    }
-  `,
-  updateQuery(prev, { subscriptionData }) {
-    if (!subscriptionData.data) {
-      return prev;
-    }
-
-    for (const book of prev.books) {
-      if (book.id == subscriptionData.data.bookAdded.id) {
-        return prev;
-      }
-    }
-
-    return {
-      books: [...prev.books, subscriptionData.data.bookAdded],
-    };
-  },
-});
+const { result, refetch } = useQuery(kGetMe);
 
 const { mutate: addBook } = useMutation(
   gql`
