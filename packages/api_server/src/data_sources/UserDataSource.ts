@@ -5,7 +5,8 @@ import type { PrismaClient, User } from '@prisma/client';
 export default class UserDataSource {
   #prismaClient: PrismaClient;
 
-  constructor(prismaClient: PrismaClient) {
+  constructor(args: { prismaClient: PrismaClient }) {
+    const { prismaClient } = args;
     this.#prismaClient = prismaClient;
   }
 

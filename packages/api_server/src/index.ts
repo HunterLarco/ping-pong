@@ -31,6 +31,7 @@ async function main() {
     {
       schema,
       async context({ connectionParams }) {
+        console.log(100);
         return createRequestContext({
           globalContext,
           authorization:

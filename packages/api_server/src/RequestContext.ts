@@ -1,16 +1,18 @@
 import { User, Game, AuthScopeCode } from '@prisma/client';
 
 import type { GlobalContext } from '@/GlobalContext';
-import MTGTreacheryDataSource from '@/data_sources/MTGTreacheryDataSource';
-import GameDataSource from '@/data_sources/GameDataSource';
 import AuthTokenDataSource from '@/data_sources/AuthTokenDataSource';
+import GameDataSource from '@/data_sources/GameDataSource';
+import GameEventPubSub from '@/data_sources/GameEventPubSub';
+import MTGTreacheryDataSource from '@/data_sources/MTGTreacheryDataSource';
 import UserDataSource from '@/data_sources/UserDataSource';
 
 type DataSources = {
-  Game: GameDataSource;
   AuthToken: AuthTokenDataSource;
-  User: UserDataSource;
+  Game: GameDataSource;
+  GameEvent: GameEventPubSub;
   MTGTreachery: MTGTreacheryDataSource;
+  User: UserDataSource;
 };
 
 export type RequestContext = {
@@ -27,10 +29,11 @@ export async function createRequestContext(args: {
   const { globalContext, authorization } = args;
 
   const dataSources: DataSources = {
-    Game: new GameDataSource(globalContext.prisma),
-    AuthToken: new AuthTokenDataSource(globalContext.prisma),
-    User: new UserDataSource(globalContext.prisma),
+    AuthToken: new AuthTokenDataSource({ prismaClient: globalContext.prisma }),
+    Game: new GameDataSource({ prismaClient: globalContext.prisma }),
+    GameEvent: new GameEventPubSub(),
     MTGTreachery: new MTGTreacheryDataSource(),
+    User: new UserDataSource({ prismaClient: globalContext.prisma }),
   };
 
   return {

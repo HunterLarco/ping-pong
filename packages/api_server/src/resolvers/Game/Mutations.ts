@@ -6,8 +6,6 @@ import {
   GameEventType,
 } from '@generated/graphql/game_service/resolvers';
 
-import { broadcastGameEvent } from '@/resolvers/game/Subscriptions';
-
 export const resolvers: MutationResolvers = {
   async createGame(_0, _1, { dataSources }) {
     const game = await dataSources.Game.createGame();
@@ -29,8 +27,8 @@ export const resolvers: MutationResolvers = {
       userIds: [actor.id],
     });
 
-    if (!newPlayers) {
-      broadcastGameEvent(request.gameId, {
+    if (newPlayers) {
+      dataSources.GameEvent.publish(request.gameId, {
         type: GameEventType.PlayerJoin,
         timestamp: new Date(),
         details: {
@@ -47,7 +45,7 @@ export const resolvers: MutationResolvers = {
       identityDataSource: dataSources.MTGTreachery,
     });
 
-    broadcastGameEvent(request.gameId, {
+    dataSources.GameEvent.publish(request.gameId, {
       type: GameEventType.GameStart,
       timestamp: new Date(),
       details: {
@@ -78,7 +76,7 @@ export const resolvers: MutationResolvers = {
       );
     }
 
-    broadcastGameEvent(game, {
+    dataSources.GameEvent.publish(game, {
       type: GameEventType.PlayerUnveil,
       timestamp: new Date(),
       details: {
@@ -107,7 +105,7 @@ export const resolvers: MutationResolvers = {
       );
     }
 
-    broadcastGameEvent(game, {
+    dataSources.GameEvent.publish(game, {
       type: GameEventType.PlayerConcede,
       timestamp: new Date(),
       details: {

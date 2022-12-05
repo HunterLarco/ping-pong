@@ -10,7 +10,8 @@ import {
 export default class AuthTokenDataSource {
   #prismaClient: PrismaClient;
 
-  constructor(prismaClient: PrismaClient) {
+  constructor(args: { prismaClient: PrismaClient }) {
+    const { prismaClient } = args;
     this.#prismaClient = prismaClient;
   }
 

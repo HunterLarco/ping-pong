@@ -12,7 +12,8 @@ import {
 export default class GameDataSource {
   #prismaClient: PrismaClient;
 
-  constructor(prismaClient: PrismaClient) {
+  constructor(args: { prismaClient: PrismaClient }) {
+    const { prismaClient } = args;
     this.#prismaClient = prismaClient;
   }
 
