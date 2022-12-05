@@ -3,5 +3,17 @@ import { RouterView } from 'vue-router';
 </script>
 
 <template>
-  <RouterView />
+  <div class="App">
+    <RouterView />
+  </div>
 </template>
+
+<style scoped lang="scss">
+@import '@/styles/layout';
+
+.App {
+  @include layout-fill;
+
+  min-height: 100vh;
+}
+</style>

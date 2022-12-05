@@ -8,7 +8,8 @@ import cloneDeep from 'clone-deep';
 import getGameByIdDocument from '@/graphql/getGameById';
 import spectateDocument from '@/graphql/spectate';
 
-import Player from '@/components/Player.vue';
+import LoadingPlayersScreen from '@/components/LoadingPlayersScreen.vue';
+import ActiveGameScreen from '@/components/ActiveGameScreen.vue';
 
 const route = useRoute();
 const router = useRouter();
@@ -51,28 +52,22 @@ subscribeToMore(() => ({
 </script>
 
 <template>
-  <div class="Host">
-    <div class="PlayerGrid">
-      <template v-if="result">
-        <Player
-          :data="player"
-          v-for="player in result.game.players"
-          :key="player.user.id"
-        />
-      </template>
-    </div>
+  <div class="Screen">
+    <template v-if="result">
+      <LoadingPlayersScreen
+        class="Screen"
+        :game="result.game"
+        v-if="!result.game.dateStarted"
+      />
+      <ActiveGameScreen class="Screen" :game="result.game" v-else />
+    </template>
   </div>
 </template>
 
 <style scoped lang="scss">
 @import '@/styles/layout';
 
-.Host {
+.Screen {
   @include layout-fill;
-}
-
-.PlayerGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, 300px);
 }
 </style>
