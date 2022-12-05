@@ -4,6 +4,7 @@ import { useMutation } from '@vue/apollo-composable';
 import { useRouter } from 'vue-router';
 import gql from 'graphql-tag';
 
+import MenuButtonList from '@/components/MenuButtonList.vue';
 import MenuButton from '@/components/MenuButton.vue';
 
 const router = useRouter();
@@ -47,8 +48,10 @@ function hostGame() {
         <img class="LogoImage" src="@/assets/TreacheryLogo.png" />
         <div class="LogoText">MTG Treachery</div>
       </div>
-      <MenuButton :disabled="loading" text="Host Game" @click="hostGame()" />
-      <MenuButton :disabled="loading" text="Play in a Game" />
+      <MenuButtonList>
+        <MenuButton :disabled="loading" text="Host Game" @click="hostGame()" />
+        <MenuButton :disabled="loading" text="Play in a Game" />
+      </MenuButtonList>
     </div>
   </div>
 </template>
@@ -86,9 +89,5 @@ function hostGame() {
   overflow: hidden;
   text-align: center;
   text-overflow: ellipsis;
-}
-
-.Button {
-  margin: 10px 0;
 }
 </style>

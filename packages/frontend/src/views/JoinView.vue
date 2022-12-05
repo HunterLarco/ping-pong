@@ -4,6 +4,9 @@ import { useQuery, useMutation } from '@vue/apollo-composable';
 import { useRoute } from 'vue-router';
 import cloneDeep from 'clone-deep';
 
+import MenuButtonList from '@/components/MenuButtonList.vue';
+import MenuButton from '@/components/MenuButton.vue';
+
 import concedeDocument from '@/graphql/concede';
 import getGameByIdDocument from '@/graphql/getGameById';
 import meDocument from '@/graphql/me';
@@ -89,8 +92,16 @@ function concede() {
       Waiting for game to start.
     </template>
     <template v-else>
-      <button :disabled="!canUnveil" @click="unveil()">Unveil</button>
-      <button :disabled="!canConcede" @click="concede()">Concede</button>
+      <MenuButtonList class="Buttons">
+        <MenuButton :disabled="!canUnveil" @click="unveil()" text="Unveil" />
+        <MenuButton :disabled="!canConcede" @click="concede()" text="Concede" />
+      </MenuButtonList>
     </template>
   </div>
 </template>
+
+<style scoped lang="scss">
+.Buttons {
+  margin: 10px;
+}
+</style>

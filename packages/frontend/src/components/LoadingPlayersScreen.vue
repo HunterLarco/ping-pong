@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router';
 import { useMutation } from '@vue/apollo-composable';
 
 import QrcodeVue from 'qrcode.vue';
+import MenuButtonList from '@/components/MenuButtonList.vue';
 import MenuButton from '@/components/MenuButton.vue';
 
 import startGameDocument from '@/graphql/startGame';
@@ -50,12 +51,14 @@ function cancelGame() {
     <div class="Frame">
       <div class="ActionBar">
         <QrcodeVue :value="joinUrl" :size="200" />
-        <MenuButton
-          text="Start Game"
-          @click="startGame()"
-          :disabled="game.players.length < 4"
-        />
-        <MenuButton text="Cancel Game" @click="cancelGame()" />
+        <MenuButtonList>
+          <MenuButton
+            text="Start Game"
+            @click="startGame()"
+            :disabled="game.players.length < 4"
+          />
+          <MenuButton text="Cancel Game" @click="cancelGame()" />
+        </MenuButtonList>
       </div>
       <div class="Players">
         <div class="SectionTitle">Ready Players:</div>
@@ -83,10 +86,6 @@ function cancelGame() {
 
 .ActionBar {
   flex-shrink: 0;
-
-  & > * {
-    margin: 10px 0;
-  }
 }
 
 .Players {
