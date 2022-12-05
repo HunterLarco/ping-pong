@@ -1,6 +1,5 @@
 <script setup>
 import { useQuery } from '@vue/apollo-composable';
-import { onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import gql from 'graphql-tag';
 import cloneDeep from 'clone-deep';
