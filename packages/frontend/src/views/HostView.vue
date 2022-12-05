@@ -5,6 +5,8 @@ import { useRouter, useRoute } from 'vue-router';
 import gql from 'graphql-tag';
 import cloneDeep from 'clone-deep';
 
+import Player from '@/components/Player.vue';
+
 const route = useRoute();
 const router = useRouter();
 
@@ -149,7 +151,28 @@ subscribeToMore(() => ({
 </script>
 
 <template>
-  <div>
-    {{ result }}
+  <div class="Host">
+    <div class="PlayerGrid">
+      <template v-if="result">
+        <Player
+          :data="player"
+          v-for="player in result.game.players"
+          :key="player.user.id"
+        />
+      </template>
+    </div>
   </div>
 </template>
+
+<style scoped lang="scss">
+@import '@/styles/layout';
+
+.Host {
+  @include layout-fill;
+}
+
+.PlayerGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 300px);
+}
+</style>
