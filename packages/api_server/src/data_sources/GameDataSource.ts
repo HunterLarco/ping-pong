@@ -11,13 +11,19 @@ import {
 
 export default class GameDataSource {
   #prismaClient: PrismaClient;
+  #identityDataSource: MTGTreacheryDataSource;
 
-  constructor(args: { prismaClient: PrismaClient }) {
-    const { prismaClient } = args;
+  constructor(args: {
+    prismaClient: PrismaClient;
+    identityDataSource: MTGTreacheryDataSource;
+  }) {
+    const { prismaClient, identityDataSource } = args;
+
     this.#prismaClient = prismaClient;
+    this.#identityDataSource = identityDataSource;
   }
 
-  async createGame() {
+  async createGame(): Promise<Game> {
     return await this.#prismaClient.game.create({
       data: {},
     });
@@ -26,7 +32,7 @@ export default class GameDataSource {
   async addPlayers(args: {
     gameId: string;
     userIds: Array<string>;
-  }): Promise<{ newPlayers: Array<Player>; game: Game }> {
+  }): Promise<{ game: Game; newPlayers: Array<Player> }> {
     const { gameId, userIds } = args;
 
     const game = await this.getById(gameId);
@@ -45,10 +51,14 @@ export default class GameDataSource {
       );
     }
 
-    const newPlayerUserIds = userIds.filter(
-      (userId) => !game.players.find((player) => player.userId == userId)
+    const existingUserIds = new Set(
+      game.players.map((player) => player.userId)
     );
-    if (!newPlayerUserIds.length) {
+    const userIdsToAdd = userIds.filter(
+      (userId) => !existingUserIds.has(userId)
+    );
+
+    if (!userIdsToAdd) {
       return {
         newPlayers: [],
         game,
@@ -61,52 +71,21 @@ export default class GameDataSource {
         cas: game.cas,
       },
       data: {
-        players: { push: newPlayerUserIds.map((userId) => ({ userId })) },
+        players: { push: userIdsToAdd.map((userId) => ({ userId })) },
         cas: { increment: 1 },
       },
     });
 
-    const newPlayers = newPlayerUserIds.map((userId) => {
-      const player = updatedGame.players.find(
-        (player) => player.userId == userId
-      );
-      if (!player) {
-        throw new GraphQLError(`Unexpectedly missing player ${userId}.`);
-      }
-      return player;
-    });
-
     return {
-      newPlayers,
+      newPlayers: updatedGame.players.filter(
+        (player) => !existingUserIds.has(player.userId)
+      ),
       game: updatedGame,
     };
   }
 
-  async getCurrentGame(args: { playerId: string }): Promise<Game | null> {
-    const { playerId } = args;
-
-    return await this.#prismaClient.game.findFirst({
-      where: {
-        players: {
-          some: {
-            userId: playerId,
-          },
-        },
-        dateEnded: {
-          isSet: false,
-        },
-      },
-      orderBy: {
-        dateCreated: 'desc',
-      },
-    });
-  }
-
-  async startGame(args: {
-    gameId: string;
-    identityDataSource: MTGTreacheryDataSource;
-  }): Promise<Game> {
-    const { gameId, identityDataSource } = args;
+  async startGame(args: { gameId: string }): Promise<Game> {
+    const { gameId } = args;
 
     const game = await this.getById(gameId);
     if (!game) {
@@ -121,7 +100,7 @@ export default class GameDataSource {
 
     const identityCards = await selectIdentityCards({
       count: game.players.length,
-      cards: await identityDataSource.fetchAll(),
+      cards: await this.#identityDataSource.fetchAll(),
     });
 
     /// Update the game document in-process.
@@ -155,16 +134,24 @@ export default class GameDataSource {
   async unveil(args: {
     gameId: string;
     userId: string;
-  }): Promise<Player | null> {
+  }): Promise<{ game: Game; player: Player }> {
     const { gameId, userId } = args;
+
+    // Even though we don't actually need to fetch the game document and instead
+    // prefer to use an atomic update, it's still nice to run optimistic
+    // validation for better error messages when things fail (e.g. user isn't a
+    // player in the game).
+    await this.#validateActivePlayer({ gameId, userId });
 
     const game = await this.#prismaClient.game.update({
       where: {
         id: gameId,
         players: {
-          userId,
-          unveiled: false,
-          state: PlayerState.Active,
+          some: {
+            userId,
+            unveiled: false,
+            state: PlayerState.Active,
+          },
         },
       },
       data: {
@@ -181,43 +168,34 @@ export default class GameDataSource {
       },
     });
 
-    return game.players.find((player) => player.userId == userId) || null;
+    return {
+      game,
+      player: game.players.find((player) => (player.userId = userId))!,
+    };
   }
 
+  /**
+   * Because conceding can have impact on other players: e.g. if the leader
+   * concedes the game ends. This method returns both the updated game state and
+   * a list of players impacted by the concession.
+   */
   async concede(args: {
     gameId: string;
     userId: string;
-  }): Promise<Player | null> {
+  }): Promise<{ game: Game; modifiedPlayers: Array<Player> }> {
     const { gameId, userId } = args;
 
-    const game = await this.getById(gameId);
-    if (!game) {
-      throw new GraphQLError(`Game ${gameId} not found`, {
-        extensions: { code: 'NOT_FOUND' },
-      });
-    } else if (!game.dateStarted) {
-      throw new GraphQLError(`Game ${gameId} has not been started.`, {
-        extensions: { code: 'FAILED_PRECONDITION' },
-      });
-    }
-
-    const player = game.players.find((player) => player.userId == userId);
-    if (!player) {
-      throw new GraphQLError(
-        `User ${userId} is not a player in game ${gameId}`,
-        { extensions: { code: 'FAILED_PRECONDITION' } }
-      );
-    } else if (player.state != PlayerState.Active) {
-      throw new GraphQLError(
-        `User ${userId} is not an active player in game ${gameId}.`,
-        { extensions: { code: 'FAILED_PRECONDITION' } }
-      );
-    }
+    const { game, player } = await this.#validateActivePlayer({
+      gameId,
+      userId,
+    });
+    const modifiedPlayerIds = new Set<string>();
 
     /// Concede the target user.
 
     player.unveiled = true;
     player.state = PlayerState.Inactive;
+    modifiedPlayerIds.add(player.userId);
 
     /// Evaluate win conditions
     ///
@@ -237,17 +215,19 @@ export default class GameDataSource {
     const markWinner = (player: Player) => {
       player.unveiled = true;
       player.state = PlayerState.Won;
+      modifiedPlayerIds.add(player.userId);
     };
     const markLoser = (player: Player) => {
       player.unveiled = true;
       player.state = PlayerState.Lost;
+      modifiedPlayerIds.add(player.userId);
     };
 
     // Promote from Inactive -> Lost
 
     for (const leader of sortedPlayers.leaders) {
       if (leader.state == PlayerState.Inactive) {
-        leader.state = PlayerState.Lost;
+        markLoser(leader);
       }
     }
     if (sortedPlayers.leaders.every(hasLost)) {
@@ -258,7 +238,7 @@ export default class GameDataSource {
     }
     for (const traitor of sortedPlayers.traitors) {
       if (traitor.state == PlayerState.Inactive) {
-        traitor.state = PlayerState.Lost;
+        markLoser(traitor);
       }
     }
 
@@ -301,9 +281,32 @@ export default class GameDataSource {
       },
     });
 
-    return (
-      updatedGame.players.find((player) => player.userId == userId) || null
-    );
+    return {
+      game: updatedGame,
+      modifiedPlayers: updatedGame.players.filter((player) =>
+        modifiedPlayerIds.has(player.userId)
+      ),
+    };
+  }
+
+  async getCurrentGame(args: { playerId: string }): Promise<Game | null> {
+    const { playerId } = args;
+
+    return await this.#prismaClient.game.findFirst({
+      where: {
+        players: {
+          some: {
+            userId: playerId,
+          },
+        },
+        dateEnded: {
+          isSet: false,
+        },
+      },
+      orderBy: {
+        dateCreated: 'desc',
+      },
+    });
   }
 
   async getById(id: string): Promise<Game | null> {
@@ -328,4 +331,37 @@ export default class GameDataSource {
 
     return ids.map((id) => (gameMap.has(id) ? gameMap.get(id) : null));
   });
+
+  async #validateActivePlayer(args: {
+    gameId: string;
+    userId: string;
+  }): Promise<{ game: Game; player: Player }> {
+    const { gameId, userId } = args;
+
+    const game = await this.getById(gameId);
+    if (!game) {
+      throw new GraphQLError(`Game ${gameId} not found`, {
+        extensions: { code: 'NOT_FOUND' },
+      });
+    } else if (!game.dateStarted) {
+      throw new GraphQLError(`Game ${gameId} has not been started.`, {
+        extensions: { code: 'FAILED_PRECONDITION' },
+      });
+    }
+
+    const player = game.players.find((player) => player.userId == userId);
+    if (!player) {
+      throw new GraphQLError(
+        `User ${userId} is not a player in game ${gameId}`,
+        { extensions: { code: 'FORBIDDEN' } }
+      );
+    } else if (player.state != PlayerState.Active) {
+      throw new GraphQLError(
+        `User ${userId} is not an active player in game ${gameId}.`,
+        { extensions: { code: 'FAILED_PRECONDITION' } }
+      );
+    }
+
+    return { game, player };
+  }
 }

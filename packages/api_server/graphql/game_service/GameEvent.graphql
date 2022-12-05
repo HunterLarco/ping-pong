@@ -10,30 +10,30 @@ type GameEvent {
 enum GameEventType {
   PlayerJoin
   GameStart
-  PlayerUnveil
-  PlayerConcede
+  PlayerUpdate
+  GameEnd
 }
 
 union GameEventDetails =
     PlayerJoinEvent
   | GameStartEvent
-  | PlayerUnveilEvent
-  | PlayerConcedeEvent
+  | PlayerUpdateEvent
+  | GameEndEvent
 
 type PlayerJoinEvent {
-  user: User!
+  player: Player!
 }
 
 type GameStartEvent {
   game: Game!
 }
 
-type PlayerUnveilEvent {
+type PlayerUpdateEvent {
   player: Player!
 }
 
-type PlayerConcedeEvent {
-  player: Player!
+type GameEndEvent {
+  game: Game!
 }
 
 scalar DateTime

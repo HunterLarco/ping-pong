@@ -28,11 +28,15 @@ export async function createRequestContext(args: {
 }): Promise<RequestContext> {
   const { globalContext, authorization } = args;
 
+  const MTGTreachery = new MTGTreacheryDataSource();
   const dataSources: DataSources = {
     AuthToken: new AuthTokenDataSource({ prismaClient: globalContext.prisma }),
-    Game: new GameDataSource({ prismaClient: globalContext.prisma }),
+    Game: new GameDataSource({
+      prismaClient: globalContext.prisma,
+      identityDataSource: MTGTreachery,
+    }),
     GameEvent: new GameEventPubSub(),
-    MTGTreachery: new MTGTreacheryDataSource(),
+    MTGTreachery,
     User: new UserDataSource({ prismaClient: globalContext.prisma }),
   };
 

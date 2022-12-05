@@ -3,6 +3,9 @@ import { GraphQLError } from 'graphql';
 
 import { MutationResolvers } from '@generated/graphql/debug_service/resolvers';
 
+// TODO: we shouldn't be importing from game_service here.
+import { GameEventType } from '@generated/graphql/game_service/resolvers';
+
 export const resolvers: MutationResolvers = {
   async populateGame(_0, { request }, { dataSources }) {
     {
@@ -34,10 +37,21 @@ export const resolvers: MutationResolvers = {
       })
     );
 
-    const { game } = await dataSources.Game.addPlayers({
+    const { game, newPlayers } = await dataSources.Game.addPlayers({
       gameId: request.gameId,
       userIds: users.map(({ user }) => user.id),
     });
+
+    for (const player of newPlayers) {
+      dataSources.GameEvent.publish(request.gameId, {
+        type: GameEventType.PlayerJoin,
+        timestamp: new Date(),
+        details: {
+          __typename: 'PlayerJoinEvent',
+          player,
+        },
+      });
+    }
 
     return {
       game,

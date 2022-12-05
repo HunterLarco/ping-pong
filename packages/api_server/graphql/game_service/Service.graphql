@@ -15,12 +15,12 @@ type Mutation {
   """
   Unveils the authenticated user in the given game.
   """
-  unveil(game: ID!): Void
+  unveil(gameId: ID!): Void
 
   """
   Concedes the authenticated user in the given game.
   """
-  concede(game: ID!): Void
+  concede(gameId: ID!): Void
 }
 
 type Subscription {
