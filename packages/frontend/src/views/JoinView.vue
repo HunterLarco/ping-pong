@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from 'vue';
+import { computed, nextTick } from 'vue';
 import { useQuery, useMutation } from '@vue/apollo-composable';
 import { useRoute } from 'vue-router';
 import cloneDeep from 'clone-deep';
@@ -7,17 +7,37 @@ import cloneDeep from 'clone-deep';
 import MenuButtonList from '@/components/MenuButtonList.vue';
 import MenuButton from '@/components/MenuButton.vue';
 
+import toaster from '@/toaster';
+
 import concedeDocument from '@/graphql/concede';
 import getGameByIdDocument from '@/graphql/getGameById';
+import joinGameDocument from '@/graphql/joinGame';
 import meDocument from '@/graphql/me';
 import spectateDocument from '@/graphql/spectate';
 import unveilDocument from '@/graphql/unveil';
 
 const route = useRoute();
 
-const { result, subscribeToMore } = useQuery(getGameByIdDocument, () => ({
-  gameId: route.params.gameId,
-}));
+const { result, subscribeToMore, onResult } = useQuery(
+  getGameByIdDocument,
+  () => ({
+    gameId: route.params.gameId,
+  })
+);
+
+onResult(() => {
+  nextTick(() => {
+    if (!myPlayer.value) {
+      const { mutate, onError } = useMutation(joinGameDocument);
+
+      onError((error) => {
+        toaster.error(error.message);
+      });
+
+      mutate({ request: { gameId: route.params.gameId } });
+    }
+  });
+});
 
 subscribeToMore(() => ({
   document: spectateDocument,
@@ -96,6 +116,7 @@ function concede() {
         <MenuButton :disabled="!canUnveil" @click="unveil()" text="Unveil" />
         <MenuButton :disabled="!canConcede" @click="concede()" text="Concede" />
       </MenuButtonList>
+      <img :src="myPlayer?.identity.image" />
     </template>
   </div>
 </template>
