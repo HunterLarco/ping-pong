@@ -4,6 +4,8 @@ import { useMutation } from '@vue/apollo-composable';
 import { useRouter } from 'vue-router';
 import gql from 'graphql-tag';
 
+import MenuButton from '@/components/MenuButton.vue';
+
 const router = useRouter();
 const loading = ref(false);
 
@@ -45,10 +47,8 @@ function hostGame() {
         <img class="LogoImage" src="@/assets/TreacheryLogo.png" />
         <div class="LogoText">MTG Treachery</div>
       </div>
-      <div class="Button" :disabled="loading || undefined" @click="hostGame">
-        Host Game
-      </div>
-      <div class="Button" :disabled="loading || undefined">Play in a Game</div>
+      <MenuButton :disabled="loading" text="Host Game" @click="hostGame()" />
+      <MenuButton :disabled="loading" text="Play in a Game" />
     </div>
   </div>
 </template>
@@ -62,6 +62,7 @@ function hostGame() {
 }
 
 .Frame {
+  margin-bottom: 40px;
   max-width: 250px;
   padding: 20px;
   width: 100%;
@@ -73,6 +74,7 @@ function hostGame() {
 
 .LogoImage {
   display: block;
+  height: 150px;
   margin: 0 auto;
   max-width: 150px;
   width: 100%;
@@ -87,22 +89,6 @@ function hostGame() {
 }
 
 .Button {
-  background: #2196f3;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: 700;
   margin: 10px 0;
-  padding: 10px 20px;
-  text-align: center;
-  user-select: none;
-
-  &:hover {
-    background: darken(#2196f3, 10%);
-  }
-
-  &[disabled] {
-    cursor: not-allowed;
-    opacity: 0.4;
-  }
 }
 </style>
