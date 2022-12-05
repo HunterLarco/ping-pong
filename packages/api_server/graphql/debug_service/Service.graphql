@@ -2,6 +2,10 @@
 #import 'external/User.graphql';
 
 type Mutation {
+  debug: DebugMutations!
+}
+
+type DebugMutations {
   populateGame(request: PopulateGameRequest!): PopulateGameResponse!
 }
 

@@ -6,6 +6,7 @@ const kMappers = {
   User: '@prisma/client#User as UserModel',
   Viewer: '@prisma/client#User as UserModel',
   IdentityCard: '@prisma/client#IdentityCard as IdentityCardModel',
+  DebugMutations: '{}',
 };
 
 const kResolverConfig = {
@@ -14,11 +15,11 @@ const kResolverConfig = {
 };
 
 const kServiceList = [
+  'debug_service',
   'game_service',
   'user_service',
   'identity_card_service',
   'verification_service',
-  'debug_service',
 ];
 
 const config: CodegenConfig = {

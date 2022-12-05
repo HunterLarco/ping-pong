@@ -1,12 +1,12 @@
 import Chance from 'chance';
 import { GraphQLError } from 'graphql';
 
-import { MutationResolvers } from '@generated/graphql/debug_service/resolvers';
+import { DebugMutationsResolvers } from '@generated/graphql/debug_service/resolvers';
 
 // TODO: we shouldn't be importing from game_service here.
 import { GameEventType } from '@generated/graphql/game_service/resolvers';
 
-export const resolvers: MutationResolvers = {
+export const resolvers: DebugMutationsResolvers = {
   async populateGame(_0, { request }, { dataSources }) {
     {
       const game = await dataSources.Game.getById(request.gameId);
