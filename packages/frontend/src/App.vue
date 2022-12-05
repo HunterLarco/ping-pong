@@ -14,7 +14,6 @@ import { RouterView } from 'vue-router';
 .App {
   @include layout-fill;
 
-  min-height: 100vh;
-  min-height: -webkit-fill-available;
+  position: fixed;
 }
 </style>
