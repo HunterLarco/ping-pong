@@ -1,6 +1,7 @@
 import {
   SubscriptionResolvers,
   ResolversTypes,
+  GameEventType,
 } from '@generated/graphql/game_service/resolvers';
 
 export const resolvers: SubscriptionResolvers = {
@@ -10,6 +11,10 @@ export const resolvers: SubscriptionResolvers = {
         request.gameId
       )) {
         yield { spectate: event };
+
+        if (event.type == GameEventType.GameEnd) {
+          break;
+        }
       }
     },
   },
