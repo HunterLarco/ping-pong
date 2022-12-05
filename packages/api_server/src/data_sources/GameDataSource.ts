@@ -141,7 +141,12 @@ export default class GameDataSource {
     // prefer to use an atomic update, it's still nice to run optimistic
     // validation for better error messages when things fail (e.g. user isn't a
     // player in the game).
-    await this.#validateActivePlayer({ gameId, userId });
+    const { player } = await this.#validateActivePlayer({ gameId, userId });
+    if (player.unveiled) {
+      throw new GraphQLError(`User ${userId} is already unveiled.`, {
+        extensions: { code: 'FAILED_PRECONDITION' },
+      });
+    }
 
     const game = await this.#prismaClient.game.update({
       where: {
@@ -346,6 +351,10 @@ export default class GameDataSource {
     } else if (!game.dateStarted) {
       throw new GraphQLError(`Game ${gameId} has not been started.`, {
         extensions: { code: 'FAILED_PRECONDITION' },
+      });
+    } else if (game.dateEnded) {
+      throw new GraphQLError(`Game ${gameId} has ended.`, {
+        extensions: { code: 'FORBIDDEN' },
       });
     }
 
