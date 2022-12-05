@@ -1,47 +1,29 @@
 <script setup>
-import { watch } from 'vue';
-import { useQuery, useMutation, useSubscription } from '@vue/apollo-composable';
+import { useMutation } from '@vue/apollo-composable';
+import { useRouter } from 'vue-router';
 import gql from 'graphql-tag';
 
-const kGetMe = gql`
-  query Query {
-    me {
-      id
-      name
-      currentGame {
-        id
-      }
-    }
-  }
-`;
+const router = useRouter();
 
-const { result, refetch } = useQuery(kGetMe);
-
-const { mutate: addBook } = useMutation(
+const { mutate: createGame, onDone } = useMutation(
   gql`
-    mutation AddBook($title: String!, $author: String!) {
-      addBook(title: $title, author: $author, branch: "NYPL") {
-        code
-        success
-        message
-        book {
+    mutation CreateGame {
+      createGame {
+        game {
           id
-          title
-          author
-          normalizedTitle
         }
       }
     }
   `
 );
+
+onDone(({ data }) => {
+  router.push({ path: `/host/${data.createGame.game.id}` });
+});
 </script>
 
 <template>
   <div>
-    <div style="white-space: pre">{{ JSON.stringify(result, null, 2) }}</div>
-    <button @click="addBook({ title: Date.now().toString(), author: 'me' })">
-      Add Book
-    </button>
-    <button @click="refetch()">Refresh</button>
+    <button @click="createGame()">Create Game</button>
   </div>
 </template>
