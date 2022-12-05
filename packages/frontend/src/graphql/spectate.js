@@ -6,7 +6,7 @@ import PlayerFragment from '@/graphql/fragments/Player.js';
 export default gql`
   ${PlayerFragment}
   ${GameFragment}
-  subscription onGameEvent($request: SpectateRequest!) {
+  subscription spectate($request: SpectateRequest!) {
     spectate(request: $request) {
       timestamp
       type
