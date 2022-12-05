@@ -5,11 +5,11 @@ import gql from 'graphql-tag';
 
 const { mutate: mutation_issuePhoneVerification } = useMutation(
   gql`
-  mutation IssuePhoneVerification($request: IssuePhoneVerificationRequest!) {
-    issuePhoneVerification(request: $request) {
-      knownPhoneNumber
+    mutation IssuePhoneVerification($request: IssuePhoneVerificationRequest!) {
+      issuePhoneVerification(request: $request) {
+        knownPhoneNumber
+      }
     }
-  }
   `
 );
 
@@ -20,8 +20,6 @@ function issuePhoneVerification(phoneNumber) {
 
 <template>
   <div>
-    <button @click="issuePhoneVerification('+100')">
-      Signup
-    </button>
+    <button @click="issuePhoneVerification('+100')">Signup</button>
   </div>
 </template>
