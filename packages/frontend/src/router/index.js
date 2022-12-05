@@ -27,7 +27,9 @@ const router = createRouter({
 router.beforeEach(async (to) => {
   const authToken = localStorage.getItem('authorization');
   if (!authToken && to.path.startsWith('/join')) {
-    return '/login';
+    return `/login?to=${to.path}`;
+  } else if (authToken && to.path.startsWith('/login')) {
+    return '/';
   }
 });
 

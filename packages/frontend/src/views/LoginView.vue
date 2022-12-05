@@ -1,11 +1,15 @@
 <script setup>
 import { ref, watch } from 'vue';
 import { useQuery, useMutation, useSubscription } from '@vue/apollo-composable';
+import { useRouter, useRoute } from 'vue-router';
 import gql from 'graphql-tag';
 
 import loginDocument from '@/graphql/login';
 import signupDocument from '@/graphql/signup';
 import verifyPhoneNumberDocument from '@/graphql/verifyPhoneNumber';
+
+const route = useRoute();
+const router = useRouter();
 
 const phoneNumber = ref();
 const knownPhoneNumber = ref(null);
@@ -67,7 +71,8 @@ async function login() {
     },
   });
   onDone(({ data }) => {
-    localStorage.setItem('authorization', data.signup.authToken);
+    localStorage.setItem('authorization', data.login.authToken);
+    router.push({ path: route.query.to });
   });
 }
 
@@ -86,6 +91,7 @@ async function signup() {
   });
   onDone(({ data }) => {
     localStorage.setItem('authorization', data.signup.authToken);
+    router.push({ path: route.query.to });
   });
 }
 </script>
