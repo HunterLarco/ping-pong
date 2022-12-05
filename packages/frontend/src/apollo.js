@@ -13,12 +13,12 @@ import { provideApolloClient } from '@vue/apollo-composable';
 
 const wsLink = new GraphQLWsLink(
   createClient({
-    url: 'ws://localhost:4000/graphql',
+    url: `ws://${window.location.hostname}:4000/graphql`,
   })
 );
 
 const httpLink = new HttpLink({
-  uri: 'http://localhost:4000/graphql',
+  uri: `http://${window.location.hostname}:4000/graphql`,
 });
 
 const link = split(
