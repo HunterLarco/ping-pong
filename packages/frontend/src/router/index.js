@@ -17,6 +17,11 @@ const router = createRouter({
       component: () => import('@/views/HostView.vue'),
     },
     {
+      path: '/join/:gameId',
+      name: 'join',
+      component: () => import('@/views/JoinView.vue'),
+    },
+    {
       path: '/login',
       name: 'login',
       component: LoginView,
@@ -24,12 +29,26 @@ const router = createRouter({
   ],
 });
 
-router.beforeEach(async (to) => {
-  const authToken = localStorage.getItem('authorization');
-  if (!authToken && to.path.startsWith('/join')) {
-    return `/login?to=${to.path}`;
-  } else if (authToken && to.path.startsWith('/login')) {
-    return '/';
+const guards = {
+  join(to, from) {
+    const authToken = localStorage.getItem('authorization');
+    if (!authToken) {
+      return `/login?to=${to.path}`;
+    }
+  },
+
+  login(to, from) {
+    const authToken = localStorage.getItem('authorization');
+    if (authToken) {
+      return `/`;
+    }
+  },
+};
+
+router.beforeEach(async (to, from) => {
+  const guard = guards[to.name];
+  if (guard) {
+    return guard(to, from);
   }
 });
 
