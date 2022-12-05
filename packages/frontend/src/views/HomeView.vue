@@ -41,6 +41,10 @@ function hostGame() {
 <template>
   <div class="HomePage">
     <div class="Frame">
+      <div class="Logo">
+        <img class="LogoImage" src="@/assets/TreacheryLogo.png" />
+        <div class="LogoText">MTG Treachery</div>
+      </div>
       <div class="Button" :disabled="loading || undefined" @click="hostGame">
         Host Game
       </div>
@@ -61,6 +65,25 @@ function hostGame() {
   max-width: 250px;
   padding: 20px;
   width: 100%;
+}
+
+.Logo {
+  padding-bottom: 40px;
+}
+
+.LogoImage {
+  display: block;
+  margin: 0 auto;
+  max-width: 150px;
+  width: 100%;
+}
+
+.LogoText {
+  font-size: 28px;
+  font-weight: 700;
+  overflow: hidden;
+  text-align: center;
+  text-overflow: ellipsis;
 }
 
 .Button {
