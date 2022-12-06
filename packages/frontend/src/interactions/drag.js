@@ -1,5 +1,23 @@
 import { ref, watch } from 'vue';
 
+function mouseToCursors(mouseEvent) {
+  return [
+    {
+      x: mouseEvent.screenX,
+      y: mouseEvent.screenY,
+      identifier: 'mouse',
+    },
+  ];
+}
+
+function touchToCursors(touchEvent) {
+  return Array.from(touchEvent.touches).map((touch) => ({
+    x: touch.screenX,
+    y: touch.screenY,
+    identifier: `${touch.identifier}`,
+  }));
+}
+
 export function useDrag(elementRef) {
   const initialX = ref(0);
   const initialY = ref(0);
@@ -9,6 +27,7 @@ export function useDrag(elementRef) {
   const velocityY = ref(0);
   const isDragActive = ref(false);
 
+  let activeCursorIdentifier;
   let history = [];
   let onDragStart = () => {};
   let onDragEnd = () => {};
@@ -25,23 +44,54 @@ export function useDrag(elementRef) {
     };
   }
 
-  function onMouseDown(event) {
-    initialX.value = event.screenX;
-    initialY.value = event.screenY;
+  function eventTrampoline(event) {
+    switch (event.type) {
+      case 'mousedown':
+        return onCursorStart(mouseToCursors(event));
+      case 'mousemove':
+        return onCursorMove(mouseToCursors(event));
+      case 'mouseup':
+        return onCursorEnd(mouseToCursors(event));
+      case 'touchstart':
+        return onCursorStart(touchToCursors(event));
+      case 'touchmove':
+        return onCursorMove(touchToCursors(event));
+      case 'touchend':
+        return onCursorEnd(touchToCursors(event));
+    }
+  }
+
+  function onCursorStart(cursors) {
+    if (activeCursorIdentifier) {
+      return;
+    }
+
+    // For multi-cursor cases (e.g. touch) we naively select the first active
+    // cursor and use it for the entire drag interaction.
+    activeCursorIdentifier = cursors[0].identifier;
+
+    initialX.value = cursors[0].x;
+    initialY.value = cursors[0].y;
     deltaX.value = 0;
     deltaY.value = 0;
     isDragActive.value = true;
     history = [];
     onDragStart(createCallbackArgs());
-    window.addEventListener('mousemove', onMouseMove);
-    window.addEventListener('mouseup', onMouseUp);
+    window.addEventListener('mousemove', eventTrampoline);
+    window.addEventListener('touchmove', eventTrampoline);
+    window.addEventListener('mouseup', eventTrampoline);
+    window.addEventListener('touchend', eventTrampoline);
   }
 
-  function onMouseMove(event) {
-    deltaX.value = event.screenX - initialX.value;
-    deltaY.value = event.screenY - initialY.value;
+  function onCursorMove(cursors) {
+    const cursor = cursors.find(
+      (cursor) => cursor.identifier == activeCursorIdentifier
+    );
 
-    history.push({ x: event.screenX, y: event.screenY, timestamp: Date.now() });
+    deltaX.value = cursor.x - initialX.value;
+    deltaY.value = cursor.y - initialY.value;
+
+    history.push({ x: cursor.x, y: cursor.y, timestamp: Date.now() });
     while (history[0].timestamp < Date.now() - 500) {
       history.shift();
     }
@@ -55,20 +105,26 @@ export function useDrag(elementRef) {
     }
   }
 
-  function onMouseUp(event) {
+  function onCursorEnd() {
+    window.removeEventListener('mousemove', eventTrampoline);
+    window.removeEventListener('touchmove', eventTrampoline);
+    window.removeEventListener('mouseup', eventTrampoline);
+    window.removeEventListener('touchend', eventTrampoline);
     onDragEnd(createCallbackArgs());
     velocityX.value = 0;
     velocityY.value = 0;
     isDragActive.value = false;
-    window.removeEventListener('mousemove', onMouseMove);
-    window.removeEventListener('mouseup', onMouseUp);
+    activeCursorIdentifier = null;
   }
 
   watch(elementRef, (element, previousElement) => {
     if (previousElement) {
-      previousElement.removeEventListener('mousedown', onMouseDown);
-      window.removeEventListener('mousemove', onMouseMove);
-      window.removeEventListener('mouseup', onMouseUp);
+      previousElement.removeEventListener('mousedown', eventTrampoline);
+      previousElement.removeEventListener('touchstart', eventTrampoline);
+      window.removeEventListener('mousemove', eventTrampoline);
+      window.removeEventListener('touchmove', eventTrampoline);
+      window.removeEventListener('mouseup', eventTrampoline);
+      window.removeEventListener('touchend', eventTrampoline);
       initialX.value = 0;
       initialY.value = 0;
       deltaX.value = 0;
@@ -76,9 +132,11 @@ export function useDrag(elementRef) {
       velocityX.value = 0;
       velocityY.value = 0;
       isDragActive.value = false;
+      activeCursorIdentifier = null;
     }
 
-    element.addEventListener('mousedown', onMouseDown);
+    element.addEventListener('mousedown', eventTrampoline);
+    element.addEventListener('touchstart', eventTrampoline);
   });
 
   return {
