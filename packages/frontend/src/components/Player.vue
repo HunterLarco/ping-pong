@@ -44,10 +44,11 @@ const healthTileStyles = computed(() => {
     Math.max(open.value ? 1 + activeOffset : activeOffset, 0),
     1
   );
+  const offsetWithPadding = (host.value?.offsetHeight - 18) * offset;
 
   const styles = {
     'background-color': color.value,
-    top: `${100 * offset}%`,
+    top: `${offsetWithPadding}px`,
   };
 
   if (!isDragActive.value) {
