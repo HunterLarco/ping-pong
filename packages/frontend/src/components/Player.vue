@@ -38,10 +38,16 @@ const healthTileStyles = computed(() => {
     ? Math.min(Math.max(0, deltaY.value / host.value?.offsetHeight), 1)
     : inactiveOffset.value;
 
-  return {
+  const styles = {
     'background-color': color.value,
     top: `${100 * offset}%`,
   };
+
+  if (!isDragActive.value) {
+    styles.transition = 'top 250ms ease';
+  }
+
+  return styles;
 });
 </script>
 
