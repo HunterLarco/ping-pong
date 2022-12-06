@@ -26,17 +26,24 @@ const mouseState = ref({
 const host = ref(null);
 
 const { deltaY, velocityY, isDragActive, onDragEnd } = useDrag(host);
-const inactiveOffset = ref(0);
+const open = ref(false);
 
 onDragEnd(({ deltaY, velocityY }) => {
-  inactiveOffset.value =
-    velocityY > 0.5 || deltaY / host.value?.offsetHeight > 0.5 ? 1 : 0;
+  if (open.value) {
+    open.value = velocityY > -0.5 && deltaY / host.value?.offsetHeight > -0.5;
+  } else {
+    open.value = velocityY > 0.5 || deltaY / host.value?.offsetHeight > 0.5;
+  }
 });
 
 const healthTileStyles = computed(() => {
-  const offset = isDragActive.value
-    ? Math.min(Math.max(0, deltaY.value / host.value?.offsetHeight), 1)
-    : inactiveOffset.value;
+  const activeOffset = isDragActive.value
+    ? deltaY.value / host.value?.offsetHeight
+    : 0;
+  const offset = Math.min(
+    Math.max(open.value ? 1 + activeOffset : activeOffset, 0),
+    1
+  );
 
   const styles = {
     'background-color': color.value,
