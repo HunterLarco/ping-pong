@@ -7,6 +7,7 @@ export function useDrag(elementRef) {
   const deltaY = ref(0);
   const velocityX = ref(0);
   const velocityY = ref(0);
+  const isDragActive = ref(false);
 
   let history = [];
   let onDragStart = () => {};
@@ -20,6 +21,7 @@ export function useDrag(elementRef) {
       deltaY: deltaY.value,
       velocityX: velocityX.value,
       velocityY: velocityY.value,
+      isDragActive: isDragActive.value,
     };
   }
 
@@ -28,6 +30,7 @@ export function useDrag(elementRef) {
     initialY.value = event.screenY;
     deltaX.value = 0;
     deltaY.value = 0;
+    isDragActive.value = true;
     history = [];
     onDragStart(createCallbackArgs());
     window.addEventListener('mousemove', onMouseMove);
@@ -56,6 +59,7 @@ export function useDrag(elementRef) {
     onDragEnd(createCallbackArgs());
     velocityX.value = 0;
     velocityY.value = 0;
+    isDragActive.value = false;
     window.removeEventListener('mousemove', onMouseMove);
     window.removeEventListener('mouseup', onMouseUp);
   }
@@ -71,6 +75,7 @@ export function useDrag(elementRef) {
       deltaY.value = 0;
       velocityX.value = 0;
       velocityY.value = 0;
+      isDragActive.value = false;
     }
 
     element.addEventListener('mousedown', onMouseDown);
@@ -83,6 +88,7 @@ export function useDrag(elementRef) {
     deltaY,
     velocityX,
     velocityY,
+    isDragActive,
     onDragStart(callback) {
       onDragStart = callback;
     },

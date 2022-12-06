@@ -1,6 +1,8 @@
 <script setup>
 import { ref, computed } from 'vue';
 
+import { useDrag } from '@/interactions/drag';
+
 const props = defineProps({
   data: {
     type: Object,
@@ -11,13 +13,40 @@ const props = defineProps({
 // TODO: move color to the backend
 const color = ref('#2196f3');
 
-const healthTileStyles = computed(() => ({
-  'background-color': color.value,
-}));
+const mouseState = ref({
+  leftDown: {
+    active: false,
+    initialScreenY: 0,
+    previousScreenY: 0,
+    previousDateTime: 0,
+    velocity: 0,
+  },
+});
+
+const host = ref(null);
+
+const { deltaY, velocityY, isDragActive, onDragEnd } = useDrag(host);
+const inactiveOffset = ref(0);
+
+onDragEnd(({ deltaY, velocityY }) => {
+  inactiveOffset.value =
+    velocityY > 0.5 || deltaY / host.value?.offsetHeight > 0.5 ? 1 : 0;
+});
+
+const healthTileStyles = computed(() => {
+  const offset = isDragActive.value
+    ? Math.min(Math.max(0, deltaY.value / host.value?.offsetHeight), 1)
+    : inactiveOffset.value;
+
+  return {
+    'background-color': color.value,
+    top: `${100 * offset}%`,
+  };
+});
 </script>
 
 <template>
-  <div class="Player">
+  <div class="Player" @mousedown="onMouseDown" ref="host">
     <div class="HealthTile" :style="healthTileStyles">
       <div class="HealthText">40</div>
       <div class="Name">{{ data.user.name }}</div>
