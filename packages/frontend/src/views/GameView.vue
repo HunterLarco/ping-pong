@@ -2,11 +2,16 @@
 import { ref } from 'vue';
 
 import Tile from '@/components/Tile.vue';
+import ViewerForeground from '@/components/ViewerForeground.vue';
 </script>
 
 <template>
   <div class="Page">
-    <Tile class="Me" foreground-background="#2196f3"> </Tile>
+    <Tile class="Me" foreground-background="#2196f3">
+      <template v-slot:foreground>
+        <ViewerForeground />
+      </template>
+    </Tile>
     <div class="Players">
       <div />
       <div />
