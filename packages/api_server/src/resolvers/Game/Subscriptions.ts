@@ -1,3 +1,5 @@
+import { GraphQLError } from 'graphql';
+
 import {
   SubscriptionResolvers,
   ResolversTypes,
@@ -7,6 +9,25 @@ import {
 export const resolvers: SubscriptionResolvers = {
   spectate: {
     async *subscribe(_0, { request }, { dataSources }) {
+      const game = await dataSources.Game.getById(request.gameId);
+
+      if (!game) {
+        throw new GraphQLError(`Game ${request.gameId} not found.`, {
+          extensions: { code: 'NOT_FOUND' },
+        });
+      }
+
+      yield {
+        spectate: <ResolversTypes['GameEvent']>{
+          type: GameEventType.Connect,
+          timestamp: new Date(),
+          details: {
+            __typename: 'ConnectEvent',
+            game,
+          },
+        },
+      };
+
       for await (const event of dataSources.GameEvent.subscribe(
         request.gameId
       )) {

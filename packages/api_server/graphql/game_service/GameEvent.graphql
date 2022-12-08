@@ -8,6 +8,7 @@ type GameEvent {
 }
 
 enum GameEventType {
+  Connect
   PlayerJoin
   GameStart
   PlayerUpdate
@@ -15,10 +16,15 @@ enum GameEventType {
 }
 
 union GameEventDetails =
-    PlayerJoinEvent
+    ConnectEvent
+  | PlayerJoinEvent
   | GameStartEvent
   | PlayerUpdateEvent
   | GameEndEvent
+
+type ConnectEvent {
+  game: Game!
+}
 
 type PlayerJoinEvent {
   player: Player!
