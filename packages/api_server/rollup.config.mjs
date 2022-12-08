@@ -44,7 +44,10 @@ export default {
         allowSyntheticDefaultImports: true,
         baseUrl: './',
         forceConsistentCasingInFileNames: true,
-        noEmitOnError: true,
+        // When building for prod we dont want to output a broken build, however
+        // during development it's valuable to emit broken builds for the watch
+        // server to detect and log.
+        noEmitOnError: process.env.NODE_ENV != 'development',
         noImplicitAny: true,
         paths: {
           '@/*': ['src/*'],
