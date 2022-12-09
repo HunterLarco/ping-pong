@@ -281,7 +281,7 @@ export default class GameDataSource {
       },
       data: {
         players: game.players,
-        dateEnded: gameEnded ? new Date() : null,
+        dateEnded: gameEnded ? new Date() : undefined,
         cas: { increment: 1 },
       },
     });
