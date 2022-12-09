@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useMutation, useQuery } from '@vue/apollo-composable';
+import cloneDeep from 'clone-deep';
 import { onMounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useToast } from 'vue-toastification';
@@ -35,7 +36,7 @@ onMounted(async () => {
   }
 });
 
-const { result: cachedGameResult, subscribeToMore: spectate } = useQuery(
+const { result: gameResult, subscribeToMore: spectate } = useQuery(
   GetGameGQL,
   () => ({
     gameId: route.params.gameId,
@@ -45,6 +46,8 @@ const { result: cachedGameResult, subscribeToMore: spectate } = useQuery(
   }
 );
 
+// If the path contains a game ID, create a subscription to update the above
+// cache-only query.
 watch(
   () => <string>route.params.gameId,
   (gameId: string) => {
@@ -55,6 +58,11 @@ watch(
     spectate(() => ({
       document: SpectateGameGQL,
       variables: { gameId },
+      updateQuery(cacheEntry, { subscriptionData }) {
+        return {
+          game: applyGameEvent(cacheEntry.game, subscriptionData.data.spectate),
+        };
+      },
       onError(error) {
         toast.error(error.message);
         console.log(error);
@@ -65,10 +73,29 @@ watch(
     immediate: true,
   }
 );
+
+function applyGameEvent(game: any, event: any) {
+  switch (event.type) {
+    case 'PlayerJoin': {
+      const tmp = cloneDeep(game);
+      tmp.players.push(event.details.player);
+      return tmp;
+    }
+    case 'PlayerUpdate': {
+      const tmp = cloneDeep(game);
+      tmp.players = tmp.players.map((player: any) =>
+        player.user.id == event.details.player.user.id
+          ? event.details.player
+          : player
+      );
+      return tmp;
+    }
+  }
+}
 </script>
 
 <template>
-  <div class="HostPage">{{ cachedGameResult }}</div>
+  <div class="HostPage">{{ gameResult }}</div>
 </template>
 
 <style scoped lang="scss">
