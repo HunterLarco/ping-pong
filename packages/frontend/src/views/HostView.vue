@@ -1,24 +1,49 @@
 <script setup lang="ts">
-import { useMutation } from '@vue/apollo-composable';
+import { useMutation, useSubscription } from '@vue/apollo-composable';
 import { onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 import CreateGameGQL from '@/graphql/operations/CreateGame';
+import SpectateGameGQL from '@/graphql/operations/SpectateGame';
 
 const route = useRoute();
 const router = useRouter();
 
-const { mutate: createGameMutation } = useMutation(CreateGameGQL);
-
 onMounted(async () => {
+  // If the page is `/host` then we need to create a new game. The
+  // `useSubscription` directive below will automatically watch for changes in
+  // the url so when we redirect to `/host/{gameId}`, the subscription will
+  // start.
   if (!route.params.gameId) {
-    // TODO: fix this
-    // @ts-ignore
-    const { data } = await createGameMutation();
-    router.push({
-      path: `/host/${data.createGame.game.id}`,
+    const { mutate: createGame, onDone, onError } = useMutation(CreateGameGQL);
+
+    onDone(({ data }) => {
+      router.push({
+        path: `/host/${data.createGame.game.id}`,
+      });
     });
+
+    onError((error) => {
+      console.error(error.message);
+    });
+
+    createGame();
   }
+});
+
+const { onResult: onGameEvent } = useSubscription(
+  SpectateGameGQL,
+  () => ({
+    gameId: route.params.gameId,
+  }),
+  () => ({
+    enabled: !!route.params.gameId,
+  })
+);
+
+onGameEvent(({ data }) => {
+  const { spectate: event } = data;
+  console.log(event);
 });
 </script>
 
