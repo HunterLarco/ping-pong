@@ -16,7 +16,7 @@ function hostGame() {
 }
 
 function joinCurrentGame() {
-  router.push({ path: `/play/${homePageResult.value.viewer.currentGame.id}` });
+  router.push({ path: `/host/${homePageResult.value.viewer.currentGame.id}` });
 }
 </script>
 

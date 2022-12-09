@@ -11,6 +11,8 @@ import { getMainDefinition } from '@apollo/client/utilities';
 import { provideApolloClient } from '@vue/apollo-composable';
 import { createClient } from 'graphql-ws';
 
+import getGameByIdCachePolicy from '@/graphql/cache_policies/getGameById';
+
 /// Create link
 
 const wsLink = new GraphQLWsLink(
@@ -53,17 +55,7 @@ const cache = new InMemoryCache({
   typePolicies: {
     Query: {
       fields: {
-        getGameById: {
-          read(_, { args, toReference }) {
-            if (!args) {
-              return null;
-            }
-            return toReference({
-              __typename: 'Game',
-              id: args.id,
-            });
-          },
-        },
+        getGameById: getGameByIdCachePolicy,
       },
     },
   },

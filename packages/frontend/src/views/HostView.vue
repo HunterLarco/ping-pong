@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { useMutation, useSubscription } from '@vue/apollo-composable';
+import { useMutation, useQuery, useSubscription } from '@vue/apollo-composable';
 import { onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useToast } from 'vue-toastification';
 
 import CreateGameGQL from '@/graphql/operations/CreateGame';
+import GetGameGQL from '@/graphql/operations/GetGame';
 import SpectateGameGQL from '@/graphql/operations/SpectateGame';
 
 const route = useRoute();
@@ -33,6 +34,16 @@ onMounted(async () => {
   }
 });
 
+const { result: cachedGameResult } = useQuery(
+  GetGameGQL,
+  () => ({
+    gameId: route.params.gameId,
+  }),
+  {
+    fetchPolicy: 'cache-only',
+  }
+);
+
 const { onResult: onGameEvent } = useSubscription(
   SpectateGameGQL,
   () => ({
@@ -50,7 +61,7 @@ onGameEvent(({ data }) => {
 </script>
 
 <template>
-  <div class="HostPage">host</div>
+  <div class="HostPage">{{ cachedGameResult }}</div>
 </template>
 
 <style scoped lang="scss">
