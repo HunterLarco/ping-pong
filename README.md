@@ -11,6 +11,10 @@ npm run initialize
 - Prisma Schema: https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference
 - GraphQL Codegen Mappers: https://the-guild.dev/blog/better-type-safety-for-resolvers-with-graphql-codegen
 - Federated GraphQL: https://www.apollographql.com/docs/federation/
+
+## Great Articles
+
+- Demystifying Cache Normalization: https://www.apollographql.com/blog/apollo-client/caching/demystifying-cache-normalization/
 - Principled GraphQL: https://principledgraphql.com/
 
 ## API Server
