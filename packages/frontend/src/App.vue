@@ -1,19 +1,7 @@
-<script setup>
+<script setup lang="ts">
 import { RouterView } from 'vue-router';
 </script>
 
 <template>
-  <div class="App">
-    <RouterView />
-  </div>
+  <RouterView />
 </template>
-
-<style scoped lang="scss">
-@import '@/styles/layout';
-
-.App {
-  @include layout-fill;
-
-  position: fixed;
-}
-</style>

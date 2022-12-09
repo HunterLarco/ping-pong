@@ -55,6 +55,9 @@ const cache = new InMemoryCache({
       fields: {
         getGameById: {
           read(_, { args, toReference }) {
+            if (!args) {
+              return null;
+            }
             return toReference({
               __typename: 'Game',
               id: args.id,

@@ -1,11 +1,15 @@
 import { createRouter, createWebHistory } from 'vue-router';
+import type { RouteRecordName, NavigationGuardWithThis } from 'vue-router';
 
+/*
 import HomeView from '../views/HomeView.vue';
 import LoginView from '../views/LoginView.vue';
+*/
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
+    /*
     {
       path: '/',
       name: 'home',
@@ -31,18 +35,23 @@ const router = createRouter({
       name: 'game',
       component: () => import('@/views/GameView.vue'),
     },
+    */
   ],
 });
 
-const guards = {
-  join(to, from) {
+interface RouteGuards {
+  [key: RouteRecordName]: NavigationGuardWithThis<void>;
+}
+
+const guards: RouteGuards = {
+  join(to) {
     const authToken = localStorage.getItem('authorization');
     if (!authToken) {
       return `/login?to=${to.path}`;
     }
   },
 
-  login(to, from) {
+  login() {
     const authToken = localStorage.getItem('authorization');
     if (authToken) {
       return `/`;
@@ -50,10 +59,12 @@ const guards = {
   },
 };
 
-router.beforeEach(async (to, from) => {
-  const guard = guards[to.name];
-  if (guard) {
-    return guard(to, from);
+router.beforeEach(async (to, from, next) => {
+  if (to.name) {
+    const guard = guards[to.name];
+    if (guard) {
+      return guard(to, from, next);
+    }
   }
 });
 
