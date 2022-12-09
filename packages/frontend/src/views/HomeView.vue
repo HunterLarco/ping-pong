@@ -16,7 +16,7 @@ function hostGame() {
 }
 
 function joinCurrentGame() {
-  router.push({ path: `/join/${homePageResult.value.viewer.currentGame.id}` });
+  router.push({ path: `/play/${homePageResult.value.viewer.currentGame.id}` });
 }
 </script>
 
@@ -29,7 +29,6 @@ function joinCurrentGame() {
       </div>
       <MenuButtonList>
         <MenuButton text="Host Game" @click="hostGame()" />
-        <MenuButton text="Play in a Game" />
         <MenuButton
           :disabled="!homePageResult?.viewer?.currentGame"
           text="Join Current Game"

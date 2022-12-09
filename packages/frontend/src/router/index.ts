@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import type { RouteLocationNormalized, RouteRecordName } from 'vue-router';
 
-import HomeView from '../views/HomeView.vue';
+import HomeView from '@/views/HomeView.vue';
 
 // import LoginView from '../views/LoginView.vue';
 
@@ -12,6 +12,11 @@ const router = createRouter({
       path: '/',
       name: 'home',
       component: HomeView,
+    },
+    {
+      path: '/host/:gameId?',
+      name: 'host',
+      component: () => import('@/views/HostView.vue'),
     },
     /*
     {
