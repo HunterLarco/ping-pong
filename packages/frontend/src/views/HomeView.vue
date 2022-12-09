@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { useQuery } from '@vue/apollo-composable';
-import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 import MenuButton from '@/components/MenuButton.vue';

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { useMutation, useQuery, useSubscription } from '@vue/apollo-composable';
-import { onMounted, ref } from 'vue';
+import { useMutation, useQuery } from '@vue/apollo-composable';
+import { onMounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useToast } from 'vue-toastification';
 
@@ -35,7 +35,7 @@ onMounted(async () => {
   }
 });
 
-const { result: cachedGameResult } = useQuery(
+const { result: cachedGameResult, subscribeToMore: spectate } = useQuery(
   GetGameGQL,
   () => ({
     gameId: route.params.gameId,
@@ -45,25 +45,26 @@ const { result: cachedGameResult } = useQuery(
   }
 );
 
-const { onResult: onGameEvent, onError: onSpectateError } = useSubscription(
-  SpectateGameGQL,
-  () => ({
-    gameId: route.params.gameId,
-  }),
-  () => ({
-    enabled: !!route.params.gameId,
-  })
+watch(
+  () => <string>route.params.gameId,
+  (gameId: string) => {
+    if (!gameId) {
+      return;
+    }
+
+    spectate(() => ({
+      document: SpectateGameGQL,
+      variables: { gameId },
+      onError(error) {
+        toast.error(error.message);
+        console.log(error);
+      },
+    }));
+  },
+  {
+    immediate: true,
+  }
 );
-
-onGameEvent(({ data }) => {
-  const { spectate: event } = data;
-  console.log(event);
-});
-
-onSpectateError((error) => {
-  toast.error(error.message);
-  console.error('Failed to spectate game.', error);
-});
 </script>
 
 <template>
