@@ -1,7 +1,7 @@
 import gql from 'graphql-tag';
 
-import UserFragment from '@/graphql/fragments/User.js';
 import IdentityCardFragment from '@/graphql/fragments/IdentityCard.js';
+import UserFragment from '@/graphql/fragments/User.js';
 
 export default gql`
   ${UserFragment}

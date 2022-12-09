@@ -1,8 +1,8 @@
-import { IdentityCard, PlayerState as ModelPlayerState } from '@prisma/client';
 import {
-  Resolvers,
   PlayerState,
+  Resolvers,
 } from '@generated/graphql/game_service/resolvers';
+import { IdentityCard, PlayerState as ModelPlayerState } from '@prisma/client';
 
 export const resolvers: Resolvers = {
   Game: {

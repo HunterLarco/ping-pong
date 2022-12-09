@@ -1,9 +1,9 @@
+import { MutationResolvers } from '@generated/graphql/verification_service/resolvers';
 import { GraphQLError } from 'graphql';
 
-import { MutationResolvers } from '@generated/graphql/verification_service/resolvers';
 import {
-  issuePhoneVerification,
   checkOneTimePassword,
+  issuePhoneVerification,
 } from '@/util/phoneVerification';
 
 export const resolvers: MutationResolvers = {

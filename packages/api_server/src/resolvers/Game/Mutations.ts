@@ -1,10 +1,9 @@
-import { GraphQLError } from 'graphql';
-
-import { IdentityType } from '@prisma/client';
 import {
-  MutationResolvers,
   GameEventType,
+  MutationResolvers,
 } from '@generated/graphql/game_service/resolvers';
+import { IdentityType } from '@prisma/client';
+import { GraphQLError } from 'graphql';
 
 export const resolvers: MutationResolvers = {
   async createGame(_0, _1, { dataSources }) {

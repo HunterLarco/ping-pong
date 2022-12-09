@@ -1,10 +1,9 @@
-import { GraphQLError } from 'graphql';
-
 import {
-  SubscriptionResolvers,
-  ResolversTypes,
   GameEventType,
+  ResolversTypes,
+  SubscriptionResolvers,
 } from '@generated/graphql/game_service/resolvers';
+import { GraphQLError } from 'graphql';
 
 export const resolvers: SubscriptionResolvers = {
   spectate: {

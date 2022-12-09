@@ -1,11 +1,11 @@
-import { GraphQLError } from 'graphql';
-import DataLoader from 'dataloader';
 import {
-  PrismaClient,
-  AuthToken,
   AuthScope,
   AuthScopeCode,
+  AuthToken,
+  PrismaClient,
 } from '@prisma/client';
+import DataLoader from 'dataloader';
+import { GraphQLError } from 'graphql';
 
 export default class AuthTokenDataSource {
   #prismaClient: PrismaClient;

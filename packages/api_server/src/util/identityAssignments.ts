@@ -1,10 +1,10 @@
+import { IdentityCard, IdentityType } from '@prisma/client';
 import { GraphQLError } from 'graphql';
 import pickRandom from 'pick-random';
 import shuffleArray from 'shuffle-array';
 
-import { IdentityCard, IdentityType } from '@prisma/client';
-import type MTGTreacheryDataSource from '@/data_sources/MTGTreacheryDataSource';
 import type { RequestContext } from '@/RequestContext';
+import type MTGTreacheryDataSource from '@/data_sources/MTGTreacheryDataSource';
 
 export type TreacheryDistribution = {
   leader: number;

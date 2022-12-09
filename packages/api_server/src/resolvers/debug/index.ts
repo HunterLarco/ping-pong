@@ -1,6 +1,5 @@
-import { GraphQLError } from 'graphql';
-
 import { Resolvers } from '@generated/graphql/debug_service/resolvers';
+import { GraphQLError } from 'graphql';
 
 import { resolvers as mutationResolvers } from '@/resolvers/debug/Mutations';
 

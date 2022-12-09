@@ -1,6 +1,6 @@
-import { GraphQLError } from 'graphql';
-import DataLoader from 'dataloader';
 import type { PrismaClient, User } from '@prisma/client';
+import DataLoader from 'dataloader';
+import { GraphQLError } from 'graphql';
 
 export default class UserDataSource {
   #prismaClient: PrismaClient;

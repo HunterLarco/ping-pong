@@ -1,8 +1,8 @@
-import { IdentityType as PrismaIdentityType } from '@prisma/client';
 import {
-  Resolvers,
   IdentityType,
+  Resolvers,
 } from '@generated/graphql/identity_card_service/resolvers';
+import { IdentityType as PrismaIdentityType } from '@prisma/client';
 
 export const resolvers: Resolvers = {
   IdentityCard: {

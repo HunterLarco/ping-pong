@@ -1,14 +1,14 @@
-import typescript from "@rollup/plugin-typescript";
-import resolve from "@rollup/plugin-node-resolve";
+import resolve from '@rollup/plugin-node-resolve';
+import typescript from '@rollup/plugin-typescript';
 
 export default {
-  input: "src/index.ts",
+  input: 'src/index.ts',
   output: {
-    file: "dist/plugin.js",
-    format: "cjs",
+    file: 'dist/plugin.js',
+    format: 'cjs',
     sourcemap: true,
   },
-  external: ["graphql"],
+  external: ['graphql'],
   plugins: [
     resolve(),
     typescript({
@@ -16,12 +16,12 @@ export default {
       compilerOptions: {
         allowJs: false,
         allowSyntheticDefaultImports: true,
-        baseUrl: "./",
+        baseUrl: './',
         forceConsistentCasingInFileNames: true,
         noEmitOnError: true,
         noImplicitAny: true,
         paths: {
-          "@/*": ["src/*"],
+          '@/*': ['src/*'],
         },
         preserveConstEnums: true,
         skipLibCheck: true,

@@ -1,7 +1,6 @@
-import { GraphQLError } from 'graphql';
-
 import { MutationResolvers } from '@generated/graphql/user_service/resolvers';
 import { AuthScopeCode } from '@prisma/client';
+import { GraphQLError } from 'graphql';
 
 export const resolvers: MutationResolvers = {
   async signup(_0, { request }, { globalContext, dataSources }) {

@@ -1,12 +1,12 @@
-import { GraphQLError } from 'graphql';
-import DataLoader from 'dataloader';
-import type { PrismaClient, Game, Player } from '@prisma/client';
+import type { Game, Player, PrismaClient } from '@prisma/client';
 import { IdentityType, PlayerState } from '@prisma/client';
+import DataLoader from 'dataloader';
+import { GraphQLError } from 'graphql';
 
 import type MTGTreacheryDataSource from '@/data_sources/MTGTreacheryDataSource';
 import {
-  sortByIdentity,
   selectIdentityCards,
+  sortByIdentity,
 } from '@/util/identityAssignments';
 
 export default class GameDataSource {

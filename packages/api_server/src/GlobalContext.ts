@@ -1,7 +1,7 @@
+import { PrismaClient } from '@prisma/client';
 import dotenv from 'dotenv';
 import twilio from 'twilio';
 import type { ServiceContext as TwilioVerifyService } from 'twilio/lib/rest/verify/v2/service';
-import { PrismaClient } from '@prisma/client';
 
 export type GlobalContext = {
   prisma: PrismaClient;

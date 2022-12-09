@@ -1,6 +1,5 @@
-import { PubSub } from 'graphql-subscriptions';
-
 import { ResolversTypes } from '@generated/graphql/game_service/resolvers';
+import { PubSub } from 'graphql-subscriptions';
 
 type GameEvent = ResolversTypes['GameEvent'];
 

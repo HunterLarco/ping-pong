@@ -1,15 +1,15 @@
 import {
-  HttpLink,
-  split,
-  concat,
-  ApolloLink,
   ApolloClient,
+  ApolloLink,
+  HttpLink,
   InMemoryCache,
+  concat,
+  split,
 } from '@apollo/client/core';
 import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
 import { getMainDefinition } from '@apollo/client/utilities';
-import { createClient } from 'graphql-ws';
 import { provideApolloClient } from '@vue/apollo-composable';
+import { createClient } from 'graphql-ws';
 
 /// Create link
 

@@ -1,4 +1,4 @@
-import { User, Game, AuthScopeCode } from '@prisma/client';
+import { AuthScopeCode, Game, User } from '@prisma/client';
 
 import type { GlobalContext } from '@/GlobalContext';
 import AuthTokenDataSource from '@/data_sources/AuthTokenDataSource';

@@ -17,6 +17,7 @@
     "vue-router": "4.1.6"
   },
   "devDependencies": {
+    "@trivago/prettier-plugin-sort-imports": "4.0.0",
     "@types/node": "18.11.9",
     "@vitejs/plugin-vue": "3.2.0",
     "@vue/tsconfig": "0.1.3",
