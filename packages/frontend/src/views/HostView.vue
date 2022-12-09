@@ -2,12 +2,14 @@
 import { useMutation, useSubscription } from '@vue/apollo-composable';
 import { onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import { useToast } from 'vue-toastification';
 
 import CreateGameGQL from '@/graphql/operations/CreateGame';
 import SpectateGameGQL from '@/graphql/operations/SpectateGame';
 
 const route = useRoute();
 const router = useRouter();
+const toast = useToast();
 
 onMounted(async () => {
   // If the page is `/host` then we need to create a new game. The
@@ -24,7 +26,7 @@ onMounted(async () => {
     });
 
     onError((error) => {
-      console.error(error.message);
+      toast.error(error.message);
     });
 
     createGame();
