@@ -28,6 +28,7 @@ onMounted(async () => {
 
     onError((error) => {
       toast.error(error.message);
+      console.error('Failed to create game.', error);
     });
 
     createGame();
@@ -44,7 +45,7 @@ const { result: cachedGameResult } = useQuery(
   }
 );
 
-const { onResult: onGameEvent } = useSubscription(
+const { onResult: onGameEvent, onError: onSpectateError } = useSubscription(
   SpectateGameGQL,
   () => ({
     gameId: route.params.gameId,
@@ -57,6 +58,11 @@ const { onResult: onGameEvent } = useSubscription(
 onGameEvent(({ data }) => {
   const { spectate: event } = data;
   console.log(event);
+});
+
+onSpectateError((error) => {
+  toast.error(error.message);
+  console.error('Failed to spectate game.', error);
 });
 </script>
 
