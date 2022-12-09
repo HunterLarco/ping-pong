@@ -11,6 +11,8 @@ import { getMainDefinition } from '@apollo/client/utilities';
 import { createClient } from 'graphql-ws';
 import { provideApolloClient } from '@vue/apollo-composable';
 
+/// Create link
+
 const wsLink = new GraphQLWsLink(
   createClient({
     url: `ws://${window.location.hostname}:4000/graphql`,
@@ -45,8 +47,29 @@ const authorization = new ApolloLink((operation, forward) => {
   return forward(operation);
 });
 
+/// Create cache
+
+const cache = new InMemoryCache({
+  typePolicies: {
+    Query: {
+      fields: {
+        getGameById: {
+          read(_, { args, toReference }) {
+            return toReference({
+              __typename: 'Game',
+              id: args.id,
+            });
+          },
+        },
+      },
+    },
+  },
+});
+
+/// Construct the client
+
 const apolloClient = new ApolloClient({
-  cache: new InMemoryCache(),
+  cache,
   link: concat(authorization, link),
 });
 

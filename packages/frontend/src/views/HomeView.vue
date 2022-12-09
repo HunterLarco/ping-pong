@@ -1,14 +1,18 @@
 <script setup>
 import { ref } from 'vue';
-import { useMutation } from '@vue/apollo-composable';
+import { useQuery, useMutation } from '@vue/apollo-composable';
 import { useRouter } from 'vue-router';
 import gql from 'graphql-tag';
 
 import MenuButtonList from '@/components/MenuButtonList.vue';
 import MenuButton from '@/components/MenuButton.vue';
 
+import meDocument from '@/graphql/me';
+
 const router = useRouter();
 const loading = ref(false);
+
+const { result: me } = useQuery(meDocument);
 
 function hostGame() {
   if (loading.value) {
@@ -51,6 +55,11 @@ function hostGame() {
       <MenuButtonList>
         <MenuButton :disabled="loading" text="Host Game" @click="hostGame()" />
         <MenuButton :disabled="loading" text="Play in a Game" />
+        <MenuButton
+          v-if="me?.me?.currentGame"
+          text="Join Current Game"
+          @click="router.push({ path: `/join/${me.me.currentGame.id}` })"
+        />
       </MenuButtonList>
     </div>
   </div>

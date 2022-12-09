@@ -78,7 +78,7 @@ const players = computed(() => {
   return game.players ?? [];
 });
 const myPlayer = computed(() => {
-  return players.value.find((player) => player.user.id == me.value.id);
+  return players.value.find((player) => player.user.id == me.value?.id);
 });
 
 const canUnveil = computed(() => {
