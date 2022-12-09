@@ -1,20 +1,18 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import type { RouteRecordName, NavigationGuardWithThis } from 'vue-router';
+import type { RouteRecordName, RouteLocationNormalized } from 'vue-router';
 
-/*
 import HomeView from '../views/HomeView.vue';
-import LoginView from '../views/LoginView.vue';
-*/
+// import LoginView from '../views/LoginView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    /*
     {
       path: '/',
       name: 'home',
       component: HomeView,
     },
+    /*
     {
       path: '/host/:gameId',
       name: 'host',
@@ -40,7 +38,10 @@ const router = createRouter({
 });
 
 interface RouteGuards {
-  [key: RouteRecordName]: NavigationGuardWithThis<void>;
+  [key: RouteRecordName]: (
+    to: RouteLocationNormalized,
+    from: RouteLocationNormalized
+  ) => void | string;
 }
 
 const guards: RouteGuards = {
@@ -59,11 +60,11 @@ const guards: RouteGuards = {
   },
 };
 
-router.beforeEach(async (to, from, next) => {
+router.beforeEach(async (to, from) => {
   if (to.name) {
     const guard = guards[to.name];
     if (guard) {
-      return guard(to, from, next);
+      return guard(to, from);
     }
   }
 });
