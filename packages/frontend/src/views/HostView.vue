@@ -1,16 +1,22 @@
 <script setup lang="ts">
+import { useApolloClient } from '@vue/apollo-composable';
+import cloneDeep from 'clone-deep';
 import { onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useToast } from 'vue-toastification';
 
 import {
+  GameFragmentFragmentDoc,
   useCreateGameMutation,
   useGetGameQuery,
+  useSpectateGameSubscription,
 } from '@/../generated/graphql/operations';
+import type { GameFragmentFragment } from '@/../generated/graphql/operations';
 
 const route = useRoute();
 const router = useRouter();
 const toast = useToast();
+const { client: apolloClient } = useApolloClient();
 
 onMounted(async () => {
   // If the page is `/host` then we need to create a new game. The
@@ -35,7 +41,7 @@ onMounted(async () => {
   }
 });
 
-const { result: gameResult /* subscribeToMore: spectate */ } = useGetGameQuery(
+const { result: gameResult } = useGetGameQuery(
   () => ({
     gameId: <string>route.params.gameId,
   }),
@@ -44,54 +50,71 @@ const { result: gameResult /* subscribeToMore: spectate */ } = useGetGameQuery(
   }
 );
 
-/*
-// If the path contains a game ID, create a subscription to update the above
-// cache-only query.
-watch(
-  () => <string>route.params.gameId,
-  (gameId: string) => {
-    if (!gameId) {
-      return;
-    }
+const { onResult: onGameEvent, onError: onSpectateError } =
+  useSpectateGameSubscription(
+    () => ({
+      gameId: <string>route.params.gameId,
+    }),
+    () => ({
+      enabled: !!route.params.gameId,
+    })
+  );
 
-    spectate(() => ({
-      document: SpectateGameDocument,
-      variables: { gameId },
-      updateQuery(cacheEntry, { subscriptionData }) {
-        return {
-          game: applyGameEvent(cacheEntry.game, subscriptionData.data.spectate),
-        };
-      },
-      onError(error) {
-        toast.error(error.message);
-        console.log(error);
-      },
-    }));
-  },
-  {
-    immediate: true,
+onGameEvent(({ data }) => {
+  const event = data?.spectate;
+  if (!event) {
+    return;
   }
-);
 
-function applyGameEvent(game: any, event: any) {
-  switch (event.type) {
-    case 'PlayerJoin': {
-      const tmp = cloneDeep(game);
-      tmp.players.push(event.details.player);
-      return tmp;
-    }
-    case 'PlayerUpdate': {
-      const tmp = cloneDeep(game);
-      tmp.players = tmp.players.map((player: any) =>
-        player.user.id == event.details.player.user.id
-          ? event.details.player
-          : player
+  const details = event.details;
+  switch (details.__typename) {
+    case 'PlayerJoinEvent': {
+      apolloClient.cache.updateFragment<GameFragmentFragment>(
+        {
+          id: `Game:${<string>route.params.gameId}`,
+          fragment: GameFragmentFragmentDoc,
+          fragmentName: 'GameFragment',
+        },
+        (game) => {
+          if (!game) {
+            return game;
+          }
+
+          const newGame = cloneDeep(game);
+          newGame.players.push(details.player);
+          return newGame;
+        }
       );
-      return tmp;
+      break;
+    }
+    case 'PlayerUpdateEvent': {
+      apolloClient.cache.updateFragment<GameFragmentFragment>(
+        {
+          id: `Game:${<string>route.params.gameId}`,
+          fragment: GameFragmentFragmentDoc,
+          fragmentName: 'GameFragment',
+        },
+        (game) => {
+          if (!game) {
+            return game;
+          }
+
+          const newGame = cloneDeep(game);
+          newGame.players = newGame.players.map((player) =>
+            player.user.id == details.player.user.id ? details.player : player
+          );
+          return newGame;
+        }
+      );
+      break;
     }
   }
-}
-*/
+});
+
+onSpectateError((error) => {
+  toast.error(error.message);
+  console.error('Failed to spectate game.', error);
+});
 </script>
 
 <template>
