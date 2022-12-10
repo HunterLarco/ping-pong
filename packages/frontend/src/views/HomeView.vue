@@ -1,21 +1,24 @@
 <script setup lang="ts">
-import { useQuery } from '@vue/apollo-composable';
 import { useRouter } from 'vue-router';
 
+import { useHomePageQuery } from '@/../generated/graphql/operations';
 import MenuButton from '@/components/MenuButton.vue';
 import MenuButtonList from '@/components/MenuButtonList.vue';
-import HomePageGQL from '@/graphql/operations/HomePage';
 
 const router = useRouter();
 
-const { result: homePageResult } = useQuery(HomePageGQL);
+const { result: homePageResult } = useHomePageQuery();
 
 function hostGame() {
   router.push({ path: `/host` });
 }
 
 function joinCurrentGame() {
-  router.push({ path: `/host/${homePageResult.value.viewer.currentGame.id}` });
+  if (homePageResult.value?.viewer?.currentGame) {
+    router.push({
+      path: `/host/${homePageResult.value.viewer.currentGame.id}`,
+    });
+  }
 }
 </script>
 

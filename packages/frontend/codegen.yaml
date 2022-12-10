@@ -1,0 +1,32 @@
+schema:
+  - './graphql/schema/**/*.graphql'
+documents:
+  - './graphql/fragments/**/*.graphql'
+  - './graphql/operations/**/*.graphql'
+generates:
+  ./generated/graphql/typedPolicies.ts:
+    plugins:
+      - 'typescript-apollo-client-helpers'
+    config:
+      useTypeImports: true
+  ./generated/graphql/operations.ts:
+    plugins:
+      - 'typescript'
+      - 'typescript-operations'
+      - 'typescript-vue-apollo'
+      - 'named-operations-object'
+      - 'add': { content: '// THIS FILE IS GENERATED, DO NOT EDIT!' }
+      - 'add': { content: '// @ts-nocheck' }
+    config:
+      vueApolloComposableImportFrom: '@vue/apollo-composable'
+      vueCompositionApiImportFrom: 'vue'
+      withCompositionFunctions: true
+      strictScalars: true
+      onlyOperationTypes: true
+      scalars:
+        DateTime: Date
+        PhoneNumber: string
+        URL: string
+        Void: void
+hooks:
+  afterOneFileWrite: 'prettier --write'

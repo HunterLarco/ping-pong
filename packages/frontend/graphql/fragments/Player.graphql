@@ -1,0 +1,13 @@
+#import 'IdentityCard.graphql'
+#import 'User.graphql'
+
+fragment PlayerFragment on Player {
+  user {
+    ...UserFragment
+  }
+  state
+  identity {
+    ...IdentityCardFragment
+  }
+  unveiled
+}

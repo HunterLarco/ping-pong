@@ -1,13 +1,12 @@
 <script setup lang="ts">
-import { useMutation, useQuery } from '@vue/apollo-composable';
-import cloneDeep from 'clone-deep';
-import { onMounted, watch } from 'vue';
+import { onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useToast } from 'vue-toastification';
 
-import CreateGameGQL from '@/graphql/operations/CreateGame';
-import GetGameGQL from '@/graphql/operations/GetGame';
-import SpectateGameGQL from '@/graphql/operations/SpectateGame';
+import {
+  useCreateGameMutation,
+  useGetGameQuery,
+} from '@/../generated/graphql/operations';
 
 const route = useRoute();
 const router = useRouter();
@@ -19,11 +18,11 @@ onMounted(async () => {
   // the url so when we redirect to `/host/{gameId}`, the subscription will
   // start.
   if (!route.params.gameId) {
-    const { mutate: createGame, onDone, onError } = useMutation(CreateGameGQL);
+    const { mutate: createGame, onDone, onError } = useCreateGameMutation();
 
     onDone(({ data }) => {
       router.push({
-        path: `/host/${data.createGame.game.id}`,
+        path: `/host/${data!.createGame.game.id}`,
       });
     });
 
@@ -36,16 +35,16 @@ onMounted(async () => {
   }
 });
 
-const { result: gameResult, subscribeToMore: spectate } = useQuery(
-  GetGameGQL,
+const { result: gameResult /* subscribeToMore: spectate */ } = useGetGameQuery(
   () => ({
-    gameId: route.params.gameId,
+    gameId: <string>route.params.gameId,
   }),
   {
     fetchPolicy: 'cache-only',
   }
 );
 
+/*
 // If the path contains a game ID, create a subscription to update the above
 // cache-only query.
 watch(
@@ -56,7 +55,7 @@ watch(
     }
 
     spectate(() => ({
-      document: SpectateGameGQL,
+      document: SpectateGameDocument,
       variables: { gameId },
       updateQuery(cacheEntry, { subscriptionData }) {
         return {
@@ -92,6 +91,7 @@ function applyGameEvent(game: any, event: any) {
     }
   }
 }
+*/
 </script>
 
 <template>

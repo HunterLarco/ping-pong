@@ -1,0 +1,6 @@
+fragment IdentityCardFragment on IdentityCard {
+  name
+  type
+  image
+  source
+}

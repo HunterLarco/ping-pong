@@ -1,0 +1,11 @@
+#import 'Player.graphql'
+
+fragment GameFragment on Game {
+  id
+  dateCreated
+  dateEnded
+  dateStarted
+  players {
+    ...PlayerFragment
+  }
+}

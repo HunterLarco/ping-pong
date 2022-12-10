@@ -4,7 +4,7 @@ import type { PluginOptions as ToastPluginOptions } from 'vue-toastification';
 import 'vue-toastification/dist/index.css';
 
 import App from '@/App.vue';
-import '@/apollo.js';
+import '@/apollo';
 import '@/assets/main.css';
 import router from '@/router';
 

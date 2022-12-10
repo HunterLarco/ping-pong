@@ -1,0 +1,11 @@
+#import '../fragments/Game.graphql';
+
+query HomePage {
+  viewer: me {
+    id
+    name
+    currentGame {
+      ...GameFragment
+    }
+  }
+}
