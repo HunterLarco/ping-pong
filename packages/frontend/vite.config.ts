@@ -6,7 +6,7 @@ import graphqlCodegen from 'vite-plugin-graphql-codegen';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [vue(), checker({ vueTsc: true }), graphqlCodegen()],
+  plugins: [graphqlCodegen(), vue(), checker({ vueTsc: true })],
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
