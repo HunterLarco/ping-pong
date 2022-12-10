@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
 
-import { useHomePageQuery } from '@/../generated/graphql/operations';
 import MenuButton from '@/components/MenuButton.vue';
 import MenuButtonList from '@/components/MenuButtonList.vue';
+import { useHomePageQuery } from '@/generated/graphql/operations';
 
 const router = useRouter();
 

@@ -1,8 +1,8 @@
 import { useApolloClient } from '@vue/apollo-composable';
 import cloneDeep from 'clone-deep';
 
-import { GameFragmentFragmentDoc } from '@/../generated/graphql/operations';
-import type { GameFragmentFragment } from '@/../generated/graphql/operations';
+import { GameFragmentFragmentDoc } from '@/generated/graphql/operations';
+import type { GameFragmentFragment } from '@/generated/graphql/operations';
 
 const { client: apolloClient } = useApolloClient();
 

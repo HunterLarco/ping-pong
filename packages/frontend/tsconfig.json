@@ -9,7 +9,7 @@
     "strict": true,
     "paths": {
       "@/*": ["./src/*"],
-      "@generated/*": ["./generated/*"]
+      "@/generated/*": ["./generated/*"]
     }
   },
 

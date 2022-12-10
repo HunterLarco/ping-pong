@@ -11,8 +11,8 @@ import { getMainDefinition } from '@apollo/client/utilities';
 import { provideApolloClient } from '@vue/apollo-composable';
 import { createClient } from 'graphql-ws';
 
-import type { StrictTypedTypePolicies } from '@/../../generated/graphql/typedPolicies';
 import getGameByIdCachePolicy from '@/apollo/cache_policies/getGameById';
+import type { StrictTypedTypePolicies } from '@/generated/graphql/typedPolicies';
 
 /// Create link
 
