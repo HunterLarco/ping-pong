@@ -19,24 +19,21 @@ import getGameByIdCachePolicy from '@/apollo/cache_policies/getGameById';
 const wsLink = new GraphQLWsLink(
   createClient({
     url: `ws://${window.location.hostname}:4000/graphql`,
+    // Unbelievably, web sockers cannot include custom headers in browsers (see
+    // linked source below). This means that we need to send our authorization
+    // token directly as part of the initial connection request instead of using
+    // the `authorization` ApolloLink which is used with `httpLink`.
+    //
+    // https://stackoverflow.com/questions/4361173/http-headers-in-websockets-client-api/4361358#4361358
+    connectionParams: () => ({
+      Authorization: localStorage.getItem('authorization') ?? undefined,
+    }),
   })
 );
 
 const httpLink = new HttpLink({
   uri: `http://${window.location.hostname}:4000/graphql`,
 });
-
-const link = split(
-  ({ query }) => {
-    const definition = getMainDefinition(query);
-    return (
-      definition.kind === 'OperationDefinition' &&
-      definition.operation === 'subscription'
-    );
-  },
-  wsLink,
-  httpLink
-);
 
 const authorization = new ApolloLink((operation, forward) => {
   const token = localStorage.getItem('authorization');
@@ -49,6 +46,18 @@ const authorization = new ApolloLink((operation, forward) => {
   }
   return forward(operation);
 });
+
+const link = split(
+  ({ query }) => {
+    const definition = getMainDefinition(query);
+    return (
+      definition.kind === 'OperationDefinition' &&
+      definition.operation === 'subscription'
+    );
+  },
+  wsLink,
+  concat(authorization, httpLink)
+);
 
 /// Create cache
 
@@ -66,7 +75,7 @@ const cache = new InMemoryCache({
 
 const apolloClient = new ApolloClient({
   cache,
-  link: concat(authorization, link),
+  link,
 });
 
 provideApolloClient(apolloClient);

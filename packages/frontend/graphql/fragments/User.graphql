@@ -1,4 +1,5 @@
 fragment UserFragment on User {
   name
   id
+  isViewer
 }

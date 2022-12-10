@@ -9,4 +9,16 @@ export const resolvers: Resolvers = {
       return parent.name;
     },
   },
+
+  User: {
+    id(parent) {
+      return parent.id;
+    },
+    name(parent) {
+      return parent.name;
+    },
+    isViewer(parent, _1, { actor }) {
+      return parent.id == actor?.id;
+    },
+  },
 };

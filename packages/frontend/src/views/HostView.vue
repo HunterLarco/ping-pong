@@ -96,7 +96,9 @@ onSpectateError((error) => {
 </script>
 
 <template>
-  <div class="HostPage">{{ gameResult }}</div>
+  <div class="HostPage">
+    <pre>{{ JSON.stringify(gameResult, null, 2) }}</pre>
+  </div>
 </template>
 
 <style scoped lang="scss">
@@ -104,8 +106,8 @@ onSpectateError((error) => {
 
 .HostPage {
   @include layout-fill;
-  @include layout-center;
 
   position: fixed;
+  overflow: scroll;
 }
 </style>
