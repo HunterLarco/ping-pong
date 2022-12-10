@@ -52,6 +52,17 @@ when new changes are available and will hot-reload the frontend.
 Frontend: http://localhost:5173
 API Server: http://localhost:4000/graphql
 
+## Code Quality
+
+Each package as well as the root package support the commands `lint` and
+`lint:fix`. For former will check for style conformance, the latter will
+auto-format your code to comply with the linter. Please auto-format all code
+before committing.
+
+```
+npm run lint:fix
+```
+
 ## Useful Documentation
 
 - Vue: https://vuejs.org/guide/quick-start.html
