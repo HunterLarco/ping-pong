@@ -12,6 +12,9 @@ export const resolvers: Resolvers = {
     players(parent) {
       return parent.players;
     },
+    viewerIsParticipant(parent, _1, { actor }) {
+      return !!parent.players.find((player) => player.userId == actor?.id);
+    },
     dateCreated(parent) {
       return parent.dateCreated;
     },

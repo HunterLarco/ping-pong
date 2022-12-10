@@ -7,6 +7,16 @@ nvm use
 npm run initialize
 ```
 
+And add a new file to `packages/api_server/.env` with the following data.
+
+```
+DATABASE_URL="mongodb://localhost/db?directConnection=true"
+
+TWILIO_ACCOUNT_SID="{{ insert your token here }}"
+TWILIO_AUTH_TOKEN="{{ insert your token here }}"
+TWILIO_VERIFY_SID="{{ insert your token here }}"
+```
+
 Afterwards you should verify that everything installed correctly by building the
 project. This has the added benefit of populating our build caches for more
 streamlined development.

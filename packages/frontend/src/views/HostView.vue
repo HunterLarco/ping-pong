@@ -73,6 +73,9 @@ onGameEvent(({ data }) => {
     case 'PlayerJoinEvent': {
       GameFragmentCache.update(<string>route.params.gameId, (game) => {
         game.players.push(details.player);
+        if (details.player.user.isViewer) {
+          game.viewerIsParticipant = true;
+        }
         return game;
       });
       break;

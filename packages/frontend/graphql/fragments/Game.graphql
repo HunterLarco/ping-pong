@@ -5,6 +5,7 @@ fragment GameFragment on Game {
   dateCreated
   dateEnded
   dateStarted
+  viewerIsParticipant
   players {
     ...PlayerFragment
   }

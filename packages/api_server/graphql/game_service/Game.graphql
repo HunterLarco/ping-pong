@@ -4,6 +4,13 @@
 type Game {
   id: ID!
   players: [Player!]!
+
+  """
+  If the current user (aka viewer) is a player in this game, this will be true,
+  otherwise false.
+  """
+  viewerIsParticipant: Boolean!
+
   dateCreated: DateTime!
   dateStarted: DateTime
   dateEnded: DateTime
