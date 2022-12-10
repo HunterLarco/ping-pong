@@ -11,6 +11,7 @@ import { getMainDefinition } from '@apollo/client/utilities';
 import { provideApolloClient } from '@vue/apollo-composable';
 import { createClient } from 'graphql-ws';
 
+import type { StrictTypedTypePolicies } from '@/../../generated/graphql/typedPolicies';
 import getGameByIdCachePolicy from '@/apollo/cache_policies/getGameById';
 
 /// Create link
@@ -52,7 +53,7 @@ const authorization = new ApolloLink((operation, forward) => {
 /// Create cache
 
 const cache = new InMemoryCache({
-  typePolicies: {
+  typePolicies: <StrictTypedTypePolicies>{
     Query: {
       fields: {
         getGameById: getGameByIdCachePolicy,
