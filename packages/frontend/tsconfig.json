@@ -8,8 +8,8 @@
     "noUnusedLocals": true,
     "strict": true,
     "paths": {
-      "@/*": ["./src/*"],
-      "@/generated/*": ["./generated/*"]
+      "@/*": ["src/*"],
+      "@generated/*": ["generated/*"]
     }
   },
 

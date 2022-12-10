@@ -1,14 +1,14 @@
 <script setup lang="ts">
+import {
+  useCreateGameMutation,
+  useGetGameQuery,
+  useSpectateGameSubscription,
+} from '@generated/graphql/operations';
 import { watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useToast } from 'vue-toastification';
 
 import * as GameFragmentCache from '@/apollo/cache_updates/GameFragment';
-import {
-  useCreateGameMutation,
-  useGetGameQuery,
-  useSpectateGameSubscription,
-} from '@/generated/graphql/operations';
 
 const route = useRoute();
 const router = useRouter();
