@@ -1,45 +1,47 @@
 <script setup lang="ts">
-import { useApolloClient } from '@vue/apollo-composable';
-import cloneDeep from 'clone-deep';
-import { onMounted } from 'vue';
+import { watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useToast } from 'vue-toastification';
 
 import {
-  GameFragmentFragmentDoc,
   useCreateGameMutation,
   useGetGameQuery,
   useSpectateGameSubscription,
 } from '@/../generated/graphql/operations';
-import type { GameFragmentFragment } from '@/../generated/graphql/operations';
+import * as GameFragmentCache from '@/apollo/cache_updates/GameFragment';
 
 const route = useRoute();
 const router = useRouter();
 const toast = useToast();
-const { client: apolloClient } = useApolloClient();
 
-onMounted(async () => {
-  // If the page is `/host` then we need to create a new game. The
-  // `useSubscription` directive below will automatically watch for changes in
-  // the url so when we redirect to `/host/{gameId}`, the subscription will
-  // start.
-  if (!route.params.gameId) {
-    const { mutate: createGame, onDone, onError } = useCreateGameMutation();
+// If the page is `/host` then we need to create a new game. The
+// `useSubscription` directive below will automatically watch for changes in
+// the url so when we redirect to `/host/{gameId}`, the subscription will
+// start.
+watch(
+  () => route.params.gameId,
+  (gameId) => {
+    if (!gameId) {
+      const { mutate: createGame, onDone, onError } = useCreateGameMutation();
 
-    onDone(({ data }) => {
-      router.push({
-        path: `/host/${data!.createGame.game.id}`,
+      onDone(({ data }) => {
+        router.push({
+          path: `/host/${data!.createGame.game.id}`,
+        });
       });
-    });
 
-    onError((error) => {
-      toast.error(error.message);
-      console.error('Failed to create game.', error);
-    });
+      onError((error) => {
+        toast.error(error.message);
+        console.error('Failed to create game.', error);
+      });
 
-    createGame();
+      createGame();
+    }
+  },
+  {
+    immediate: true,
   }
-});
+);
 
 const { result: gameResult } = useGetGameQuery(
   () => ({
@@ -69,43 +71,19 @@ onGameEvent(({ data }) => {
   const details = event.details;
   switch (details.__typename) {
     case 'PlayerJoinEvent': {
-      apolloClient.cache.updateFragment<GameFragmentFragment>(
-        {
-          id: `Game:${<string>route.params.gameId}`,
-          fragment: GameFragmentFragmentDoc,
-          fragmentName: 'GameFragment',
-        },
-        (game) => {
-          if (!game) {
-            return game;
-          }
-
-          const newGame = cloneDeep(game);
-          newGame.players.push(details.player);
-          return newGame;
-        }
-      );
+      GameFragmentCache.update(<string>route.params.gameId, (game) => {
+        game.players.push(details.player);
+        return game;
+      });
       break;
     }
     case 'PlayerUpdateEvent': {
-      apolloClient.cache.updateFragment<GameFragmentFragment>(
-        {
-          id: `Game:${<string>route.params.gameId}`,
-          fragment: GameFragmentFragmentDoc,
-          fragmentName: 'GameFragment',
-        },
-        (game) => {
-          if (!game) {
-            return game;
-          }
-
-          const newGame = cloneDeep(game);
-          newGame.players = newGame.players.map((player) =>
-            player.user.id == details.player.user.id ? details.player : player
-          );
-          return newGame;
-        }
-      );
+      GameFragmentCache.update(<string>route.params.gameId, (game) => {
+        game.players = game.players.map((player) =>
+          player.user.id == details.player.user.id ? details.player : player
+        );
+        return game;
+      });
       break;
     }
   }
