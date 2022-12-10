@@ -27,6 +27,11 @@ export const resolvers: SubscriptionResolvers = {
         },
       };
 
+      if (game.dateEnded) {
+        // If the game has already ended, close the stream.
+        return;
+      }
+
       for await (const event of dataSources.GameEvent.subscribe(
         request.gameId
       )) {
