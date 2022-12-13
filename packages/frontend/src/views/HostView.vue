@@ -25,8 +25,8 @@ watch(
       const { mutate: createGame, onDone, onError } = useCreateGameMutation();
 
       onDone(({ data }) => {
-        router.push({
-          path: `/host/${data!.createGame.game.id}`,
+        router.replace({
+          path: `/game/${data!.createGame.game.id}`,
         });
       });
 

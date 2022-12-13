@@ -15,8 +15,13 @@ const router = createRouter({
       component: HomeView,
     },
     {
-      path: '/host/:gameId?',
-      name: 'host',
+      path: '/start',
+      name: 'start',
+      component: HostView,
+    },
+    {
+      path: '/game/:gameId',
+      name: 'game',
       component: HostView,
     },
     /*

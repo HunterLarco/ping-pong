@@ -9,14 +9,14 @@ const router = useRouter();
 
 const { result: homePageResult } = useHomePageQuery();
 
-function hostGame() {
-  router.push({ path: `/host` });
+function createNewGame() {
+  router.push({ path: `/start` });
 }
 
 function joinCurrentGame() {
   if (homePageResult.value?.viewer?.currentGame) {
     router.push({
-      path: `/host/${homePageResult.value.viewer.currentGame.id}`,
+      path: `/game/${homePageResult.value.viewer.currentGame.id}`,
     });
   }
 }
@@ -30,7 +30,7 @@ function joinCurrentGame() {
         <div class="LogoText">MTG Treachery</div>
       </div>
       <MenuButtonList>
-        <MenuButton text="Host Game" @click="hostGame()" />
+        <MenuButton text="Start New Game" @click="createNewGame()" />
         <MenuButton
           :disabled="!homePageResult?.viewer?.currentGame"
           text="Join Current Game"
