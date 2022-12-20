@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useIssuePhoneVerificationMutation } from '@generated/graphql/operations';
 import { computed, ref } from 'vue';
+import { useRouter } from 'vue-router';
 import { useToast } from 'vue-toastification';
 
 import CountryCodeDropdown from '@/components/CountryCodeDropdown.vue';
@@ -9,6 +10,7 @@ import InputGroup from '@/components/InputGroup.vue';
 import MenuButton from '@/components/MenuButton.vue';
 import NavBar from '@/components/NavBar.vue';
 
+const router = useRouter();
 const toast = useToast();
 
 /// Form State
@@ -40,11 +42,15 @@ function submit() {
 
   onDone((result) => {
     loading.value = false;
-    const knownPhoneNumber =
-      !!result?.data?.issuePhoneVerification.knownPhoneNumber;
-    if (!knownPhoneNumber) {
+    if (result?.data?.issuePhoneVerification.knownPhoneNumber) {
+      router.push({
+        path: '/login/opt',
+        query: {
+          phoneNumber: phoneNumber.value,
+        },
+      });
+    } else {
       toast.error('User not found.');
-      return;
     }
   });
 
