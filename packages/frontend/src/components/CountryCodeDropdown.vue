@@ -1,6 +1,10 @@
 <script setup lang="ts">
 const props = defineProps({
   modelValue: String,
+  disabled: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const emit = defineEmits(['update:modelValue']);
@@ -13,6 +17,7 @@ const emit = defineEmits(['update:modelValue']);
     @change="
       emit('update:modelValue', (<HTMLSelectElement>$event.target).value)
     "
+    :disabled="disabled"
   >
     <option data-countryCode="US" value="1">United States (+1)</option>
     <optgroup>

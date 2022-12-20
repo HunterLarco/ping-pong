@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useIssuePhoneVerificationMutation } from '@generated/graphql/operations';
+import { useMutationLoading } from '@vue/apollo-composable';
 import { computed, ref } from 'vue';
 
 import CountryCodeDropdown from '@/components/CountryCodeDropdown.vue';
@@ -7,11 +9,33 @@ import InputGroup from '@/components/InputGroup.vue';
 import MenuButton from '@/components/MenuButton.vue';
 import NavBar from '@/components/NavBar.vue';
 
+/// Form Data
+
 const countryCode = ref('1' /* Default value is United States (+1) */);
 const localPhoneNumber = ref('');
 const phoneNumber = computed(
   () => `+${countryCode.value}${localPhoneNumber.value}`
 );
+
+/// Mutations
+
+const { mutate: issuePhoneVerification } = useIssuePhoneVerificationMutation(
+  () => ({
+    variables: {
+      phoneNumber: phoneNumber.value,
+    },
+  })
+);
+
+/// Loading State
+
+const loading = useMutationLoading();
+
+/// Actions
+
+function submit() {
+  issuePhoneVerification();
+}
 </script>
 
 <template>
@@ -22,20 +46,26 @@ const phoneNumber = computed(
     <div class="Content">
       <div class="Form">
         <InputGroup label="Your Phone Number">
-          <InputFrame label="Country / Region">
-            <CountryCodeDropdown v-model="countryCode" />
+          <InputFrame label="Country / Region" :disabled="loading">
+            <CountryCodeDropdown v-model="countryCode" :disabled="loading" />
           </InputFrame>
-          <InputFrame label="Phone Number">
+          <InputFrame label="Phone Number" :disabled="loading">
             <input
               type="tel"
               :value="localPhoneNumber"
               @input="
                 localPhoneNumber = (<HTMLInputElement>$event.target).value
               "
+              :disabled="loading"
             />
           </InputFrame>
         </InputGroup>
-        <MenuButton class="SubmitButton" text="Next" />
+        <MenuButton
+          class="SubmitButton"
+          text="Next"
+          @click="submit"
+          :disabled="loading"
+        />
       </div>
     </div>
   </div>

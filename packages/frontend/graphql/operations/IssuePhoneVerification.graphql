@@ -1,0 +1,7 @@
+scalar PhoneNumber
+
+mutation IssuePhoneVerification($phoneNumber: PhoneNumber!) {
+  issuePhoneVerification(request: { phoneNumber: $phoneNumber }) {
+    knownPhoneNumber
+  }
+}

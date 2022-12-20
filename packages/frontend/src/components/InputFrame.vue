@@ -4,11 +4,16 @@ const props = defineProps({
     type: String,
     default: '',
   },
+
+  disabled: {
+    type: Boolean,
+    default: false,
+  },
 });
 </script>
 
 <template>
-  <div class="Frame">
+  <div class="Frame" :disabled="disabled || undefined">
     <div class="Label">{{ props.label }}</div>
     <div class="Content">
       <slot></slot>
@@ -36,6 +41,18 @@ const props = defineProps({
     mix-blend-mode: overlay;
     z-index: -1;
   }
+
+  &[disabled] {
+    cursor: not-allowed;
+
+    .Label {
+      color: rgba(#fff, 0.2);
+    }
+
+    &::before {
+      background: rgba(#fff, 0.4);
+    }
+  }
 }
 
 .Label {
@@ -50,6 +67,10 @@ const props = defineProps({
 
 .Content {
   height: 36px;
+}
+
+:slotted(.Frame[disabled] .Content > *) {
+  color: rgba(#fff, 0.4);
 }
 
 :slotted(.Content > input[type='text']),
