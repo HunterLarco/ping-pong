@@ -1,9 +1,17 @@
 <script setup lang="ts">
+import { computed, ref } from 'vue';
+
 import CountryCodeDropdown from '@/components/CountryCodeDropdown.vue';
 import InputFrame from '@/components/InputFrame.vue';
 import InputGroup from '@/components/InputGroup.vue';
 import MenuButton from '@/components/MenuButton.vue';
 import NavBar from '@/components/NavBar.vue';
+
+const countryCode = ref('1' /* Default value is United States (+1) */);
+const localPhoneNumber = ref('');
+const phoneNumber = computed(
+  () => `+${countryCode.value}${localPhoneNumber.value}`
+);
 </script>
 
 <template>
@@ -15,10 +23,16 @@ import NavBar from '@/components/NavBar.vue';
       <div class="Form">
         <InputGroup label="Your Phone Number">
           <InputFrame label="Country / Region">
-            <CountryCodeDropdown />
+            <CountryCodeDropdown v-model="countryCode" />
           </InputFrame>
           <InputFrame label="Phone Number">
-            <input type="tel" />
+            <input
+              type="tel"
+              :value="localPhoneNumber"
+              @input="
+                localPhoneNumber = (<HTMLInputElement>$event.target).value
+              "
+            />
           </InputFrame>
         </InputGroup>
         <MenuButton class="SubmitButton" text="Next" />

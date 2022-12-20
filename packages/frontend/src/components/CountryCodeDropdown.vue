@@ -1,9 +1,19 @@
 <script setup lang="ts">
-// TODO: https://github.com/trivago/prettier-plugin-sort-imports/issues/191
+const props = defineProps({
+  modelValue: String,
+});
+
+const emit = defineEmits(['update:modelValue']);
 </script>
 
 <template>
-  <select name="countryCode">
+  <select
+    name="countryCode"
+    :value="props.modelValue"
+    @change="
+      emit('update:modelValue', (<HTMLSelectElement>$event.target).value)
+    "
+  >
     <option data-countryCode="US" value="1">United States (+1)</option>
     <optgroup>
       <option data-countryCode="DZ" value="213">Algeria (+213)</option>
