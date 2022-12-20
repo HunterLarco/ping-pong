@@ -32,9 +32,6 @@ import MenuButton from '@/components/MenuButton.vue';
 .HomePage {
   @include layout-fill;
   @include layout-vertical;
-
-  position: fixed;
-  background-image: linear-gradient(127deg, #76268a 0%, #1b1c80 100%);
 }
 
 .Header {

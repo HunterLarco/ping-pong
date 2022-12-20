@@ -2,15 +2,17 @@
 *::before,
 *::after {
   box-sizing: border-box;
-  margin: 0;
-  position: relative;
   font-weight: normal;
+  margin: 0;
+  user-select: none;
 }
 
 html,
 body {
-  position: fixed;
+  min-height: 100vh;
   overflow: hidden;
+  overscroll-behavior-y: none;
+  position: relative;
 }
 
 body {
