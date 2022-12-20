@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useIssuePhoneVerificationMutation } from '@generated/graphql/operations';
-import { useMutationLoading } from '@vue/apollo-composable';
 import { computed, ref } from 'vue';
+import { useToast } from 'vue-toastification';
 
 import CountryCodeDropdown from '@/components/CountryCodeDropdown.vue';
 import InputFrame from '@/components/InputFrame.vue';
@@ -9,7 +9,11 @@ import InputGroup from '@/components/InputGroup.vue';
 import MenuButton from '@/components/MenuButton.vue';
 import NavBar from '@/components/NavBar.vue';
 
-/// Form Data
+const toast = useToast();
+
+/// Form State
+
+const loading = ref(false);
 
 const countryCode = ref('1' /* Default value is United States (+1) */);
 const localPhoneNumber = ref('');
@@ -17,24 +21,34 @@ const phoneNumber = computed(
   () => `+${countryCode.value}${localPhoneNumber.value}`
 );
 
-/// Mutations
-
-const { mutate: issuePhoneVerification } = useIssuePhoneVerificationMutation(
-  () => ({
-    variables: {
-      phoneNumber: phoneNumber.value,
-    },
-  })
-);
-
-/// Loading State
-
-const loading = useMutationLoading();
-
 /// Actions
 
 function submit() {
-  issuePhoneVerification();
+  loading.value = true;
+
+  const { mutate, onError, onDone } = useIssuePhoneVerificationMutation({
+    variables: {
+      phoneNumber: phoneNumber.value,
+    },
+  });
+
+  onError((error) => {
+    loading.value = false;
+    toast.error(error.message);
+    console.error('Failed to issue phone verification.', error);
+  });
+
+  onDone((result) => {
+    loading.value = false;
+    const knownPhoneNumber =
+      !!result?.data?.issuePhoneVerification.knownPhoneNumber;
+    if (!knownPhoneNumber) {
+      toast.error('User not found.');
+      return;
+    }
+  });
+
+  mutate();
 }
 </script>
 
