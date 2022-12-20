@@ -13,4 +13,7 @@ export default defineConfig({
       '@generated': fileURLToPath(new URL('./generated', import.meta.url)),
     },
   },
+  server: {
+    host: true,
+  },
 });
