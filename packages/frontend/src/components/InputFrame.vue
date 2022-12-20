@@ -51,4 +51,17 @@ const props = defineProps({
 .Content {
   height: 36px;
 }
+
+:slotted(.Content > input[type='text']),
+:slotted(.Content > input[type='tel']) {
+  background: transparent;
+  border-radius: 0;
+  border: none;
+  color: #fff;
+  font-size: 16px;
+  height: 100%;
+  outline: none;
+  padding: 0 6px;
+  width: 100%;
+}
 </style>

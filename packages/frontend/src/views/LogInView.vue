@@ -13,8 +13,12 @@ import NavBar from '@/components/NavBar.vue';
     <div class="Content">
       <div class="Form">
         <InputGroup label="Your Phone Number">
-          <InputFrame label="Country / Region" />
-          <InputFrame label="Phone Number" />
+          <InputFrame label="Country / Region">
+            <input type="tel" />
+          </InputFrame>
+          <InputFrame label="Phone Number">
+            <input type="tel" />
+          </InputFrame>
         </InputGroup>
         <MenuButton class="SubmitButton" text="Next" />
       </div>
