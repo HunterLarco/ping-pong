@@ -27,24 +27,37 @@ function tryEmitClick() {
 </template>
 
 <style scoped lang="scss">
+@import '@/styles/layout';
+
 .Button {
-  background: #2196f3;
   border-radius: 4px;
+  color: #fff;
   cursor: pointer;
+  font-size: 14px;
   font-weight: 700;
   padding: 10px 20px;
+  position: relative;
   text-align: center;
   user-select: none;
 
-  &:not([disabled]) {
-    &:hover {
-      background: darken(#2196f3, 10%);
-    }
+  &::before {
+    @include layout-fill;
+
+    background: #fff;
+    border-radius: 6px;
+    content: '';
+    display: block;
+    mix-blend-mode: overlay;
+    z-index: -1;
   }
 
   &[disabled] {
+    color: rgba(#fff, 0.4);
     cursor: not-allowed;
-    opacity: 0.4;
+
+    &::before {
+      background: rgba(#fff, 0.4);
+    }
   }
 }
 </style>

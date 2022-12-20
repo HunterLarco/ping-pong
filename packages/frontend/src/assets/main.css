@@ -1,5 +1,6 @@
 @import './base.css';
 
 #app {
+  color: #fff;
   font-weight: normal;
 }
