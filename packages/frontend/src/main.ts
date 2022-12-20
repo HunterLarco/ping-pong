@@ -6,24 +6,26 @@ import 'vue-toastification/dist/index.css';
 import App from '@/App.vue';
 import '@/apollo';
 import '@/assets/main.css';
+import '@/assets/toast.scss';
 import router from '@/router';
 
 const app = createApp(App);
 
 app.use(router);
 app.use(Toast, <ToastPluginOptions>{
-  position: 'bottom-center',
-  timeout: 5000,
+  closeButton: false,
   closeOnClick: true,
-  pauseOnFocusLoss: true,
-  pauseOnHover: true,
+  containerClassName: 'ToastOverride',
   draggable: true,
   draggablePercent: 0.6,
-  showCloseButtonOnHover: false,
   hideProgressBar: true,
-  closeButton: false,
   icon: true,
+  pauseOnFocusLoss: true,
+  pauseOnHover: true,
+  position: 'bottom-center',
   rtl: false,
+  showCloseButtonOnHover: false,
+  timeout: 5000,
 });
 
 app.mount('#app');
