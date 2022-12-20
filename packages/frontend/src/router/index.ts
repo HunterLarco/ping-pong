@@ -1,10 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import type { RouteLocationNormalized, RouteRecordName } from 'vue-router';
 
-import HomeView from '@/views/HomeView.vue';
 import HostView from '@/views/HostView.vue';
-
-// import LoginView from '../views/LoginView.vue';
+import LogInView from '@/views/LogInView.vue';
+import NuxView from '@/views/NuxView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -12,7 +11,12 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: HomeView,
+      component: NuxView,
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component: LogInView,
     },
     {
       path: '/start',
@@ -24,28 +28,6 @@ const router = createRouter({
       name: 'game',
       component: HostView,
     },
-    /*
-    {
-      path: '/host/:gameId',
-      name: 'host',
-      component: () => import('@/views/HostView.vue'),
-    },
-    {
-      path: '/join/:gameId',
-      name: 'join',
-      component: () => import('@/views/JoinView.vue'),
-    },
-    {
-      path: '/login',
-      name: 'login',
-      component: LoginView,
-    },
-    {
-      path: '/game',
-      name: 'game',
-      component: () => import('@/views/GameView.vue'),
-    },
-    */
   ],
 });
 
@@ -57,6 +39,7 @@ interface RouteGuards {
 }
 
 const guards: RouteGuards = {
+  /*
   join(to) {
     const authToken = localStorage.getItem('authorization');
     if (!authToken) {
@@ -70,6 +53,7 @@ const guards: RouteGuards = {
       return `/`;
     }
   },
+  */
 };
 
 router.beforeEach(async (to, from) => {

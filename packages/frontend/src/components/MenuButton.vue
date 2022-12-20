@@ -30,7 +30,7 @@ function tryEmitClick() {
 @import '@/styles/layout';
 
 .Button {
-  border-radius: 4px;
+  border-radius: 6px;
   color: #fff;
   cursor: pointer;
   font-size: 14px;
