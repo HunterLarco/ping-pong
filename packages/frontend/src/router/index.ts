@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import type { RouteLocationNormalized, RouteRecordName } from 'vue-router';
 
 import HostView from '@/views/HostView.vue';
+import LogInOtpView from '@/views/LogInOtpView.vue';
 import LogInView from '@/views/LogInView.vue';
 import NuxView from '@/views/NuxView.vue';
 
@@ -17,6 +18,11 @@ const router = createRouter({
       path: '/login',
       name: 'login',
       component: LogInView,
+    },
+    {
+      path: '/login/otp',
+      name: 'login_otp',
+      component: LogInOtpView,
     },
     {
       path: '/start',

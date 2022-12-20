@@ -44,7 +44,7 @@ function submit() {
     loading.value = false;
     if (result?.data?.issuePhoneVerification.knownPhoneNumber) {
       router.push({
-        path: '/login/opt',
+        path: '/login/otp',
         query: {
           phoneNumber: phoneNumber.value,
         },

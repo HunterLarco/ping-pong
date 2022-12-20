@@ -29,12 +29,14 @@ const props = defineProps({
   margin: 2px 0;
 
   &:first-child {
-    border-radius: 6px 6px 0 0;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
     margin-top: 0;
   }
 
   &:last-child {
-    border-radius: 0 0 6px 6px;
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
     margin-bottom: 0;
   }
 }

@@ -75,6 +75,7 @@ const props = defineProps({
 
 :slotted(.Content > input[type='text']),
 :slotted(.Content > input[type='tel']),
+:slotted(.Content > input[type='number']),
 :slotted(.Content > select) {
   appearance: none;
   background: transparent;
