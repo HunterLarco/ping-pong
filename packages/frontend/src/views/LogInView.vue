@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import CountryCodeDropdown from '@/components/CountryCodeDropdown.vue';
 import InputFrame from '@/components/InputFrame.vue';
 import InputGroup from '@/components/InputGroup.vue';
 import MenuButton from '@/components/MenuButton.vue';
@@ -14,7 +15,7 @@ import NavBar from '@/components/NavBar.vue';
       <div class="Form">
         <InputGroup label="Your Phone Number">
           <InputFrame label="Country / Region">
-            <input type="tel" />
+            <CountryCodeDropdown />
           </InputFrame>
           <InputFrame label="Phone Number">
             <input type="tel" />

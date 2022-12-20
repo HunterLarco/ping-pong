@@ -53,7 +53,9 @@ const props = defineProps({
 }
 
 :slotted(.Content > input[type='text']),
-:slotted(.Content > input[type='tel']) {
+:slotted(.Content > input[type='tel']),
+:slotted(.Content > select) {
+  appearance: none;
   background: transparent;
   border-radius: 0;
   border: none;
