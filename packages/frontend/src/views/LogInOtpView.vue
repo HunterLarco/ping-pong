@@ -128,7 +128,7 @@ function login(identityVerificationToken: string) {
 <template>
   <div class="HomePage">
     <div class="Header">
-      <NavBar back="/login" title="Log In" />
+      <NavBar title="Log In" />
     </div>
     <div class="Content">
       <div class="Form">

@@ -1,23 +1,24 @@
 <script setup lang="ts">
-const props = defineProps({
-  back: {
-    type: String,
-    default: '/',
-  },
+import { useRouter } from 'vue-router';
 
+const router = useRouter();
+
+const props = defineProps({
   title: {
     type: String,
     required: true,
   },
 });
+
+function goBack() {
+  router.go(-1);
+}
 </script>
 
 <template>
   <div class="Host">
     <div class="Left">
-      <RouterLink :to="props.back">
-        <img src="@/assets/BackButton.svg" />
-      </RouterLink>
+      <img @click="goBack" src="@/assets/BackButton.svg" />
     </div>
 
     <div class="Center">
