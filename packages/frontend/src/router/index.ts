@@ -1,8 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import type { RouteLocationNormalized, RouteRecordName } from 'vue-router';
 
+import GameView from '@/views/GameView.vue';
 import HomeView from '@/views/HomeView.vue';
-import HostView from '@/views/HostView.vue';
 import LogInOtpView from '@/views/LogInOtpView.vue';
 import LogInView from '@/views/LogInView.vue';
 import NuxView from '@/views/NuxView.vue';
@@ -45,12 +45,12 @@ const router = createRouter({
     {
       path: '/start',
       name: 'start',
-      component: HostView,
+      component: GameView,
     },
     {
       path: '/game/:gameId',
       name: 'game',
-      component: HostView,
+      component: GameView,
     },
   ],
 });
