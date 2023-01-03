@@ -89,6 +89,10 @@ function submit(oneTimePassword: string) {
     console.error('Failed to verify phone number.', error);
   });
 
+  if (input.value) {
+    input.value.blur();
+  }
+
   mutate();
 }
 
