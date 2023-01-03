@@ -2,26 +2,27 @@
 import { useRouter } from 'vue-router';
 
 import MenuButton from '@/components/MenuButton.vue';
+import NavBar from '@/components/NavBar.vue';
 
 const router = useRouter();
+
+/// Actions
 
 function logout() {
   window.localStorage.removeItem('authorization');
   router.push({ path: '/' });
 }
+
+function startGame() {
+  router.push({ path: '/start' });
+}
 </script>
 
 <template>
   <div class="HomePage">
-    <div class="Header">
-      <div class="Logo">
-        <div class="LogoText">MTG Treachery</div>
-      </div>
-    </div>
-    <div class="Content"></div>
-    <div class="Footer">
-      <MenuButton text="Logout" @click="logout" />
-    </div>
+    <NavBar title="MTG Treachery" no-back-button />
+    <MenuButton text="Start a Game" @click="startGame" />
+    <MenuButton text="Logout" @click="logout" />
   </div>
 </template>
 
@@ -30,32 +31,8 @@ function logout() {
 
 .HomePage {
   @include layout-fill;
-  @include layout-vertical;
-}
 
-.Header {
-  flex-shrink: 0;
-}
-
-.Content {
-  flex-grow: 1;
-}
-
-.Footer {
-  flex-shrink: 0;
-  padding: 10px 20px;
-}
-
-.Logo {
-  padding: 40px 20px 20px 20px;
-}
-
-.LogoText {
-  font-size: 30px;
-  font-weight: 700;
-  overflow: hidden;
-  text-align: center;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow-x: hidden;
+  overflow-y: scroll;
 }
 </style>

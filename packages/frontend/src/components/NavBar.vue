@@ -8,6 +8,11 @@ const props = defineProps({
     type: String,
     required: true,
   },
+
+  noBackButton: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 function goBack() {
@@ -18,14 +23,16 @@ function goBack() {
 <template>
   <div class="Host">
     <div class="Left">
-      <img @click="goBack" src="@/assets/BackButton.svg" />
+      <img v-if="!noBackButton" @click="goBack" src="@/assets/BackButton.svg" />
     </div>
 
     <div class="Center">
       {{ props.title }}
     </div>
 
-    <div class="Right" />
+    <div class="Right">
+      <div v-if="!noBackButton" class="ButtonBalancer" />
+    </div>
   </div>
 </template>
 
@@ -58,6 +65,9 @@ function goBack() {
 
 .Right {
   flex-shrink: 0;
+}
+
+.ButtonBalancer {
   width: 22px;
 }
 </style>
