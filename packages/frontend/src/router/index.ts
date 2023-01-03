@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import type { RouteLocationNormalized, RouteRecordName } from 'vue-router';
 
+import HomeView from '@/views/HomeView.vue';
 import HostView from '@/views/HostView.vue';
 import LogInOtpView from '@/views/LogInOtpView.vue';
 import LogInView from '@/views/LogInView.vue';
@@ -11,7 +12,7 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      name: 'home',
+      name: 'nux',
       component: NuxView,
     },
     {
@@ -23,6 +24,11 @@ const router = createRouter({
       path: '/login/otp',
       name: 'login_otp',
       component: LogInOtpView,
+    },
+    {
+      path: '/home',
+      name: 'home',
+      component: HomeView,
     },
     {
       path: '/start',
@@ -44,22 +50,25 @@ interface RouteGuards {
   ) => void | string;
 }
 
-const guards: RouteGuards = {
-  /*
-  join(to) {
-    const authToken = localStorage.getItem('authorization');
-    if (!authToken) {
-      return `/login?to=${to.path}`;
-    }
-  },
+function disallowAuthGuard() {
+  const authToken = localStorage.getItem('authorization');
+  if (authToken) {
+    return '/home';
+  }
+}
 
-  login() {
-    const authToken = localStorage.getItem('authorization');
-    if (authToken) {
-      return `/`;
-    }
-  },
-  */
+function requireAuthGuard() {
+  const authToken = localStorage.getItem('authorization');
+  if (!authToken) {
+    return '/';
+  }
+}
+
+const guards: RouteGuards = {
+  nux: disallowAuthGuard,
+  login: disallowAuthGuard,
+  login_otp: disallowAuthGuard,
+  home: requireAuthGuard,
 };
 
 router.beforeEach(async (to, from) => {
