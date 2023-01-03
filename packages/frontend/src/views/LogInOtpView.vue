@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import {
+  useIssuePhoneVerificationMutation,
   useLoginMutation,
   useVerifyPhoneNumberMutation,
 } from '@generated/graphql/operations';
@@ -29,6 +30,33 @@ function onInput(value: string) {
 }
 
 /// Actions
+
+function resendOTP() {
+  if (loading.value) {
+    return;
+  }
+
+  loading.value = true;
+
+  const { mutate, onError, onDone } = useIssuePhoneVerificationMutation({
+    variables: {
+      phoneNumber: <string>route.query.phoneNumber,
+    },
+  });
+
+  onError((error) => {
+    loading.value = false;
+    toast.error(error.message);
+    console.error('Failed to issue phone verification.', error);
+  });
+
+  onDone(() => {
+    loading.value = false;
+    toast.success(`New One Time Password send.`);
+  });
+
+  mutate();
+}
 
 function submit(oneTimePassword: string) {
   loading.value = true;
@@ -115,6 +143,9 @@ function login(identityVerificationToken: string) {
             />
           </InputFrame>
         </InputGroup>
+        <div class="SecondaryActions">
+          Didn't get the code? <span @click="resendOTP">Resend</span>.
+        </div>
       </div>
     </div>
   </div>
@@ -138,5 +169,18 @@ function login(identityVerificationToken: string) {
 
 .Form {
   padding: 49px 23px 60px 23px;
+}
+
+.SecondaryActions {
+  color: rgba(#fff, 0.7);
+  font-size: 12px;
+  margin-top: 40px;
+  text-align: center;
+  white-space: nowrap;
+
+  a,
+  span {
+    color: #fff;
+  }
 }
 </style>
