@@ -6,6 +6,7 @@ import HostView from '@/views/HostView.vue';
 import LogInOtpView from '@/views/LogInOtpView.vue';
 import LogInView from '@/views/LogInView.vue';
 import NuxView from '@/views/NuxView.vue';
+import SignUpView from '@/views/SignUpView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -24,6 +25,11 @@ const router = createRouter({
       path: '/login/otp',
       name: 'login_otp',
       component: LogInOtpView,
+    },
+    {
+      path: '/signup',
+      name: 'signup',
+      component: SignUpView,
     },
     {
       path: '/home',
@@ -68,6 +74,7 @@ const guards: RouteGuards = {
   nux: disallowAuthGuard,
   login: disallowAuthGuard,
   login_otp: disallowAuthGuard,
+  signup: disallowAuthGuard,
   home: requireAuthGuard,
 };
 
