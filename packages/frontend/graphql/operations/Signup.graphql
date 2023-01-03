@@ -1,0 +1,10 @@
+mutation Signup($identityVerificationToken: ID!, $name: String!) {
+  signup(
+    request: {
+      identityVerificationToken: $identityVerificationToken
+      name: $name
+    }
+  ) {
+    authToken
+  }
+}

@@ -6,6 +6,7 @@ import HostView from '@/views/HostView.vue';
 import LogInOtpView from '@/views/LogInOtpView.vue';
 import LogInView from '@/views/LogInView.vue';
 import NuxView from '@/views/NuxView.vue';
+import SignUpOtpView from '@/views/SignUpOtpView.vue';
 import SignUpView from '@/views/SignUpView.vue';
 
 const router = createRouter({
@@ -30,6 +31,11 @@ const router = createRouter({
       path: '/signup',
       name: 'signup',
       component: SignUpView,
+    },
+    {
+      path: '/signup/otp',
+      name: 'signup_otp',
+      component: SignUpOtpView,
     },
     {
       path: '/home',
@@ -75,6 +81,7 @@ const guards: RouteGuards = {
   login: disallowAuthGuard,
   login_otp: disallowAuthGuard,
   signup: disallowAuthGuard,
+  signup_otp: disallowAuthGuard,
   home: requireAuthGuard,
 };
 
