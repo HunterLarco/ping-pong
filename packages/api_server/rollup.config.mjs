@@ -17,7 +17,6 @@ export default {
     'body-parser',
     'cors',
     'dataloader',
-    'dotenv',
     'express',
     'graphql',
     'graphql-scalars',
