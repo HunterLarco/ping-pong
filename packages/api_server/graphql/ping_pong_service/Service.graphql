@@ -8,6 +8,10 @@ type Mutation {
   sendMessage(request: SendMessageRequest!): SendMessageResponse!
 }
 
+type Subscription {
+  messageHistory: MessageLog!
+}
+
 ### sendMessage
 
 input SendMessageRequest {

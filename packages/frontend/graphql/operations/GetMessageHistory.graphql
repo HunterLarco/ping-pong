@@ -1,0 +1,7 @@
+query GetMessageHistory {
+  messageHistory {
+    id
+    payload
+    dateReceived
+  }
+}

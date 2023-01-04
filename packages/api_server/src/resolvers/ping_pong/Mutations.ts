@@ -3,9 +3,11 @@ import { GraphQLError } from 'graphql';
 
 export const resolvers: MutationResolvers = {
   async sendMessage(_0, { request }, { dataSources }) {
-    await dataSources.MessageHistory.recordMessage({
+    const messageLog = await dataSources.MessageHistory.recordMessage({
       message: request.message,
     });
+
+    dataSources.MessageLogPubSub.publish(messageLog);
 
     if (request.message.toLowerCase() !== 'ping') {
       throw new GraphQLError('Message must be `ping`.', {
