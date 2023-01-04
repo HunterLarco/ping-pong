@@ -9,6 +9,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { useToast } from 'vue-toastification';
 
 import * as GameFragmentCache from '@/apollo/cache_updates/GameFragment';
+import MenuButton from '@/components/MenuButton.vue';
 import NavBar from '@/components/NavBar.vue';
 import PlayerTile from '@/components/PlayerTile.vue';
 
@@ -102,14 +103,23 @@ onSpectateError((error) => {
 
 <template>
   <div class="HostPage">
-    <NavBar
-      :title="gameResult?.game?.dateEnded ? 'Finished Game' : 'Active Game'"
-    />
-    <PlayerTile
-      v-for="player in gameResult?.game?.players"
-      :key="player.user.id"
-      :player="player"
-    />
+    <div class="Header">
+      <NavBar
+        :title="gameResult?.game?.dateEnded ? 'Finished Game' : 'Active Game'"
+      />
+    </div>
+    <div class="Content">
+      <PlayerTile
+        v-for="player in gameResult?.game?.players"
+        :key="player.user.id"
+        :player="player"
+      />
+    </div>
+    <div class="Footer">
+      <MenuButton text="Unveil" disabled />
+      <MenuButton text="Concede" disabled />
+      <MenuButton text="View Your Identity" disabled />
+    </div>
   </div>
 </template>
 
@@ -118,7 +128,22 @@ onSpectateError((error) => {
 
 .HostPage {
   @include layout-fill;
+  @include layout-vertical;
+}
 
-  overflow: scroll;
+.Header {
+  flex-shrink: 0;
+  padding-bottom: 22px;
+}
+
+.Content {
+  flex-grow: 1;
+  overflow-x: scroll;
+  overflow-y: scroll;
+}
+
+.Footer {
+  flex-shrink: 0;
+  margin: 20px;
 }
 </style>
