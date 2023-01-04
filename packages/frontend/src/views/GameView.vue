@@ -116,9 +116,11 @@ onSpectateError((error) => {
       />
     </div>
     <div class="Footer">
-      <MenuButton text="Unveil" disabled />
-      <MenuButton text="Concede" disabled />
-      <MenuButton text="View Your Identity" disabled />
+      <template v-if="!gameResult?.game?.dateEnded">
+        <MenuButton text="Unveil" disabled />
+        <MenuButton text="Concede" disabled />
+        <MenuButton text="View Your Identity" disabled />
+      </template>
     </div>
   </div>
 </template>
