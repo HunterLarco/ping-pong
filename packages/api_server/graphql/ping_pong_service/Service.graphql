@@ -1,0 +1,25 @@
+#import 'MessageLog.graphql'
+
+type Query {
+  messageHistory: [MessageLog!]!
+}
+
+type Mutation {
+  sendMessage(request: SendMessageRequest!): SendMessageResponse!
+}
+
+### sendMessage
+
+input SendMessageRequest {
+  """
+  Will only accept `ping`.
+  """
+  message: String!
+}
+
+type SendMessageResponse {
+  """
+  Server response. Should be `pong`.
+  """
+  response: String!
+}

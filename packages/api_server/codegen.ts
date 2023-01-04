@@ -1,12 +1,7 @@
 import type { CodegenConfig } from '@graphql-codegen/cli';
 
 const kMappers = {
-  Game: '@prisma/client#Game as GameModel',
-  Player: '@prisma/client#Player as PlayerModel',
-  User: '@prisma/client#User as UserModel',
-  Viewer: '@prisma/client#User as UserModel',
-  IdentityCard: '@prisma/client#IdentityCard as IdentityCardModel',
-  DebugMutations: '{}',
+  MessageLog: '@prisma/client#MessageHistory as MessageHistoryModel',
 };
 
 const kResolverConfig = {
@@ -14,13 +9,7 @@ const kResolverConfig = {
   mappers: kMappers,
 };
 
-const kServiceList = [
-  'debug_service',
-  'game_service',
-  'user_service',
-  'identity_card_service',
-  'verification_service',
-];
+const kServiceList = ['ping_pong_service'];
 
 const config: CodegenConfig = {
   generates: {

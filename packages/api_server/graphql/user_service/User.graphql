@@ -1,9 +1,0 @@
-type User {
-  id: ID!
-  name: String!
-
-  """
-  A helpful flag to indicate if this user is the same as the current viewer.
-  """
-  isViewer: Boolean!
-}

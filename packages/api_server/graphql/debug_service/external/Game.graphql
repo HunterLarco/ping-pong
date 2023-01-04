@@ -1,3 +1,0 @@
-type Game {
-  id: ID!
-}

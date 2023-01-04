@@ -1,3 +1,4 @@
+/*
 import { ResolversTypes } from '@generated/graphql/game_service/resolvers';
 import { PubSub } from 'graphql-subscriptions';
 
@@ -5,9 +6,9 @@ type GameEvent = ResolversTypes['GameEvent'];
 
 const inMemoryPubSub = new PubSub();
 
-/**
+/ **
  * In-memory pubsub mechanism for game events.
- */
+ * /
 export default class GameEventPubSub {
   publish(gameId: string, event: GameEvent) {
     inMemoryPubSub.publish(gameId, { event });
@@ -20,3 +21,4 @@ export default class GameEventPubSub {
     }
   }
 }
+*/

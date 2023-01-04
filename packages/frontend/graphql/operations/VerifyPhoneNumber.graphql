@@ -1,9 +1,0 @@
-scalar PhoneNumber
-
-mutation VerifyPhoneNumber($phoneNumber: PhoneNumber!, $oneTimePassword: ID!) {
-  verifyPhoneNumber(
-    request: { phoneNumber: $phoneNumber, oneTimePassword: $oneTimePassword }
-  ) {
-    verificationToken
-  }
-}

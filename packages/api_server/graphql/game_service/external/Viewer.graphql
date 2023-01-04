@@ -1,6 +1,0 @@
-#import '../Game.graphql'
-
-type Viewer {
-  id: ID!
-  currentGame: Game
-}

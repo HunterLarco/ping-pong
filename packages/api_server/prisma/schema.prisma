@@ -1,94 +1,11 @@
-/// Game
+/// MessageHistory
 
-model Game {
+model MessageHistory {
   id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  message String
 
   dateCreated DateTime @default(now())
-  dateStarted DateTime?
-  dateEnded DateTime?
-
-  players Player[]
-
-  // Value used for optimistic locking (See https://tinyurl.com/3wkprjn6)
-  cas Int @default(0)
-}
-
-type Player {
-  userId String @db.ObjectId
-
-  // Will only be populated once the game starts.
-  identityCard IdentityCard?
-  unveiled Boolean @default(false)
-
-  state PlayerState @default(Active)
-}
-
-enum PlayerState {
-  // Indicates that the player is an active member in the game.
-  Active 
-
-  // Indicates that a player is no longer playing the game, but could still win.
-  // For example, a Guardian who lost when the Leader is still alive.
-  Inactive
-
-  Lost
-  Won
-}
-
-type IdentityCard {
-  id String
-  name String
-  type IdentityType
-  text String
-  rulings String[]
-  source String
-}
-
-enum IdentityType {
-  Leader
-  Guardian
-  Assassin
-  Traitor
-}
-
-/// User
-
-model User {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
-
-  phoneNumber String @unique
-  name String
-
-  dateCreated DateTime @default(now())
-}
-
-/// AuthToken
-
-model AuthToken {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
-
-  scopes AuthScope[]
-
-  // If not set, the token never expires.
-  expiry DateTime?
-
-  dateIssued DateTime @default(now())
-}
-
-type AuthScope {
-  code AuthScopeCode
-
-  // Optional foreign key designating a target for the scope. For example, if
-  // this scope provides DOCUMENT_EDITING permissions, the target might be a
-  // document key--whereas for a PASSWORD_RESET permission, the target might be
-  // a user key.
-  target String
-}
-
-enum AuthScopeCode {
-  GameHost // target is the gameID
-  PhoneVerification // target is the phone number
-  UserAuth // target is the userId
 }
 
 /// Prisma configuration

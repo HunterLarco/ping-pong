@@ -1,40 +1,37 @@
 <script setup lang="ts">
-import { useHomePageQuery } from '@generated/graphql/operations';
-import { useRouter } from 'vue-router';
+import { useSendMessageMutation } from '@generated/graphql/operations';
+import { ref } from 'vue';
 
-import MenuButton from '@/components/MenuButton.vue';
-import NavBar from '@/components/NavBar.vue';
+const result = ref();
 
-const router = useRouter();
+const { mutate, error, loading, onDone } = useSendMessageMutation({});
 
-const { result: homePageResult } = useHomePageQuery();
+onDone((mutationResult) => {
+  result.value = mutationResult;
+});
 
 /// Actions
 
-function logout() {
-  window.localStorage.removeItem('authorization');
-  router.push({ path: '/' });
-}
-
-function startGame() {
-  router.push({ path: '/start' });
+function sendMessage(message: string) {
+  mutate({ message });
 }
 </script>
 
 <template>
   <div class="HomePage">
-    <NavBar title="MTG Treachery" no-back-button />
-    <MenuButton text="Start a Game" @click="startGame" />
-    <MenuButton
-      text="Current Game"
-      v-if="homePageResult?.viewer?.currentGame"
-      @click="
-        router.push({
-          path: `/game/${homePageResult?.viewer?.currentGame?.id}`,
-        })
-      "
-    />
-    <MenuButton text="Logout" @click="logout" />
+    <button @click="sendMessage('ping')">Send "ping" message</button>
+    <button @click="sendMessage('hello')">Send "hello" message</button>
+    <div v-if="loading">Loading</div>
+    <div v-else>
+      <div v-if="error">
+        <b>Error</b>
+        <pre>{{ error }}</pre>
+      </div>
+      <div v-else>
+        <b>Result</b>
+        <pre>{{ result }}</pre>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -46,5 +43,9 @@ function startGame() {
 
   overflow-x: hidden;
   overflow-y: scroll;
+
+  b {
+    font-weight: 700;
+  }
 }
 </style>

@@ -1,5 +1,0 @@
-mutation Login($identityVerificationToken: ID!) {
-  login(request: { identityVerificationToken: $identityVerificationToken }) {
-    authToken
-  }
-}

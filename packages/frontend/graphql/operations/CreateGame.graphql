@@ -1,9 +1,0 @@
-#import '../fragments/Game.graphql';
-
-mutation CreateGame {
-  createGame {
-    game {
-      ...GameFragment
-    }
-  }
-}

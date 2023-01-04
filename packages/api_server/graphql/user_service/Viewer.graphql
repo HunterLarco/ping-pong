@@ -1,4 +1,0 @@
-type Viewer {
-  id: ID!
-  name: String!
-}
