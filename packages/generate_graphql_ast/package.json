@@ -1,0 +1,29 @@
+{
+  "name": "@ping-pong/generate_graphql_ast",
+  "description": "Plugin for graphql-codegen to generate GraphQL AST files",
+  "version": "1.0.0",
+  "main": "dist/plugin.js",
+  "scripts": {
+    "build": "NODE_ENV=production rollup -c",
+    "dev": "NODE_ENV=development rollup -c",
+    "lint": "prettier . --check",
+    "lint:fix": "prettier . --write"
+  },
+  "dependencies": {
+    "@graphql-codegen/plugin-helpers": "2.7.2",
+    "@graphql-tools/utils": "9.1.1"
+  },
+  "peerDependencies": {
+    "@types/graphql": "14.5.0",
+    "graphql": "16.6.0"
+  },
+  "devDependencies": {
+    "@rollup/plugin-node-resolve": "15.0.1",
+    "@rollup/plugin-typescript": "9.0.2",
+    "@trivago/prettier-plugin-sort-imports": "4.0.0",
+    "prettier": "2.7.1",
+    "rollup": "3.3.0",
+    "tslib": "2.4.1",
+    "typescript": "4.9.3"
+  }
+}

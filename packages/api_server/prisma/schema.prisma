@@ -1,0 +1,21 @@
+/// MessageHistory
+
+model MessageHistory {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  message String
+
+  dateCreated DateTime @default(now())
+}
+
+/// Prisma configuration
+
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["extendedWhereUnique"]
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}

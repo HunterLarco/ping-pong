@@ -7,12 +7,13 @@
     "url": "git+https://github.com/HunterLarco/ping-pong.git"
   },
   "scripts": {
-    "initialize": "npm install && npm run clean && lerna bootstrap",
-    "clean": "lerna clean --yes && lerna exec -- rm -rf dist",
-    "refresh": "lerna bootstrap",
-    "dev": "lerna run dev --parallel --scope=@ping-pong/api_server --scope=@ping-pong/frontend",
-    "lint": "lerna run lint --parallel --scope=@ping-pong/api_server --scope=@ping-pong/frontend",
-    "lint:fix": "lerna run lint:fix --parallel --scope=@ping-pong/api_server --scope=@ping-pong/frontend"
+    "initialize": "npm install && npm run clean && lerna bootstrap --hoist",
+    "clean": "lerna clean --yes && lerna exec -- rm -rf dist generated",
+    "refresh": "lerna bootstrap --hoist",
+    "dev": "lerna run dev --stream",
+    "build": "lerna run build",
+    "lint": "lerna run lint --parallel",
+    "lint:fix": "lerna run lint:fix --parallel"
   },
   "author": "Hunter John Larco",
   "license": "ISC",

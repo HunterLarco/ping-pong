@@ -11,9 +11,12 @@ node_modules
 .DS_Store
 dist
 dist-ssr
+dev-dist
 generated
 coverage
 *.local
+.env
+*.lerna_backup
 
 /cypress/videos/
 /cypress/screenshots/

@@ -1,0 +1,5 @@
+mutation SendMessage($message: String!) {
+  sendMessage(request: { message: $message }) {
+    response
+  }
+}

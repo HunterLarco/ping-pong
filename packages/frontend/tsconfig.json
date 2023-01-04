@@ -1,0 +1,21 @@
+{
+  "extends": "@vue/tsconfig/tsconfig.web.json",
+  "include": ["env.d.ts", "src/**/*", "src/**/*.vue", "generated/**/*"],
+  "compilerOptions": {
+    "allowJs": false,
+    "baseUrl": ".",
+    "noImplicitAny": true,
+    "noUnusedLocals": true,
+    "strict": true,
+    "paths": {
+      "@/*": ["src/*"],
+      "@generated/*": ["generated/*"]
+    }
+  },
+
+  "references": [
+    {
+      "path": "./tsconfig.config.json"
+    }
+  ]
+}

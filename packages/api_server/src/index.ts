@@ -1,55 +1,68 @@
+import { ApolloServer } from '@apollo/server';
+import { expressMiddleware } from '@apollo/server/express4';
+import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
+import bodyParser from 'body-parser';
+import cors from 'cors';
+import express from 'express';
+import { useServer } from 'graphql-ws/lib/use/ws';
+import http from 'http';
+import { WebSocketServer } from 'ws';
+
+import { createGlobalContext } from '@/GlobalContext';
+import { createRequestContext } from '@/RequestContext';
 import schema from '@/schema';
 
-/// HTTP Server
+async function main() {
+  const globalContext = await createGlobalContext();
 
-import express from 'express';
+  /// HTTP Server
 
-const app = express();
-const httpServer = http.createServer(app);
+  const app = express();
+  const httpServer = http.createServer(app);
 
-/// WebSocket Server
+  /// WebSocket Server
 
-import { WebSocketServer } from 'ws';
-import { useServer } from 'graphql-ws/lib/use/ws';
+  const wsServer = new WebSocketServer({
+    server: httpServer,
+    path: '/graphql',
+  });
 
-const wsServer = new WebSocketServer({
-  server: httpServer,
-  path: '/graphql',
-});
-
-const wsServerCleanup = useServer({ schema }, wsServer);
-
-/// GraphQL Server
-
-import { ApolloServer } from '@apollo/server';
-import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
-
-const graphQlServer = new ApolloServer({
-  schema,
-  plugins: [
-    ApolloServerPluginDrainHttpServer({ httpServer }),
+  const wsServerCleanup = useServer<Record<string, string | undefined>, {}>(
     {
-      async serverWillStart() {
-        return {
-          async drainServer() {
-            await wsServerCleanup.dispose();
-          },
-        };
+      schema,
+      async context({ connectionParams }) {
+        return createRequestContext({
+          globalContext,
+          authorization:
+            connectionParams && connectionParams.Authorization
+              ? connectionParams.Authorization
+              : null,
+        });
       },
     },
-  ],
-});
+    wsServer
+  );
 
-/// Start the Server
+  /// GraphQL Server
 
-import http from 'http';
-import cors from 'cors';
-import bodyParser from 'body-parser';
+  const graphQlServer = new ApolloServer({
+    schema,
+    plugins: [
+      ApolloServerPluginDrainHttpServer({ httpServer }),
+      {
+        async serverWillStart() {
+          return {
+            async drainServer() {
+              await wsServerCleanup.dispose();
+            },
+          };
+        },
+      },
+    ],
+  });
 
-import { createContext } from '@/context';
-import { expressMiddleware } from '@apollo/server/express4';
+  /// Start the Server
 
-async function main() {
   await graphQlServer.start();
 
   app.use(
@@ -57,8 +70,11 @@ async function main() {
     cors(),
     bodyParser.json(),
     expressMiddleware(graphQlServer, {
-      async context() {
-        return createContext();
+      async context({ req }) {
+        return createRequestContext({
+          globalContext,
+          authorization: req.get('Authorization') || null,
+        });
       },
     })
   );
@@ -67,6 +83,7 @@ async function main() {
     httpServer.listen({ port: 4000 }, () => resolve())
   );
   console.log(`🚀 Server listening at: localhost:4000`);
+  console.log(`🚀 Running in ${process.env.NODE_ENV} mode`);
 }
 
 main();

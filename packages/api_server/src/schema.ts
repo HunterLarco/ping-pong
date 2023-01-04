@@ -1,12 +1,11 @@
-import { makeExecutableSchema } from '@graphql-tools/schema';
+import ApiTypeDefs from '@generated/graphql/ast';
 import { mergeResolvers } from '@graphql-tools/merge';
+import { makeExecutableSchema } from '@graphql-tools/schema';
+import * as graphqlScalars from 'graphql-scalars';
 
-import BookResolvers from '@/resolvers/Book';
-import LibraryResolvers from '@/resolvers/Library';
-
-import ApiTypeDefs from '@generated/schema/api.graphql';
+import PingPongResolvers from '@/resolvers/ping_pong';
 
 export default makeExecutableSchema({
-  typeDefs: [ApiTypeDefs],
-  resolvers: mergeResolvers([LibraryResolvers, BookResolvers]),
+  typeDefs: [ApiTypeDefs, ...graphqlScalars.typeDefs],
+  resolvers: mergeResolvers([PingPongResolvers, graphqlScalars.resolvers]),
 });

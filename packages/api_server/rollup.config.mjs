@@ -1,13 +1,11 @@
-import graphql from '@rollup/plugin-graphql';
-import alias from '@rollup/plugin-alias';
 import run from '@rollup/plugin-run';
 import typescript from '@rollup/plugin-typescript';
 
 export default {
   input: 'src/index.ts',
   output: {
-    file: 'dist/server.js',
-    format: 'cjs',
+    file: 'dist/server.mjs',
+    format: 'es',
     sourcemap: true,
   },
   external: [
@@ -20,23 +18,14 @@ export default {
     'cors',
     'dataloader',
     'express',
-    'fuzzy-search',
+    'graphql',
+    'graphql-scalars',
     'graphql-subscriptions',
     'graphql-ws/lib/use/ws',
     'http',
-    'uuid',
     'ws',
   ],
   plugins: [
-    graphql(),
-    alias({
-      entries: [
-        {
-          find: /^@generated\/(.*\.graphql)$/,
-          replacement: './generated/$1',
-        },
-      ],
-    }),
     typescript({
       tsconfig: false,
       compilerOptions: {
@@ -44,7 +33,10 @@ export default {
         allowSyntheticDefaultImports: true,
         baseUrl: './',
         forceConsistentCasingInFileNames: true,
-        noEmitOnError: true,
+        // When building for prod we dont want to output a broken build, however
+        // during development it's valuable to emit broken builds for the watch
+        // server to detect and log.
+        noEmitOnError: process.env.NODE_ENV != 'development',
         noImplicitAny: true,
         paths: {
           '@/*': ['src/*'],
@@ -53,9 +45,13 @@ export default {
         preserveConstEnums: true,
         skipLibCheck: true,
         strict: true,
+        target: 'es2016',
       },
     }),
-    process.env.NODE_ENV == 'development' && run(),
+    process.env.NODE_ENV == 'development' &&
+      run({
+        execArgv: ['-r', 'source-map-support/register'],
+      }),
   ],
   watch: {
     buildDelay: 500,
