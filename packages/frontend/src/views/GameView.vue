@@ -9,6 +9,8 @@ import { useRoute, useRouter } from 'vue-router';
 import { useToast } from 'vue-toastification';
 
 import * as GameFragmentCache from '@/apollo/cache_updates/GameFragment';
+import NavBar from '@/components/NavBar.vue';
+import PlayerTile from '@/components/PlayerTile.vue';
 
 const route = useRoute();
 const router = useRouter();
@@ -100,7 +102,14 @@ onSpectateError((error) => {
 
 <template>
   <div class="HostPage">
-    <pre>{{ JSON.stringify(gameResult, null, 2) }}</pre>
+    <NavBar
+      :title="gameResult?.game?.dateEnded ? 'Finished Game' : 'Active Game'"
+    />
+    <PlayerTile
+      v-for="player in gameResult?.game?.players"
+      :key="player.user.id"
+      :player="player"
+    />
   </div>
 </template>
 
@@ -110,7 +119,6 @@ onSpectateError((error) => {
 .HostPage {
   @include layout-fill;
 
-  position: fixed;
   overflow: scroll;
 }
 </style>
