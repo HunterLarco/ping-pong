@@ -1,13 +1,25 @@
 <script setup lang="ts">
 import type { PlayerFragmentFragment } from '@generated/graphql/operations';
+import { ref } from 'vue';
 
 const props = defineProps<{
   player: PlayerFragmentFragment;
 }>();
+
+const modelStyles = ref({
+  display: 'none',
+});
+
+/// Actions
+
+function toggleModal() {
+  modelStyles.value.display =
+    modelStyles.value.display == 'none' ? 'block' : 'none';
+}
 </script>
 
 <template>
-  <div class="Host">
+  <div class="Host" @click="toggleModal">
     <div class="Left">
       <div class="Name">
         {{ props.player.user.name
@@ -30,6 +42,10 @@ const props = defineProps<{
       v-if="props.player.unveiled && props.player.identity"
       :src="props.player.identity.image"
     />
+
+    <div class="Modal" :style="modelStyles">
+      <img :src="props.player.identity!.image" />
+    </div>
   </div>
 </template>
 
@@ -93,5 +109,19 @@ const props = defineProps<{
   top: -90px;
   width: calc(100% + 40px);
   z-index: -1;
+}
+
+.Modal {
+  @include layout-fill;
+
+  background: #fff;
+  position: fixed;
+  z-index: 999;
+
+  img {
+    height: 100%;
+    object-fit: contain;
+    width: 100%;
+  }
 }
 </style>
