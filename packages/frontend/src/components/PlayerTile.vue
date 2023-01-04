@@ -13,8 +13,10 @@ const modelStyles = ref({
 /// Actions
 
 function toggleModal() {
-  modelStyles.value.display =
-    modelStyles.value.display == 'none' ? 'block' : 'none';
+  if (props.player.unveiled) {
+    modelStyles.value.display =
+      modelStyles.value.display == 'none' ? 'block' : 'none';
+  }
 }
 </script>
 
@@ -44,7 +46,7 @@ function toggleModal() {
     />
 
     <div class="Modal" :style="modelStyles">
-      <img :src="props.player.identity!.image" />
+      <img :src="props.player.identity?.image" />
     </div>
   </div>
 </template>
